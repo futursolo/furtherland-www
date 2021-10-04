@@ -1,0 +1,54 @@
+[package]
+name = "fl-www"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+fl-www-common = { path = "../fl-www-common" }
+# fl-www-agents = { path = "../fl-www-agents" }
+
+wasm-bindgen = "0.2.78"
+wasm-bindgen-futures = "0.4.28"
+js-sys = "0.3.55"
+# web-sys
+wee_alloc = "0.4.5"
+futures = "0.3.17"
+gloo = { version = "0.3.0", features = ["futures"] }
+
+console_log = { version = "0.2.0", features = ["color"] }
+log = "0.4.14"
+
+yew = { version = "0.18.0", features = ["agent", "web_sys"], default-features = false }
+yewdux = "0.6.2"
+yew-feather = "0.1.2"
+yew-router = "0.15.0"
+yew-side-effect = "0.1.0"
+
+i18n-embed = { version = "0.13.0", features = ["fluent-system", "web-sys-requester"] }
+rust-embed = { version = "6.2.0", features = ["debug-embed"] }
+i18n-embed-fl = "0.6.0"
+unic-langid = "0.9.0"
+
+rand = "0.8.4"
+
+chrono = { version = "0.4.19", features = ["wasmbind"] }
+parking_lot = { version = "0.11.2", features = ["wasm-bindgen"] }
+
+pulldown-cmark = { version = "0.8.0", default-features = false }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2.3", features = ["js"] }
+
+[dependencies.web-sys]
+version = "0.3.55"
+features = [
+  "Window",
+  "MediaQueryList",
+  "Storage",
+  "CssStyleDeclaration",
+  "Element",
+  "HtmlElement",
+  "ScrollIntoViewOptions",
+  "ScrollBehavior",
+  "ScrollToOptions",
+]

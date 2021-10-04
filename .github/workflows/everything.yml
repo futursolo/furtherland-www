@@ -1,0 +1,96 @@
+---
+name: Run Tests & Publishing
+
+on: [push]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+          profile: minimal
+
+      - name: Restore Rust Cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Run cargo fmt -- --check
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Run cargo clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+
+  deploy:
+    name: Deploy to GitHub Pages (Staging)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+          profile: minimal
+
+      - name: Setup Rust wasm
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          profile: minimal
+
+      - name: Restore Rust Cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Setup trunk
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: "latest"
+
+      - name: Build Release Artifact
+        run: |
+          # cargo build --release --target wasm32-unknown-unknown
+          trunk --config=Trunk.build.toml build --release index.html
+
+      - name: Ask Robots to Refrain from Scanning the Staging Site
+        run: |
+          cat > dist/robots.txt <<EOF
+          User-agent: *
+          Disallow: /
+          EOF
+
+      - name: Add 404.html
+        run: cp dist/index.html dist/404.html
+
+      - name: Deploy to GitHub Pages (Staging)
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages-staging # The branch the action should deploy to.
+          folder: dist # The folder the action should deploy.

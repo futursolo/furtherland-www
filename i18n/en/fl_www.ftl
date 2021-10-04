@@ -1,0 +1,10 @@
+about = About
+home = Home
+default-title = Hoshikawa's Secret Room
+title = {$title} - Hoshikawa's Secret Room
+coming-soon = Coming Soon!
+not-found-title = 404 - Page Not Found
+not-found-description = The page you requested does not exist.
+my-name = Kaede Hoshikawa
+footer-copy = All articles on this site are licensed under a CC-BY-SA 4.0 International Licence.
+comments = Comments

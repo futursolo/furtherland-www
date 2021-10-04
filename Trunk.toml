@@ -1,0 +1,10 @@
+[serve]
+port = 9741
+open = true
+
+[watch]
+ignore = [
+    "packages/fl-www/target/",
+    "packages/fl-www-macros/target/",
+    "packages/fl-www-common/target/",
+]

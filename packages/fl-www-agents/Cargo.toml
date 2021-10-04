@@ -1,0 +1,25 @@
+[package]
+name = "fl-www-agents"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fl-www-common = { path = "../fl-www-common" }
+
+wasm-bindgen = "0.2.75"
+wasm-bindgen-futures = "0.4.25"
+js-sys = "0.3.52"
+# web-sys
+futures = "0.3"
+gloo = { version = "0.3", features = ["futures"] }
+
+console_log = { version = "0.2.0", features = ["color"] }
+log = "0.4.14"
+
+yew = { version = "0.18.0", features = ["agent", "web_sys"], default-features = false }
+yewtil = "0.4.0"
+
+# bincode = "1.0"
+serde = "1.0"
