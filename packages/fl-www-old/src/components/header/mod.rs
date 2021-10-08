@@ -25,7 +25,7 @@ pub(crate) fn header() -> Html {
 
     let lang = use_language();
 
-    let header_ref: NodeRef = use_ref(NodeRef::default).borrow_mut().clone();
+    let header_ref: NodeRef = use_ref(|| NodeRef::default()).borrow_mut().clone();
 
     let background_colour = match theme.kind() {
         ThemeKind::Light => Colour::from_rgba(0, 0, 0, 0.3),
@@ -62,13 +62,10 @@ pub(crate) fn header() -> Html {
     };
 
     let sync_header_height_clone = sync_header_height.clone();
-    use_effect_with_deps(
-        move |_| {
-            sync_header_height_clone();
-            || {}
-        },
-        (),
-    );
+    use_effect(move || {
+        sync_header_height_clone();
+        || {}
+    });
 
     use_event(&window(), "scroll", move |_| sync_header_height());
 
@@ -159,7 +156,7 @@ pub(crate) fn header() -> Html {
     };
 
     let nav_colour = if *fixed_nav {
-        theme.colour.text.primary
+        theme.colour.text.primary.clone()
     } else {
         Colour::from_rgb(255, 255, 255)
     };
@@ -186,10 +183,10 @@ pub(crate) fn header() -> Html {
             >
                 {content}
                 <nav class={classes!(nav_classes)}>
-                    <Link to={AppRoute::Home { lang }} colour={nav_colour}>
+                    <Link to={AppRoute::Home { lang }} colour={nav_colour.clone()}>
                         <Item colour={home_colour}>{home_text}</Item>
                     </Link>
-                    <Link to={AppRoute::About { lang }} colour={nav_colour}>
+                    <Link to={AppRoute::About { lang }} colour={nav_colour.clone()}>
                         <Item colour={Colour::from_rgba(255, 242, 66, 0.9)}>{fl!("about")}</Item>
                     </Link>
                     <FlexSpace />

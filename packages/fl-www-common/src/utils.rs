@@ -1,8 +1,9 @@
 use std::convert::TryInto;
+use std::sync::atomic::{AtomicU64, Ordering};
 // use std::ops;
 // use std::sync::{Arc, Mutex};
 
-// use once_cell::sync::Lazy;
+use once_cell::sync::Lazy;
 
 use crate::prelude::*;
 
@@ -13,22 +14,16 @@ use crate::prelude::*;
 
 //use crate::prelude::*;
 
-// #[derive(PartialEq, Debug, Clone, Eq, Hash)]
-// pub(crate) struct Id(u64);
+#[derive(PartialEq, Debug, Clone, Eq, Hash)]
+pub(crate) struct Id(u64);
 
-// impl Id {
-//     pub fn new() -> Self {
-//         static CTR: Lazy<Arc<Mutex<u64>>> = Lazy::new(|| Arc::new(Mutex::new(0)));
+impl Id {
+    pub fn new() -> Self {
+        static CTR: Lazy<AtomicU64> = Lazy::new(AtomicU64::default);
 
-//         let ctr = CTR.clone();
-//         let mut ctr = ctr.lock().unwrap();
-
-//         let current_ctr = *ctr;
-//         (*ctr) += 1;
-
-//         Self(current_ctr)
-//     }
-// }
+        Self(CTR.fetch_add(1, Ordering::SeqCst))
+    }
+}
 
 // impl ops::Deref for Id {
 //     type Target = u64;

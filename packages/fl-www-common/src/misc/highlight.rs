@@ -87,7 +87,7 @@ impl HighlightOutput {
             ))
             .unwrap();
 
-            nodes.push(html! {<span class=style>{s}</span>})
+            nodes.push(html! {<span class={style}>{s}</span>})
         }
 
         html! {<>{nodes}</>}
