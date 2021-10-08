@@ -18,6 +18,8 @@ pub(crate) fn theme_toggle() -> Html {
         ThemeKind::Dark => "Switch to Light Theme",
     };
 
+    log::debug!("{:?}", theme.kind());
+
     let toggle_theme = Callback::from(move |_| theme.set(theme.kind().alternative()));
 
     html! {

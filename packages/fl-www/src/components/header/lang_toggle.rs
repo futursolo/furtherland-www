@@ -2,6 +2,7 @@ use yew_feather::globe::Globe;
 
 use crate::prelude::*;
 use components::Link;
+use i18n::Language;
 use styling::Colour;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -13,9 +14,14 @@ pub(crate) struct LangToggleProps {
 pub(crate) fn lang_toggle(props: &LangToggleProps) -> Html {
     let lang = use_language();
 
+    let other_lang = match lang {
+        Language::Chinese => Language::English,
+        Language::English => Language::Chinese,
+    };
+
     let current_route = AppRoute::current_route()
         .unwrap_or_default()
-        .with_lang(lang);
+        .with_lang(other_lang);
 
     html! {
         <Link to={current_route}>

@@ -45,9 +45,8 @@ pub(crate) struct ThemeState {
 
 impl ThemeState {
     pub fn set(&self, next_kind: ThemeKind) {
-        self.inner.set(next_kind.clone());
-
         set_theme_kind(Some(next_kind));
+        self.inner.set(next_kind);
     }
 
     pub fn kind(&self) -> ThemeKind {

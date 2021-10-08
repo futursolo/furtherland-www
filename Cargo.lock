@@ -271,36 +271,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fl-www-old"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "console_log",
- "fl-www-common",
- "futures",
- "getrandom",
- "gloo",
- "i18n-embed",
- "i18n-embed-fl",
- "js-sys",
- "log",
- "parking_lot",
- "pulldown-cmark",
- "rand",
- "rust-embed",
- "stylist",
- "unic-langid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "wee_alloc",
- "yew",
- "yew-feather",
- "yew-router",
- "yew-side-effect",
-]
-
-[[package]]
 name = "flate2"
 version = "1.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"

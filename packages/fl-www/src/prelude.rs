@@ -9,7 +9,7 @@ pub(crate) use web_sys::HtmlElement;
 pub(crate) use yew_router::prelude::*;
 
 pub(crate) use crate::components;
-pub(crate) use crate::pages::{AppRoute, I18nRoute};
+pub(crate) use crate::pages::AppRoute;
 
 pub(crate) use crate::fl;
 pub(crate) use crate::i18n;

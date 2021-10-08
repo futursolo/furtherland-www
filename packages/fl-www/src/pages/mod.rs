@@ -16,47 +16,17 @@ use components::Redirect;
 use i18n::Language;
 
 #[derive(Routable, Debug, Clone, PartialEq)]
-pub(crate) enum I18nRoute {
-    #[at("/zh/")]
-    Chinese,
-    #[at("/en/")]
-    English,
-    #[at("/!")]
-    Home,
-    #[not_found]
-    #[at("/page-not-found")]
-    PageNotFound,
-}
-
-impl I18nRoute {
-    fn render_route(&self) -> Html {
-        match self {
-            Self::English => AppRoute::current_route().unwrap_or_default().render_route(),
-            Self::Chinese => AppRoute::current_route().unwrap_or_default().render_route(),
-            Self::Home => {
-                let lang = Language::detect();
-                html! {<Redirect to={AppRoute::Home { lang }} />}
-            }
-            Self::PageNotFound => {
-                let lang = Language::detect();
-                html! {<Redirect to={AppRoute::PageNotFound { lang }} />}
-            }
-        }
-    }
-}
-
-#[derive(Routable, Debug, Clone, PartialEq)]
 pub(crate) enum AppRoute {
     #[at("/:lang/writings/:slug")]
     Writing { lang: Language, slug: String },
-    #[at("/:lang/pages/about!")]
+    #[at("/:lang/pages/about")]
     About { lang: Language },
     #[at("/:lang/page-not-found")]
     PageNotFound { lang: Language },
-    #[at("/:lang/!")]
+    #[at("/:lang/")]
     Home { lang: Language },
     #[not_found]
-    #[at("/")]
+    #[at("/page-not-found")]
     Other,
 }
 
@@ -88,6 +58,17 @@ impl AppRoute {
             Self::Writing { slug, .. } => Self::Writing { slug, lang },
         }
     }
+
+    pub fn lang(&self) -> Option<Language> {
+        match self {
+            Self::Home { lang, .. } => Some(*lang),
+            Self::About { lang, .. } => Some(*lang),
+
+            Self::PageNotFound { lang, .. } => Some(*lang),
+            Self::Writing { lang, .. } => Some(*lang),
+            _ => None,
+        }
+    }
 }
 
 impl Default for AppRoute {
@@ -97,13 +78,11 @@ impl Default for AppRoute {
     }
 }
 
-pub(crate) type I18nRouter = Router<I18nRoute>;
-
 #[function_component(AppRouter)]
 pub(crate) fn app_router() -> Html {
     html! {
-        <I18nRouter
-             render={I18nRouter::render(I18nRoute::render_route)}
+        <Router<AppRoute>
+             render={Router::render(AppRoute::render_route)}
          />
     }
 }

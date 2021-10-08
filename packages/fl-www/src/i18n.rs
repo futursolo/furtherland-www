@@ -25,14 +25,10 @@ pub(crate) enum Language {
 
 impl Language {
     pub fn detect() -> Self {
-        log::debug!("{:?}", I18nRoute::current_route());
+        log::debug!("{:?}", AppRoute::current_route());
 
-        if let Some(m) = I18nRoute::current_route() {
-            match m {
-                I18nRoute::English => return Self::English,
-                I18nRoute::Chinese => return Self::Chinese,
-                _ => (),
-            }
+        if let Some(m) = AppRoute::current_route().and_then(|m| m.lang()) {
+            return m;
         }
 
         let requested_langs = WebLanguageRequester::requested_languages();
