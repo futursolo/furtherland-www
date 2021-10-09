@@ -66,8 +66,6 @@ where
     T: PartialEq + fmt::Debug,
 {
     pub fn set(&self, value: T) {
-        log::debug!("New Value: {:?}", value);
-        log::debug!("Old Value: {:?}", *self.inner);
         let mut current_value = self.inner.borrow_mut();
 
         if **current_value != value {

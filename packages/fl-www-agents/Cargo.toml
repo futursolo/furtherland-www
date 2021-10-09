@@ -18,8 +18,8 @@ gloo = { version = "0.3", features = ["futures"] }
 console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
-yew = { version = "0.18.0", features = ["agent", "web_sys"], default-features = false }
-yewtil = "0.4.0"
+yew = { git = "https://github.com/yewstack/yew" }
+yew-agent = { git = "https://github.com/yewstack/yew", package = "yew-agent" }
 
 # bincode = "1.0"
 serde = "1.0"

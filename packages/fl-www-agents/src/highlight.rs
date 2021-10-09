@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use yew::agent::{Agent, AgentLink, Context, HandlerId};
+use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
 use misc::highlight::{HighlightInput, HighlightOutput};
@@ -24,7 +24,7 @@ pub struct Worker {
 }
 
 impl Agent for Worker {
-    type Reach = Context<Self>;
+    type Reach = Public<Self>;
     type Message = Msg;
     type Input = Request;
     type Output = Response;

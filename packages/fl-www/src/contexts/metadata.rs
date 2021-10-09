@@ -19,7 +19,7 @@ impl Deref for MetadataState {
     type Target = Metadata;
 
     fn deref(&self) -> &Self::Target {
-        &self.value
+        self.value
     }
 }
 

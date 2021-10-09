@@ -1,4 +1,6 @@
 // pub use fl_www_agents as agents;
+pub(crate) use fl_www_agents as agents;
+pub(crate) use fl_www_agents::prelude::*;
 pub(crate) use fl_www_common::prelude::*;
 
 // pub(crate) use wasm_bindgen::prelude::*;

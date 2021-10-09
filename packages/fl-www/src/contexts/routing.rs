@@ -29,9 +29,7 @@ pub(crate) fn use_app_route() -> AppRoute {
         (),
     );
 
-    let route = route.borrow().to_owned();
-
-    (*route).to_owned()
+    (*route.borrow()).to_owned()
 }
 
 #[function_component(RoutingListener)]

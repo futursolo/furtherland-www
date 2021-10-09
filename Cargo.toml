@@ -3,7 +3,7 @@ members = [
     "packages/fl-www",
     "packages/fl-www-macros",
     "packages/fl-www-common",
-    # "packages/fl-www-agents",
+    "packages/fl-www-agents",
 ]
 
 [profile.release]

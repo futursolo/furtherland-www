@@ -30,6 +30,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61604a8f862e1d5c3229fdd78f8b02c68dcf73a4c4b05fd636d12240aaa242c1"
 
 [[package]]
+name = "anymap2"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
+
+[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -245,6 +251,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "console_log",
+ "fl-www-agents",
  "fl-www-common",
  "futures",
  "getrandom",
@@ -267,6 +274,23 @@ dependencies = [
  "yew-feather",
  "yew-router",
  "yew-side-effect",
+]
+
+[[package]]
+name = "fl-www-agents"
+version = "0.1.0"
+dependencies = [
+ "console_log",
+ "fl-www-common",
+ "futures",
+ "gloo",
+ "js-sys",
+ "log",
+ "serde",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "yew",
+ "yew-agent",
 ]
 
 [[package]]
@@ -2067,6 +2091,23 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew-macro",
+]
+
+[[package]]
+name = "yew-agent"
+version = "0.1.0"
+source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+dependencies = [
+ "anymap2",
+ "bincode",
+ "gloo-console",
+ "js-sys",
+ "serde",
+ "slab",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "yew",
 ]
 
 [[package]]

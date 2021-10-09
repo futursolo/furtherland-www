@@ -11,3 +11,4 @@ packages/*/target/
 **/*.rs.bk
 
 dist/
+worker-dist/
