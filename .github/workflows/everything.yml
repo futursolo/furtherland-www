@@ -73,6 +73,8 @@ jobs:
         run: |
           cargo build --target wasm32-unknown-unknown --bin worker-highlight --release
           wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name worker-highlight target/wasm32-unknown-unknown/release/worker-highlight.wasm
+
+          cd worker-dist/
           mv worker-highlight_bg.wasm worker-highlight_bg.original.wasm
           wasm-opt -Oz -o worker-highlight_bg.wasm worker-highlight_bg.original.wasm
 
