@@ -57,7 +57,7 @@ jobs:
 
       - name: Setup wasm-opt
         run: |
-          $WASM_OPT_VER=101
+          WASM_OPT_VER=101
 
           cd /tmp
 
