@@ -7,6 +7,8 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
     steps:
       - name: Checkout Project
         uses: actions/checkout@v2
@@ -40,11 +42,6 @@ jobs:
         with:
           command: build
 
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-
       - name: Setup wasm-bindgen
         uses: jetli/wasm-bindgen-action@v0.1.0
         with:
@@ -61,7 +58,7 @@ jobs:
 
           cd /tmp
 
-          curl -O -s https://github.com/WebAssembly/binaryen/releases/download/version_101/binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
+          curl -O -L https://github.com/WebAssembly/binaryen/releases/download/version_101/binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
           tar zxvf binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
           echo "PATH=$PATH:$(pwd)/binaryen-version_$WASM_OPT_VER/bin" >> $GITHUB_ENV
 
