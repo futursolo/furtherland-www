@@ -1,46 +1,38 @@
 use crate::prelude::*;
 
-use yew_router::{
-    agent::{RouteAgentDispatcher, RouteRequest},
-    route::Route,
-};
+mod base {
+    use std::marker::PhantomData;
+    use yew::prelude::*;
+    use yew_router::{push_route, Routable};
 
-#[derive(Properties, Clone, PartialEq)]
-pub(crate) struct RedirectProps {
-    pub to: I18nRoute,
-}
-
-pub(crate) struct Redirect {
-    props: RedirectProps,
-
-    router: RouteAgentDispatcher<()>,
-}
-
-impl Component for Redirect {
-    type Message = ();
-    type Properties = RedirectProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        let router = RouteAgentDispatcher::new();
-        Self { props, router }
+    /// Props for [`Link`]
+    #[derive(Properties, Clone, PartialEq)]
+    pub struct RedirectProps<R: Routable + Clone + PartialEq> {
+        /// Route that will be pushed when the component is rendered.
+        pub to: R,
     }
 
-    fn rendered(&mut self, first_render: bool) {
-        if first_render {
-            let route = Route::from(self.props.to.clone());
-            self.router.send(RouteRequest::ChangeRoute(route));
+    /// A component that will redirect to specified route when rendered.
+    pub struct Redirect<R: Routable + Clone + PartialEq + 'static> {
+        _data: PhantomData<R>,
+    }
+
+    impl<R> Component for Redirect<R>
+    where
+        R: Routable + Clone + PartialEq + 'static,
+    {
+        type Message = ();
+        type Properties = RedirectProps<R>;
+
+        fn create(_ctx: &Context<Self>) -> Self {
+            Self { _data: PhantomData }
+        }
+
+        fn view(&self, ctx: &Context<Self>) -> Html {
+            push_route(ctx.props().to.clone());
+            Html::default()
         }
     }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
-        Html::default()
-    }
 }
+
+pub(crate) type Redirect = base::Redirect<AppRoute>;

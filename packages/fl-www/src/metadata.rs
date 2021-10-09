@@ -8,7 +8,7 @@ use crate::prelude::*;
 
 use i18n::Language;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct WritingMetadata {
     pub slug: String,
     pub lang: Language,
@@ -41,7 +41,7 @@ impl WritingMetadata {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub(crate) struct Metadata {
     writings: Vec<WritingMetadata>,
 }

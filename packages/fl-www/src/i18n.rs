@@ -9,6 +9,7 @@ use i18n_embed::{
 use once_cell::sync::Lazy;
 use rust_embed::RustEmbed;
 use unic_langid::LanguageIdentifier;
+use yew_router::prelude::Routable;
 
 use crate::prelude::*;
 
@@ -16,7 +17,7 @@ use crate::prelude::*;
 #[folder = "../../i18n"] // path to the compiled localization resources
 struct Localizations;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 pub(crate) enum Language {
     Chinese,
     English,
@@ -24,14 +25,14 @@ pub(crate) enum Language {
 
 impl Language {
     pub fn detect() -> Self {
-        log::debug!("{:?}", I18nRoute::current_route());
-
-        if let Some(m) = I18nRoute::current_route() {
-            match m {
-                I18nRoute::English(_) => return Self::English,
-                I18nRoute::Chinese(_) => return Self::Chinese,
-                _ => (),
-            }
+        if let Some(m) = window()
+            .location()
+            .pathname()
+            .ok()
+            .and_then(|m| AppRoute::recognize(&m))
+            .and_then(|m| m.lang())
+        {
+            return m;
         }
 
         let requested_langs = WebLanguageRequester::requested_languages();
@@ -54,7 +55,7 @@ impl Language {
         }
     }
 
-    pub fn to_lang_id(&self) -> LanguageIdentifier {
+    pub fn to_lang_id(self) -> LanguageIdentifier {
         self.as_str().parse().expect("Failed to parse.")
     }
 
@@ -63,13 +64,6 @@ impl Language {
 
         if (&*LOADER).current_language() != self.to_lang_id() {
             let _result = i18n_embed::select(&*LOADER, &Localizations, &[self.to_lang_id()]);
-        }
-    }
-
-    pub fn route_i18n(&self, route: AppRoute) -> I18nRoute {
-        match self {
-            Language::Chinese => I18nRoute::Chinese(route),
-            Language::English => I18nRoute::English(route),
         }
     }
 }

@@ -1,157 +1,110 @@
+use std::cell::RefCell;
+
 use crate::prelude::*;
-
-// use yew::agent::{Bridge, Bridged};
-
-// use agents::highlight::Worker as HighlightWorker;
-#[cfg(not(debug_assertions))]
-use misc::highlight::{HighlightInput, HighlightOutput};
+use misc::highlight::HighlightInput;
+use styling::ThemeKind;
+use yew_agent::Bridged;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeBlockProps {
-    #[prop_or_default]
-    pub dispatch: AppDispatch,
-
     pub language: Option<String>,
 
     pub content: String,
 }
 
-impl_dispatch_mut!(CodeBlockProps);
+pub(crate) fn use_highlight(
+    content: String,
+    language: Option<String>,
+    theme_kind: ThemeKind,
+) -> Option<Html> {
+    let hl_html = use_equal_state(|| -> Option<Html> { None });
 
-pub(crate) enum CodeBlockMsg {
-    #[cfg(not(debug_assertions))]
-    Highlighted(Option<HighlightOutput>),
-}
+    let hl_html_clone = hl_html.clone();
+    let worker = use_state(move || {
+        RefCell::new(agents::highlight::Worker::bridge(Callback::from(
+            move |m| {
+                let agents::highlight::Response::Highlighted(m) = m;
 
-pub(crate) struct BaseCodeBlock {
-    #[cfg(not(debug_assertions))]
-    link: ComponentLink<Self>,
+                if let Some(m) = m.map(|m| m.to_html()) {
+                    hl_html_clone.set(Some(m));
+                }
+            },
+        )))
+    });
 
-    // worker: Box<dyn Bridge<HighlightWorker>>,
-    props: CodeBlockProps,
+    use_effect_with_deps(
+        move |(content, language, theme_kind)| {
+            let content = content.clone();
+            if let Some(m) = language {
+                let theme_kind = *theme_kind;
 
-    hl_html: Option<Html>,
-}
-
-impl Component for BaseCodeBlock {
-    type Message = CodeBlockMsg;
-    type Properties = CodeBlockProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        // let worker_cb = link.callback(|m| {
-        //     let agents::highlight::Response::Highlighted(m) = m;
-        //     CodeBlockMsg::Highlighted(m)
-        // });
-
-        Self {
-            #[cfg(not(debug_assertions))]
-            link: _link,
-            // worker: HighlightWorker::bridge(worker_cb),
-            props,
-            hl_html: None,
-        }
-    }
-
-    #[cfg(not(debug_assertions))]
-    fn rendered(&mut self, first_render: bool) {
-        if first_render {
-            self.highlight();
-        }
-    }
-
-    #[cfg(not(debug_assertions))]
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        let CodeBlockMsg::Highlighted(m) = msg;
-
-        self.hl_html = m.map(|m| m.to_html());
-
-        true
-    }
-
-    #[cfg(debug_assertions)]
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        let changed = self.props.neq_assign(props);
-
-        if changed {
-            self.hl_html = None;
-
-            #[cfg(not(debug_assertions))]
-            self.highlight();
-        }
-
-        changed
-    }
-
-    fn view(&self) -> Html {
-        // let children = self
-        //     .code_with_highlight()
-        //     .unwrap_or_else(|| self.props.content.as_str().into());
-        //
-        let children = self
-            .hl_html
-            .clone()
-            .unwrap_or_else(|| self.props.content.as_str().into());
-
-        html! {
-            <pre class=self.style()>
-                <code>
-                    {children}
-                </code>
-            </pre>
-        }
-    }
-}
-
-impl BaseCodeBlock {
-    #[cfg(not(debug_assertions))]
-    fn highlight(&mut self) {
-        let theme_kind = self.props.dispatch.state().theme.current_kind();
-        let content = self.props.content.clone();
-        let language = match self.props.language {
-            Some(ref m) => m.to_string(),
-            None => return,
-        };
-        self.link.send_future(async move {
-            CodeBlockMsg::Highlighted(
-                HighlightOutput::new(HighlightInput {
+                let input = HighlightInput {
                     content,
-                    language,
+                    language: m.to_owned(),
                     theme_kind,
-                })
-                .await,
-            )
-        });
+                };
 
-        // self.worker
-        //     .send(agents::highlight::Request::Highlight(HighlightInput {
-        //         content,
-        //         language,
-        //         theme_kind,
-        //     }))
-    }
+                worker
+                    .borrow_mut()
+                    .send(agents::highlight::Request::Highlight(input));
+            }
+
+            || {}
+        },
+        (content, language, theme_kind),
+    );
+
+    (*hl_html.borrow()).clone()
 }
 
-impl YieldStyle for BaseCodeBlock {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.props.dispatch.state().theme.current();
+#[styled_component(CodeBlock)]
+pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
+    let theme = use_theme();
 
-        format!(
+    // use_effect_with_deps(
+    //     move |(content, language, theme_kind)| {
+    //         let theme_kind = *theme_kind;
+    //         let language = language.to_owned();
+    //         let content = content.to_owned();
+
+    //         if let Some(m) = language {
+    //             spawn_local(async move {
+    //                 let high_lighted = HighlightOutput::new(HighlightInput {
+    //                     content,
+    //                     language: m,
+    //                     theme_kind,
+    //                 })
+    //                 .await
+    //                 .map(|m| m.to_html());
+
+    //                 hl_html.set(high_lighted);
+    //             })
+    //         }
+
+    //         || {}
+    //     },
+    //     (props.content.clone(), props.language.clone(), theme.kind()),
+    // );
+
+    let hl_html = use_highlight(props.content.clone(), props.language.clone(), theme.kind());
+
+    let children = hl_html.unwrap_or_else(|| props.content.as_str().into());
+
+    html! {
+        <pre class={css!(
             r#"
-                background-color: {};
+                background-color: ${bg_colour};
                 padding: 20px;
                 box-sizing: border-box;
                 border-radius: 3px;
 
                 overflow-x: auto;
             "#,
-            theme.colour.background.code,
-        )
-        .into()
+            bg_colour = theme.colour.background.code,
+        )}>
+            <code>
+                {children}
+            </code>
+        </pre>
     }
 }
-
-pub(crate) type CodeBlock = WithDispatch<BaseCodeBlock>;

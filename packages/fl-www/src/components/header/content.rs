@@ -1,79 +1,42 @@
 use crate::prelude::*;
-use store::AppDispatch;
 
-pub(crate) struct BaseContent {
-    dispatch: AppDispatch,
-}
+#[styled_component(Content)]
+pub(crate) fn content() -> Html {
+    let theme = use_theme();
+    use_language();
 
-impl Component for BaseContent {
-    type Message = ();
-    type Properties = AppDispatch;
+    html! {
+        <div class={css!(r#"
+            height: 1px;
+            width: 100%;
 
-    fn create(dispatch: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { dispatch }
-    }
+            flex-grow: 1;
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        "#)}>
+            <div class={css!(
+                r#"
+                font-size: 5rem;
 
-    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
-        self.dispatch.neq_assign(dispatch)
-    }
+                @media ${lg_down} {
+                    font-size: 4rem;
+                }
 
-    fn view(&self) -> Html {
-        html! {
-            <div class=self.style()>
-                <div class="fl-header-home-content-title">{fl!("default-title")}</div>
-            </div>
-        }
-    }
-}
+                @media ${md_down} {
+                    font-size: 3rem;
+                }
 
-impl YieldStyle for BaseContent {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.dispatch.state().theme.current();
-        format!(
-            r#"
-                height: 1px;
-                width: 100%;
-
-                flex-grow: 1;
-
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-around;
-
-                & .fl-header-home-content-title {{
-                    font-size: 5rem;
-                }}
-
-                {} {{
-                    & .fl-header-home-content-title {{
-                        font-size: 4rem;
-                    }}
-                }}
-
-                {} {{
-                    & .fl-header-home-content-title {{
-                        font-size: 3rem;
-                    }}
-                }}
-
-                {} {{
-                    & .fl-header-home-content-title {{
-                        font-size: 2rem;
-                    }}
-                }}
-
-            "#,
-            theme.breakpoint.lg.down(),
-            theme.breakpoint.md.down(),
-            theme.breakpoint.sm.down(),
-        )
-        .into()
+                @media ${sm_down} {
+                    font-size: 2rem;
+                }
+                "#,
+                lg_down = theme.breakpoint.lg.down(),
+                md_down = theme.breakpoint.md.down(),
+                sm_down = theme.breakpoint.sm.down(),
+            )}>{fl!("default-title")}</div>
+         </div>
     }
 }
-
-pub(crate) type Content = WithDispatch<BaseContent>;

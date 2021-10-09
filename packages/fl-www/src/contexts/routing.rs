@@ -1,61 +1,44 @@
-use yew_router::agent::RouteAgentBridge;
-
 use crate::prelude::*;
-use store::Action;
 
-use super::ContextProps;
+use hooks::use_event;
 
-#[derive(Debug, PartialEq)]
-pub(crate) enum Msg {
-    RouteUpdated,
+pub(crate) fn use_app_route() -> AppRoute {
+    let get_current_route = || {
+        window()
+            .location()
+            .pathname()
+            .ok()
+            .as_ref()
+            .and_then(|m| AppRoute::recognize(m))
+            .unwrap_or_default()
+    };
+
+    let route = use_equal_state(get_current_route);
+
+    let route_clone = route.clone();
+    use_event(&window(), "popstate", move |_| {
+        route_clone.set(get_current_route());
+    });
+
+    let route_clone = route.clone();
+    use_effect_with_deps(
+        move |_| {
+            route_clone.set(get_current_route());
+            || {}
+        },
+        (),
+    );
+
+    (*route.borrow()).to_owned()
 }
 
-pub(crate) struct BaseRoutingListener {
-    props: ContextProps,
-    _route_bridge: RouteAgentBridge,
-    current_route: Option<AppRoute>,
+#[function_component(RoutingListener)]
+pub(crate) fn routing_listener(props: &ChildrenProps) -> Html {
+    let children = props.children.clone();
+
+    use_event(&window(), "popstate", |_event| {
+        window().scroll_to_with_scroll_to_options(web_sys::ScrollToOptions::new().top(0.0));
+    });
+
+    html! {<>{children}</>}
 }
-
-impl Component for BaseRoutingListener {
-    type Message = Msg;
-    type Properties = ContextProps;
-
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let callback = link.callback(|_| Self::Message::RouteUpdated);
-        Self {
-            props,
-            _route_bridge: RouteAgentBridge::new(callback),
-            current_route: None,
-        }
-    }
-
-    fn rendered(&mut self, first_render: bool) {
-        if first_render {
-            self.props.dispatch.send(Action::RouteUpdated);
-        }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        let next_route = I18nRoute::current_route().map(|m| m.into_app_route());
-
-        // Restore Scroll.
-        if self.current_route != next_route {
-            window().scroll_to_with_scroll_to_options(web_sys::ScrollToOptions::new().top(0.0));
-        }
-
-        self.current_route = next_route;
-        self.props.dispatch.send(Action::RouteUpdated);
-        true
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-        html! {<>{children}</>}
-    }
-}
-
-pub(crate) type RoutingListener = WithDispatch<BaseRoutingListener>;

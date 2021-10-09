@@ -1,87 +1,24 @@
 use chrono::{Datelike, Local};
-use gloo::events::EventListener;
 
 use crate::prelude::*;
 
 use components::FlexSpace;
+use hooks::use_render_event;
 
-#[derive(Clone, PartialEq, Debug)]
-pub(crate) enum Msg {
-    Resized,
-}
+#[styled_component(Footer)]
+pub(crate) fn footer() -> Html {
+    let year = Local::now().year();
+    use_language();
 
-pub(crate) struct BaseFooter {
-    dispatch: AppDispatch,
-    _resize_listener: EventListener,
-    _orientation_listener: EventListener,
-}
+    let theme = use_theme();
 
-impl Component for BaseFooter {
-    type Message = Msg;
-    type Properties = AppDispatch;
+    let is_vertical = theme.breakpoint.md.matches_down();
 
-    fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let link_clone = link.clone();
-        let window = window();
+    use_render_event(&window(), "resize");
+    use_render_event(&window(), "orientationchange");
 
-        let _resize_listener = EventListener::new(&window, "resize", move |_e| {
-            link_clone.clone().send_message(Msg::Resized);
-        });
-
-        let _orientation_listener = EventListener::new(&window, "resize", move |_e| {
-            link.clone().send_message(Msg::Resized);
-        });
-
-        Self {
-            dispatch,
-            _resize_listener,
-            _orientation_listener,
-        }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
-    }
-
-    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
-        self.dispatch.neq_assign(dispatch)
-    }
-
-    fn view(&self) -> Html {
-        let now = Local::now();
-
-        let year = now.year();
-
-        html! {
-            <footer class=self.style()>
-                <div class="fl-footer-container">
-                    <div>
-                        {format!("© {} ", year)}
-                        {fl!("default-title")}
-                    </div>
-                    {if !self.is_vertical() { html!{<FlexSpace />} } else { html!{} }}
-                    <div class="fl-footer-copy">
-                        {fl!("footer-copy")}
-                    </div>
-                </div>
-            </footer>
-        }
-    }
-}
-
-impl BaseFooter {
-    fn is_vertical(&self) -> bool {
-        let theme = self.dispatch.state().theme.current();
-
-        theme.breakpoint.md.matches_down()
-    }
-}
-
-impl YieldStyle for BaseFooter {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.dispatch.state().theme.current();
-
-        format!(
+    html! {
+        <footer class={css!(
             r#"
                 height: 100px;
                 width: 100%;
@@ -92,33 +29,39 @@ impl YieldStyle for BaseFooter {
                 align-items: center;
 
                 box-sizing: border-box;
-
-                .fl-footer-container {{
-                    max-width: calc({} - 40px);
+            "#
+        )}>
+            <div class={css!(
+                r#"
+                    max-width: calc(${md_width} - 40px);
                     width: 100%;
 
                     display: flex;
                     flex-direction: row;
                     justify-content: space-around;
                     align-items: center;
-                }}
 
-                .fl-footer-copy {{
-                    color: {};
-                }}
-
-                {} {{
-                    .fl-footer-container {{
+                    @media ${md_down} {
                         flex-direction: column;
-                    }}
-                }}
-            "#,
-            theme.breakpoint.md.width_str(),
-            theme.colour.text.secondary,
-            theme.breakpoint.md.down()
-        )
-        .into()
+                    }
+                "#,
+                md_down = theme.breakpoint.md.down(),
+                md_width = theme.breakpoint.md.width_str()
+            )}>
+                <div>
+                    {format!("© {} ", year)}
+                    {fl!("default-title")}
+                </div>
+                {if is_vertical { html!{<FlexSpace />} } else { html!{} }}
+                <div class={css!(
+                    r#"
+                        color: ${colour};
+                    "#,
+                    colour = theme.colour.text.secondary,
+                )}>
+                    {fl!("footer-copy")}
+                </div>
+            </div>
+        </footer>
     }
 }
-
-pub(crate) type Footer = WithDispatch<BaseFooter>;

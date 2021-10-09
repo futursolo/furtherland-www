@@ -1,53 +1,40 @@
 use crate::prelude::*;
 
-mod common;
-mod global_style;
+mod highlight;
 mod i18n;
+mod metadata;
 mod routing;
 mod theme;
 mod title;
 
-use common::ContextProps;
+use highlight::HighlightProvider;
+pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
+pub(crate) use metadata::use_metadata;
+use metadata::MetaProvider;
+pub(crate) use routing::use_app_route;
 use routing::RoutingListener;
+pub(crate) use theme::use_theme;
 use theme::ThemeProvider;
 use title::TitleProvider;
 
-pub(crate) struct BaseProviders {
-    props: ContextProps,
-}
+#[function_component(Providers)]
+pub(crate) fn providers(props: &ChildrenProps) -> Html {
+    let children = props.children.clone();
 
-impl Component for BaseProviders {
-    type Message = ();
-    type Properties = ContextProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-
-        html! {
-            <RoutingListener>
-                <I18nProvider>
-                    <ThemeProvider>
+    html! {
+        <RoutingListener>
+            <I18nProvider>
+                <ThemeProvider>
+                    <MetaProvider>
                         <TitleProvider>
-                            {children}
+                            <HighlightProvider>
+                                {children}
+                            </HighlightProvider>
                         </TitleProvider>
-                    </ThemeProvider>
-                </I18nProvider>
-            </RoutingListener>
-        }
+                    </MetaProvider>
+                </ThemeProvider>
+            </I18nProvider>
+        </RoutingListener>
     }
 }
-
-pub(crate) type Providers = WithDispatch<BaseProviders>;

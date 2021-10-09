@@ -1,80 +1,46 @@
 use crate::prelude::*;
 
-#[derive(Properties, Clone, PartialEq)]
-pub(crate) struct MainProps {
-    #[prop_or_default]
-    dispatch: AppDispatch,
-    pub children: Children,
-}
+#[styled_component(Main)]
+pub(crate) fn main(props: &ChildrenProps) -> Html {
+    let children = props.children.clone();
+    let theme = use_theme();
+    let route = use_app_route();
 
-impl_dispatch_mut!(MainProps);
+    let min_height_str = match route {
+        AppRoute::HomeZh | AppRoute::HomeEn => "calc(100vh - 160px)",
+        _ => "auto",
+    };
 
-pub(crate) struct BaseMain {
-    props: MainProps,
-}
-
-impl Component for BaseMain {
-    type Message = ();
-    type Properties = MainProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-        html! {
-            <main class=self.style()><div class="fl-main-container">{children}</div></main>
-        }
-    }
-}
-
-impl YieldStyle for BaseMain {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.props.dispatch.state().theme.current();
-
-        let min_height_str = if let Some(m) = I18nRoute::current_route() {
-            let m = m.into_app_route();
-
-            match m {
-                AppRoute::Home => "min-height: calc(100vh - 160px);",
-                _ => "",
-            }
-        } else {
-            ""
-        };
-
-        format!(
+    html! {
+        <main class={css!(
             r#"
                 display: flex;
                 width: 100%;
                 flex-grow: 1;
                 padding-top: 20px;
                 padding-bottom: 20px;
-                {}
+                min-height: ${min_height_str};
 
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
 
-                & .fl-main-container {{
-                    width: calc(100% - 40px);
-                    max-width: {};
-                }}
+                box-sizing: border-box;
+
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
             "#,
-            min_height_str,
-            theme.breakpoint.md.width_str()
-        )
-        .into()
+            min_height_str = min_height_str,
+        )}>
+            <div class={css!(
+                r#"
+                    width: calc(100% - 40px);
+                    max-width: ${md_width};
+                "#,
+                md_width = theme.breakpoint.md.width_str(),
+            )}>
+                {children}
+            </div>
+        </main>
     }
 }
-
-pub(crate) type Main = WithDispatch<BaseMain>;

@@ -42,11 +42,11 @@ impl Breakpoint {
     }
 
     pub fn down(&self) -> String {
-        format!("@media (max-width: {}px)", self.width)
+        format!("(max-width: {}px)", self.width)
     }
 
     pub fn up(&self) -> String {
-        format!("@media (min-width: {}px)", self.width)
+        format!("(min-width: {}px)", self.width)
     }
 
     pub fn matches_down(&self) -> bool {

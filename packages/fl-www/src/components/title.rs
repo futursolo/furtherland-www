@@ -7,51 +7,21 @@ pub(crate) struct Props {
     pub font_size: f32,
 }
 
-pub(crate) struct SectionTitle {
-    props: Props,
-}
+#[styled_component(SectionTitle)]
+pub(crate) fn section_title(props: &Props) -> Html {
+    let children = props.children.clone();
+    html! {
+        <div class={css!(r#"
+            display: flex;
+            width: 100%;
 
-impl Component for SectionTitle {
-    type Message = ();
-    type Properties = Props;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-        html! {
-            <div class=self.style()><h1>{children}</h1></div>
-        }
-    }
-}
-
-impl YieldStyle for SectionTitle {
-    fn style_str(&self) -> Cow<'static, str> {
-        format!(
-            r#"
-                display: flex;
-                width: 100%;
-
-                flex-direction: column;
-                align-items: flex-start;
-                justify-content: flex-start;
-
-                & h1 {{
-                    font-size: {}rem;
-                }}
-            "#,
-            self.props.font_size,
-        )
-        .into()
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        "#)}>
+            <h1 class={css!("font-size: ${font_size}rem;", font_size = props.font_size)}>
+                {children}
+            </h1>
+        </div>
     }
 }

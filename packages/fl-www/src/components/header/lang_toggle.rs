@@ -2,76 +2,44 @@ use yew_feather::globe::Globe;
 
 use crate::prelude::*;
 use components::Link;
-use store::AppDispatch;
+use i18n::Language;
 use styling::Colour;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct LangToggleProps {
-    #[prop_or_default]
-    pub dispatch: AppDispatch,
     pub colour: Colour,
 }
 
-impl_dispatch_mut!(LangToggleProps);
+#[styled_component(LangToggle)]
+pub(crate) fn lang_toggle(props: &LangToggleProps) -> Html {
+    let lang = use_language();
+    let route = use_app_route();
 
-pub(crate) struct BaseLangToggle {
-    props: LangToggleProps,
-}
+    let other_lang = match lang {
+        Language::Chinese => Language::English,
+        Language::English => Language::Chinese,
+    };
 
-impl Component for BaseLangToggle {
-    type Message = ();
-    type Properties = LangToggleProps;
+    let current_route = route.with_lang(other_lang);
 
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
+    html! {
+        <Link to={current_route}>
+            <div class={css!(
+                r#"
+                    height: 60px;
+                    width: 60px;
+                    color: ${colour};
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let lang = &self.props.dispatch.state().i18n.lang;
-        let route = I18nRoute::current_route()
-            .and_then(|m| match m {
-                I18nRoute::English(m) => Some(I18nRoute::Chinese(m)),
-                I18nRoute::Chinese(m) => Some(I18nRoute::English(m)),
-                I18nRoute::Home => None,
-            })
-            .unwrap_or_else(|| lang.route_i18n(AppRoute::Home));
-
-        html! {
-            <Link to=route>
-                <div class=self.style()>
-                    <Globe size=24 />
-                </div>
-            </Link>
-        }
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                "#,
+                colour = props.colour,
+            )}>
+                <Globe size={24} />
+            </div>
+        </Link>
     }
 }
-
-impl YieldStyle for BaseLangToggle {
-    fn style_str(&self) -> Cow<'static, str> {
-        format!(
-            r#"
-                height: 60px;
-                width: 60px;
-                color: {};
-
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-            "#,
-            self.props.colour
-        )
-        .into()
-    }
-}
-
-pub(crate) type LangToggle = WithDispatch<BaseLangToggle>;

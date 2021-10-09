@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use styling::Colour;
+use styling::{use_style, Colour};
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct HyperlinkProps {
@@ -8,83 +8,48 @@ pub(crate) struct HyperlinkProps {
     #[prop_or_default]
     pub title: Option<String>,
     #[prop_or_default]
-    pub dispatch: AppDispatch,
-    #[prop_or_default]
     pub colour: Option<Colour>,
 
     #[prop_or(false)]
     pub styled: bool,
 }
 
-impl_dispatch_mut!(HyperlinkProps);
+#[styled_component(Hyperlink)]
+pub(crate) fn hyperlink(props: &HyperlinkProps) -> Html {
+    let children = props.children.clone();
+    let theme = use_theme();
 
-pub(crate) struct BaseHyperlink {
-    props: HyperlinkProps,
-}
+    let styled = use_style!(
+        r#"
+            color: ${colour};
+            transition: color 0.3s;
+            text-decoration: none;
 
-impl Component for BaseHyperlink {
-    type Message = ();
-    type Properties = HyperlinkProps;
+            &:hover {
+                color: ${hover_colour};
+                text-decoration: underline;
+            }
+        "#,
+        colour = theme.colour.primary,
+        hover_colour = theme.colour.primary_hover,
+    );
 
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
+    let unstyled = use_style!(
+        r#"
+            text-decoration: none;
+            color: ${colour};
+        "#,
+        colour = props.colour.as_ref().unwrap_or(&theme.colour.text.primary)
+    );
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
+    let style = if props.styled { styled } else { unstyled };
 
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-        html! {
-            <a href=self.props.href.clone()
-                class=self.style()
-                title=self.props.title.as_ref().map(|m| m.to_string())
-            >
-                {children}
-            </a>
-        }
-    }
-}
-
-impl YieldStyle for BaseHyperlink {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.props.dispatch.state().theme.current();
-
-        if self.props.styled {
-            format!(
-                r#"
-                    color: {};
-                    transition: color 0.3s;
-                    text-decoration: none;
-
-                    &:hover {{
-                        color: {};
-                        text-decoration: underline;
-                    }}
-                "#,
-                theme.colour.primary, theme.colour.primary_hover,
-            )
-            .into()
-        } else {
-            format!(
-                r#"
-                    text-decoration: none;
-                    color: {};
-
-                "#,
-                self.props
-                    .colour
-                    .as_ref()
-                    .unwrap_or(&theme.colour.text.primary)
-            )
-            .into()
-        }
+    html! {
+        <a href={props.href.clone()}
+            class={style}
+            title={props.title.as_ref().map(|m| m.to_string())}
+        >
+            {children}
+        </a>
     }
 }
-
-pub(crate) type Hyperlink = WithDispatch<BaseHyperlink>;

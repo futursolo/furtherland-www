@@ -1,7 +1,4 @@
-use yew_router::prelude::Route;
-use yew_router::router::Router;
-use yew_router::service::RouteService;
-use yew_router::Switch;
+use yew_router::prelude::*;
 
 use crate::prelude::*;
 
@@ -18,109 +15,102 @@ use writing::Writing;
 use components::Redirect;
 use i18n::Language;
 
-#[derive(Switch, Debug, Clone, PartialEq)]
-pub(crate) enum I18nRoute {
-    #[to = "/zh{*:path}"]
-    Chinese(AppRoute),
-    #[to = "/en{*:path}"]
-    English(AppRoute),
-    #[to = "/!"]
-    Home,
+#[function_component(HomeRedirect)]
+fn home_redirect() -> Html {
+    let lang = use_language();
+    let home_route = match lang {
+        Language::Chinese => AppRoute::HomeZh,
+        Language::English => AppRoute::HomeEn,
+    };
+
+    html! {<Redirect to={home_route} />}
 }
 
-impl I18nRoute {
-    fn render_route(self) -> Html {
-        match self {
-            Self::English(m) => m.render_route(),
-            Self::Chinese(m) => m.render_route(),
-            Self::Home => {
-                let lang = Language::detect();
-                html! {<Redirect to=lang.route_i18n(AppRoute::Home) />}
-            }
-        }
-    }
-
-    pub fn current_route() -> Option<Self> {
-        let route: Route<()> = RouteService::new().get_route();
-        I18nRoute::switch(route)
-    }
-
-    pub fn default_route() -> Self {
-        let lang = Language::detect();
-        lang.route_i18n(AppRoute::PageNotFound)
-    }
-
-    pub fn into_app_route(self) -> AppRoute {
-        match self {
-            Self::English(m) => m,
-            Self::Chinese(m) => m,
-            Self::Home => AppRoute::Home,
-        }
-    }
-}
-
-#[derive(Switch, Debug, Clone, PartialEq)]
+#[derive(Routable, Debug, Clone, PartialEq)]
 pub(crate) enum AppRoute {
-    #[to = "/writings/{slug}"]
-    Writing(String),
-    #[to = "/pages/about!"]
-    About,
-    #[to = "/page-not-found"]
-    PageNotFound,
-    #[to = "/!"]
-    Home,
-    #[to = "/"]
+    #[at("/:lang/writings/:slug")]
+    Writing { lang: Language, slug: String },
+    #[at("/:lang/pages/about")]
+    About { lang: Language },
+    #[at("/:lang/page-not-found")]
+    PageNotFound { lang: Language },
+    #[at("/en")]
+    HomeEn,
+    #[at("/zh")]
+    HomeZh,
+    #[at("/")]
+    HomeRedirect,
+    #[at("/404")]
+    #[not_found]
     Other,
 }
 
 impl AppRoute {
-    fn render_route(self) -> Html {
+    fn render_route(&self) -> Html {
         match self {
-            Self::Home => {
+            Self::HomeEn | Self::HomeZh { .. } => {
                 html! {<Home />}
             }
-            Self::About => {
+            Self::HomeRedirect => {
+                html! {<HomeRedirect />}
+            }
+
+            Self::About { .. } => {
                 html! {<About />}
             }
 
-            Self::Other | Self::PageNotFound => {
+            Self::Other | Self::PageNotFound { .. } => {
                 html! {<Other />}
             }
-            Self::Writing(s) => html! {<Writing slug=s />},
+            Self::Writing { slug, .. } => html! {<Writing slug={slug.clone()} />},
+        }
+    }
+
+    pub fn with_lang(self, lang: Language) -> Self {
+        match self {
+            Self::HomeEn | Self::HomeZh => match lang {
+                Language::Chinese => Self::HomeZh,
+                Language::English => Self::HomeEn,
+            },
+            Self::About { .. } => Self::About { lang },
+
+            Self::HomeRedirect => Self::HomeRedirect,
+            Self::Other => Self::Other,
+
+            Self::PageNotFound { .. } => Self::PageNotFound { lang },
+            Self::Writing { slug, .. } => Self::Writing { slug, lang },
+        }
+    }
+
+    pub fn lang(&self) -> Option<Language> {
+        match self {
+            Self::HomeEn => Some(Language::English),
+            Self::HomeZh => Some(Language::Chinese),
+            Self::About { lang, .. } => Some(*lang),
+
+            Self::PageNotFound { lang, .. } => Some(*lang),
+            Self::Writing { lang, .. } => Some(*lang),
+
+            Self::HomeRedirect => None,
+            Self::Other => None,
         }
     }
 }
 
-pub(crate) type I18nRouter = Router<I18nRoute>;
-
-pub(crate) struct AppRouter;
-
-impl Component for AppRouter {
-    type Message = ();
-    type Properties = ();
-
-    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self
+impl Default for AppRoute {
+    fn default() -> Self {
+        let lang = Language::detect();
+        Self::PageNotFound { lang }
     }
+}
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
+#[function_component(AppRouter)]
+pub(crate) fn app_router() -> Html {
+    log::debug!("{:?}", AppRoute::not_found_route());
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
-        let render_fn = move |route| I18nRoute::render_route(route);
-
-        html! {
-        <I18nRouter
-             render=I18nRouter::render(render_fn)
-             redirect=I18nRouter::redirect(|_route| {
-                I18nRoute::default_route()
-             })
+    html! {
+        <Router<AppRoute>
+             render={Router::render(AppRoute::render_route)}
          />
-        }
     }
 }

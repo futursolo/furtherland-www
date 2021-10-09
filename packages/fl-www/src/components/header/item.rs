@@ -1,59 +1,26 @@
-use std::borrow::Cow;
-
 use crate::prelude::*;
-use store::AppDispatch;
-use styling::Colour;
+use styling::{use_style, Colour};
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct ItemProps {
-    #[prop_or_default]
-    pub dispatch: AppDispatch,
     pub children: Children,
-
     pub colour: Colour,
 }
 
-impl DispatchPropsMut for ItemProps {
-    type Store = store::Store;
+#[styled_component(Item)]
+pub(crate) fn item(props: &ItemProps) -> Html {
+    let indicator_style = use_style!(
+        r#"
+            height: 3px;
+            width: 0%;
+            transition: width 0.2s ease-out;
+            background-color: ${bg_colour};
+        "#,
+        bg_colour = props.colour
+    );
 
-    fn dispatch(&mut self) -> &mut AppDispatch {
-        &mut self.dispatch
-    }
-}
-
-pub(crate) struct BaseItem {
-    props: ItemProps,
-}
-
-impl Component for BaseItem {
-    type Message = ();
-    type Properties = ItemProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        html! {
-            <div class=self.style()>
-                <div class="fl-header-item-text">{self.props.children.clone()}</div>
-                <div class="fl-header-item-indicator" />
-            </div>
-        }
-    }
-}
-
-impl YieldStyle for BaseItem {
-    fn style_str(&self) -> Cow<'static, str> {
-        format!(
+    html! {
+        <div class={css!(
             r#"
                 height: 60px;
                 font-size: 1.1rem;
@@ -68,26 +35,17 @@ impl YieldStyle for BaseItem {
                 justify-content: center;
                 align-items: center;
 
-                & .fl-header-item-text {{
-                    flex-grow: 1;
-                    line-height: 57px;
-                }}
-
-                & .fl-header-item-indicator {{
-                    height: 3px;
-                    width: 0%;
-                    transition: width 0.2s ease-out;
-                    background-color: {};
-                }}
-
-                &:hover .fl-header-item-indicator {{
+                &:hover .${indicator_class_name} {
                     width: 100%;
-                }}
+                }
             "#,
-            self.props.colour
-        )
-        .into()
+            indicator_class_name = indicator_style.get_class_name()
+        )}>
+            <div class={css!(r#"
+                flex-grow: 1;
+                line-height: 57px;
+            "#)}>{props.children.clone()}</div>
+            <div class={indicator_style} />
+        </div>
     }
 }
-
-pub(crate) type Item = WithDispatch<BaseItem>;

@@ -1,14 +1,13 @@
 use crate::prelude::*;
-use styling::Colour;
+use styling::{use_style, Colour};
 
-type AppAnchor = yew_router::prelude::RouterAnchor<I18nRoute>;
+type AppLink = yew_router::prelude::Link<AppRoute>;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct LinkProps {
     pub children: Children,
-    pub to: I18nRoute,
-    #[prop_or_default]
-    pub dispatch: AppDispatch,
+    pub to: AppRoute,
+
     #[prop_or_default]
     pub colour: Option<Colour>,
 
@@ -16,71 +15,38 @@ pub(crate) struct LinkProps {
     pub styled: bool,
 }
 
-impl_dispatch_mut!(LinkProps);
+#[styled_component(Link)]
+pub(crate) fn link(props: &LinkProps) -> Html {
+    let route = props.to.clone();
+    let children = props.children.clone();
+    let theme = use_theme();
 
-pub(crate) struct BaseLink {
-    props: LinkProps,
-}
+    let styled = use_style!(
+        r#"
+            color: ${colour};
+            transition: color 0.3s;
+            text-decoration: none;
 
-impl Component for BaseLink {
-    type Message = ();
-    type Properties = LinkProps;
+            &:hover {
+                color: ${hover_colour};
+                text-decoration: underline;
+            }
+        "#,
+        colour = theme.colour.primary,
+        hover_colour = theme.colour.primary_hover,
+    );
 
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
+    let unstyled = use_style!(
+        r#"
+            text-decoration: none;
+            color: ${colour};
+        "#,
+        colour = props.colour.as_ref().unwrap_or(&theme.colour.text.primary)
+    );
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
+    let style = if props.styled { styled } else { unstyled };
 
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props.neq_assign(props)
-    }
-
-    fn view(&self) -> Html {
-        let route = self.props.to.clone();
-        let children = self.props.children.clone();
-        html! {
-            <AppAnchor route=route classes=self.style_class()>{children}</AppAnchor>
-        }
-    }
-}
-
-impl YieldStyle for BaseLink {
-    fn style_str(&self) -> Cow<'static, str> {
-        let theme = self.props.dispatch.state().theme.current();
-
-        if self.props.styled {
-            format!(
-                r#"
-                    color: {};
-                    transition: color 0.3s;
-                    text-decoration: none;
-
-                    &:hover {{
-                        color: {};
-                        text-decoration: underline;
-                    }}
-                "#,
-                theme.colour.primary, theme.colour.primary_hover,
-            )
-            .into()
-        } else {
-            format!(
-                r#"
-                    text-decoration: none;
-                    color: {};
-
-                "#,
-                self.props
-                    .colour
-                    .as_ref()
-                    .unwrap_or(&theme.colour.text.primary)
-            )
-            .into()
-        }
+    html! {
+        <AppLink route={route} classes={classes!(style)}>{children}</AppLink>
     }
 }
-
-pub(crate) type Link = WithDispatch<BaseLink>;

@@ -1,49 +1,50 @@
 use crate::prelude::*;
+use i18n::Language;
+use utils::Id;
 
-use super::ContextProps;
-
-pub(crate) struct BaseI18nProvider {
-    props: ContextProps,
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct LanguageState {
+    lang: Language,
+    id: Id,
 }
 
-impl Component for BaseI18nProvider {
-    type Message = ();
-    type Properties = ContextProps;
-
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { props }
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        let changed = self.props.neq_assign(props);
-
-        self.update_html_lang();
-
-        changed
-    }
-
-    fn view(&self) -> Html {
-        let children = self.props.children.clone();
-        html! {<>{children}</>}
-    }
+pub(crate) fn use_language() -> Language {
+    use_context::<LanguageState>()
+        .map(|m| m.lang)
+        .unwrap_or_else(Language::detect)
 }
 
-impl BaseI18nProvider {
-    fn update_html_lang(&mut self) {
-        let lang = self.props.dispatch.state().i18n.lang.clone();
+#[function_component(I18nProvider)]
+pub(crate) fn i18n_provider(props: &ChildrenProps) -> Html {
+    let children = props.children.clone();
+    use_app_route(); // Refresh when route changes.
 
-        let html_element = document()
-            .document_element()
-            .expect("Failed to get <html /> element.");
+    let lang = Language::detect();
 
-        html_element
-            .set_attribute("lang", lang.as_str())
-            .expect("Failed to set language.");
-    }
+    let id = use_state(Id::new);
+    let id_clone = id.clone();
+    use_effect_with_deps(
+        move |lang| {
+            let html_element = document()
+                .document_element()
+                .expect("Failed to get <html /> element.");
+
+            html_element
+                .set_attribute("lang", lang.as_str())
+                .expect("Failed to set language.");
+
+            lang.activate();
+            id_clone.set(Id::new());
+
+            || {}
+        },
+        lang,
+    );
+
+    let state = LanguageState {
+        lang,
+        id: (*id).clone(),
+    };
+
+    html! {<ContextProvider<LanguageState> context={state}>{children}</ContextProvider<LanguageState>>}
 }
-
-pub(crate) type I18nProvider = WithDispatch<BaseI18nProvider>;

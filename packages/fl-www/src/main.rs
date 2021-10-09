@@ -4,6 +4,7 @@
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 mod app;
+mod common;
 mod components;
 mod contexts;
 mod i18n;
@@ -11,7 +12,6 @@ mod metadata;
 mod misc;
 mod pages;
 mod prelude;
-mod store;
 mod tmpfs;
 
 use prelude::*;
@@ -19,30 +19,12 @@ use prelude::*;
 use app::App;
 use contexts::Providers;
 
-struct Root;
-
-impl Component for Root {
-    type Message = ();
-    type Properties = ();
-
-    fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
-        html! {
-            <Providers>
-                <App />
-            </Providers>
-        }
+#[function_component(Root)]
+pub fn root() -> Html {
+    html! {
+        <Providers>
+            <App />
+        </Providers>
     }
 }
 

@@ -7,6 +7,8 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
     steps:
       - name: Checkout Project
         uses: actions/checkout@v2
@@ -19,6 +21,13 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
+          profile: minimal
+
+      - name: Setup Rust wasm
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
           profile: minimal
 
       - name: Restore Rust Cache
@@ -39,3 +48,35 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
+
+      - name: Setup wasm-bindgen
+        uses: jetli/wasm-bindgen-action@v0.1.0
+        with:
+          version: 'latest'
+
+      - name: Setup trunk
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: 'latest'
+
+      - name: Setup wasm-opt
+        run: |
+          WASM_OPT_VER=101
+
+          cd /tmp
+
+          curl -O -L https://github.com/WebAssembly/binaryen/releases/download/version_101/binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
+          tar zxvf binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
+          echo "PATH=$PATH:$(pwd)/binaryen-version_$WASM_OPT_VER/bin" >> $GITHUB_ENV
+
+      - name: Build worker-highlight
+        run: |
+          cargo build --target wasm32-unknown-unknown --bin worker-highlight --release
+          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name worker-highlight target/wasm32-unknown-unknown/release/worker-highlight.wasm
+
+          cd worker-dist/
+          mv worker-highlight_bg.wasm worker-highlight_bg.original.wasm
+          wasm-opt -Oz -o worker-highlight_bg.wasm worker-highlight_bg.original.wasm
+
+      - name: Build Website
+        run: trunk --config Trunk.build.toml build --release index.html

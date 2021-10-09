@@ -284,7 +284,7 @@ impl Node {
             }
 
             Self::Checkbox(checkbox) => {
-                html! {<input type_="checkbox" disabled=true checked=checkbox.checked />}
+                html! {<input type_="checkbox" disabled={true} checked={checkbox.checked} />}
             }
 
             Self::Blockquote(p) => {
@@ -301,7 +301,7 @@ impl Node {
                     })
                     .collect();
 
-                html! {<CompCodeBlock language=p.language.clone() content=children />}
+                html! {<CompCodeBlock language={p.language.clone()} content={children} />}
             }
             Self::List(p) => {
                 let children: Html = p.children.iter().map(|m| m.to_html()).collect();
@@ -309,7 +309,7 @@ impl Node {
                 if let Some(m) = p.start {
                     let start = if m == 1 { None } else { Some(m.to_string()) };
 
-                    html! {<ol start=start>{children}</ol>}
+                    html! {<ol start={start}>{children}</ol>}
                 } else {
                     html! {<ul>{children}</ul>}
                 }
@@ -333,12 +333,12 @@ impl Node {
             }
 
             Self::Image(p) => {
-                html! {<img src=p.src.clone() title=p.title.clone() alt=p.alt.clone() />}
+                html! {<img src={p.src.clone()} title={p.title.clone()} alt={p.alt.clone()} />}
             }
 
             Self::HyperLink(p) => {
                 let children: Html = p.children.iter().map(|m| m.to_html()).collect();
-                html! {<Hyperlink styled=true href=p.href.clone() title=p.title.clone()>{children}</Hyperlink>}
+                html! {<Hyperlink styled={true} href={p.href.clone()} title={p.title.clone()}>{children}</Hyperlink>}
             }
         }
     }
