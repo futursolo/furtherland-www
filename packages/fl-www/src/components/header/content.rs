@@ -15,7 +15,7 @@ pub(crate) fn content() -> Html {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-around;
+            justify-content: flex-start;
         "#)}>
             <div class={css!(
                 r#"

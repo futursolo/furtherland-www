@@ -39,3 +39,12 @@ pub fn get_scroll_y() -> Option<u32> {
 
     None
 }
+
+pub fn get_viewport_height() -> u64 {
+    window()
+        .inner_height()
+        .ok()
+        .and_then(|m| m.as_f64())
+        .and_then(|m| (m as i64).try_into().ok())
+        .unwrap_or_default()
+}

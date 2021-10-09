@@ -13,10 +13,10 @@ pub(crate) struct CodeBlockProps {
 pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
     let theme = use_theme();
 
-    let hl_html = use_state(|| -> Option<Html> { None });
+    let hl_html = use_equal_state(|| -> Option<Html> { None });
 
-    let children = (*hl_html)
-        .clone()
+    let children = (*hl_html.borrow())
+        .to_owned()
         .unwrap_or_else(|| props.content.as_str().into());
 
     use_effect_with_deps(

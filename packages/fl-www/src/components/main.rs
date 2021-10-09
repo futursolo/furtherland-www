@@ -24,6 +24,11 @@ pub(crate) fn main(props: &ChildrenProps) -> Html {
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
+
+                box-sizing: border-box;
+
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
             "#,
             min_height_str = min_height_str,
         )}>

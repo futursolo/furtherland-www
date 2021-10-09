@@ -9,7 +9,7 @@ mod theme_toggle;
 use components::{FlexSpace, Link};
 use content::Content;
 use home_content::HomeContent;
-use hooks::use_event;
+use hooks::{use_event, use_viewport_height};
 use i18n::Language;
 use item::Item;
 use lang_toggle::LangToggle;
@@ -18,13 +18,54 @@ use styling::{use_style, ThemeKind};
 use theme_toggle::ThemeToggle;
 use utils::get_scroll_y;
 
+#[derive(Properties, PartialEq, Debug)]
+pub(crate) struct HeaderLinksProps {
+    nav_colour: Colour,
+}
+
+#[function_component(HeaderLinks)]
+pub(crate) fn header_links(props: &HeaderLinksProps) -> Html {
+    let lang = use_language();
+    let theme = use_theme();
+    let home_colour = theme.colour.primary.with_opacity(0.9);
+    let nav_colour = props.nav_colour;
+
+    let home_text = match lang {
+        Language::Chinese => fl!("default-title"),
+        Language::English => fl!("home"),
+    };
+
+    let home_route = match lang {
+        Language::Chinese => AppRoute::HomeZh,
+        Language::English => AppRoute::HomeEn,
+    };
+
+    html! {
+        <>
+            <Link to={home_route} colour={nav_colour}>
+                <Item colour={home_colour}>{home_text}</Item>
+            </Link>
+            <Link to={AppRoute::About { lang }} colour={nav_colour}>
+                <Item colour={Colour::from_rgba(255, 242, 66, 0.9)}>{fl!("about")}</Item>
+            </Link>
+        </>
+    }
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+enum NavPosition {
+    Top,
+    Bottom,
+    InPlace,
+}
+
 #[styled_component(Header)]
 pub(crate) fn header() -> Html {
     let theme = use_theme();
-    let home_colour = theme.colour.primary.with_opacity(0.9);
     let route = use_app_route();
+    let viewport_height = use_viewport_height();
 
-    let lang = use_language();
+    use_language();
 
     let header_ref: NodeRef = use_ref(NodeRef::default).borrow_mut().clone();
 
@@ -35,50 +76,76 @@ pub(crate) fn header() -> Html {
 
     let primary_text_color = &theme.colour.text.primary;
 
-    let fixed_nav = use_state(|| false);
+    let nav_pos = use_equal_state(|| NavPosition::InPlace);
 
-    let fixed_nav_clone = fixed_nav.clone();
+    let header_is_home = use_equal_state(|| false);
+
+    let nav_pos_clone = nav_pos.clone();
     let header_ref_clone = header_ref.clone();
     let sync_header_height = move || {
         if let Some(m) = header_ref_clone.cast::<HtmlElement>() {
-            match window()
+            let y_pos = get_scroll_y();
+
+            let header_height = match window()
                 .get_computed_style(&m)
                 .ok()
                 .flatten()
                 .and_then(|m| m.get_property_value("height").ok())
+                // Get Header height in px.
                 .and_then(|m| m.splitn(2, "px").next().and_then(|m| m.parse::<u32>().ok()))
             {
-                Some(header_height) => {
-                    let current_fixed_nav = get_scroll_y()
-                        .map(|m| header_height > 60 && m >= header_height - 60)
-                        .unwrap_or(false);
-
-                    fixed_nav_clone.set(current_fixed_nav);
-                }
+                Some(header_height) => header_height,
                 None => {
-                    fixed_nav_clone.set(false);
+                    nav_pos_clone.set(NavPosition::InPlace);
+                    return;
                 }
-            }
+            };
+
+            // If y position > header height - 60px,
+            // then NavPosition should be top.
+            let pos = if y_pos
+                .map(|m| header_height > 60 && m >= header_height - 60)
+                .unwrap_or(false)
+            {
+                NavPosition::Top
+            } else if y_pos
+                // If header height > viewport height,
+                // and header height - viewport height > y position,
+                // then NavPosition should be bottom.
+                .map(|m| (header_height as i64 - viewport_height as i64, m as i64))
+                .map(|(diff, y_pos)| diff > 0 && y_pos < diff)
+                .unwrap_or(false)
+            {
+                NavPosition::Bottom
+            } else {
+                NavPosition::InPlace
+            };
+
+            nav_pos_clone.set(pos);
         }
     };
 
     let sync_header_height_clone = sync_header_height.clone();
+    use_event(&window(), "scroll", move |_| sync_header_height_clone());
+    let sync_header_height_clone = sync_header_height.clone();
+    use_event(&window(), "orientationchange", move |_| {
+        sync_header_height_clone()
+    });
+
     use_effect_with_deps(
         move |_| {
-            sync_header_height_clone();
+            sync_header_height();
             || {}
         },
-        (),
+        *header_is_home.borrow(),
     );
-
-    use_event(&window(), "scroll", move |_| sync_header_height());
 
     let header_style = use_style!(
         r#"
-            display: flex;
+            /* display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-end; */
             width: 100%;
             color: white;
             height: 200px;
@@ -123,9 +190,21 @@ pub(crate) fn header() -> Html {
 
             transition: background-color 0.3s;
 
-            &.fl-nav-fixed {
-                position: fixed;
+            box-sizing: border-box;
+
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+
+
+            /*
+            position: sticky;
+            position: -webkit-sticky;
+            bottom: 0;
+            */
+
+            &.fl-nav-fixed-top {
                 top: 0;
+                position: fixed;
 
                 background-color: ${bg_colour};
 
@@ -142,67 +221,76 @@ pub(crate) fn header() -> Html {
     let mut header_classes = vec![header_style.get_class_name().to_owned()];
     let mut nav_classes = vec![nav_style.get_class_name().to_owned()];
 
-    if *fixed_nav {
+    let nav_pos = *nav_pos.borrow();
+
+    if nav_pos == NavPosition::Top {
         header_classes.push("fl-header-no-shadow".to_string());
-        nav_classes.push("fl-nav-fixed".to_string());
+        nav_classes.push("fl-nav-fixed-top".to_string());
+    } else if nav_pos == NavPosition::Bottom {
+        nav_classes.push("fl-nav-fixed-bottom".to_string());
     }
 
     let content = match route {
         AppRoute::HomeEn | AppRoute::HomeZh => {
+            header_is_home.set(true);
             header_classes.push("currently-home".to_string());
             html! {<HomeContent />}
         }
-        _ => html! {<Content />},
+        _ => {
+            header_is_home.set(false);
+            html! {<Content />}
+        }
     };
 
-    let home_text = match lang {
-        Language::Chinese => fl!("default-title"),
-        Language::English => fl!("home"),
-    };
-
-    let nav_colour = if *fixed_nav {
+    let nav_colour = if nav_pos == NavPosition::Top {
         theme.colour.text.primary
     } else {
         Colour::from_rgb(255, 255, 255)
     };
 
-    let home_route = match lang {
-        Language::Chinese => AppRoute::HomeZh,
-        Language::English => AppRoute::HomeEn,
-    };
-
     html! {
-        <header class={classes!(header_classes)}>
-            <div
-                class={css!(
-                    r#"
+        <header class={classes!(header_classes)} ref={header_ref}>
+            <div class={css!(
+                r#"
                     background-color: ${bg_colour};
                     transition: background-color 0.3s;
 
-                    height: 100%;
                     width: 100%;
-
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-end;
+                    height: 100%;
+                "#,
+                bg_colour = background_colour
+            )}>
+                <div class={css!(
+                    r#"
+                        height: 35%;
+                        width: 100%;
                     "#,
-                    bg_colour = background_colour
-                )}
-                ref={header_ref}
-            >
-                {content}
-                <nav class={classes!(nav_classes)}>
-                    <Link to={home_route} colour={nav_colour}>
-                        <Item colour={home_colour}>{home_text}</Item>
-                    </Link>
-                    <Link to={AppRoute::About { lang }} colour={nav_colour}>
-                        <Item colour={Colour::from_rgba(255, 242, 66, 0.9)}>{fl!("about")}</Item>
-                    </Link>
-                    <FlexSpace />
-                    <LangToggle colour={nav_colour} />
-                    <ThemeToggle />
-                </nav>
+                )}/>
+                <div
+                    class={css!(
+                        r#"
+                            height: 65%;
+                            width: 100%;
+
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: flex-end;
+
+                            position: sticky;
+                            position: -webkit-sticky;
+                            bottom: 0;
+                        "#
+                    )}
+                >
+                    {content}
+                    <nav class={classes!(nav_classes)}>
+                        <HeaderLinks nav_colour={nav_colour} />
+                        <FlexSpace />
+                        <LangToggle colour={nav_colour} />
+                        <ThemeToggle />
+                    </nav>
+                </div>
             </div>
         </header>
     }

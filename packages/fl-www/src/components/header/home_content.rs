@@ -2,11 +2,14 @@ use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 use yew_feather::chevron_down::ChevronDown;
 
 use crate::prelude::*;
+use styling::use_media_query;
 
 #[styled_component(HomeContent)]
 pub(crate) fn home_content() -> Html {
     let theme = use_theme();
     use_language();
+
+    let is_small = use_media_query(&theme.breakpoint.sm.down());
 
     let scroll_to_main = use_state(|| {
         |_| {
@@ -17,6 +20,9 @@ pub(crate) fn home_content() -> Html {
             }
         }
     });
+
+    let down_arrow_size = if is_small { 80 } else { 100 };
+    let area_size = if is_small { 120 } else { 150 };
 
     html! {
         <div class={css!(r#"
@@ -30,7 +36,6 @@ pub(crate) fn home_content() -> Html {
             align-items: center;
             justify-content: space-around;
         "#)}>
-            <div class={css!(r#"height: 150px;"#)}></div>
             <div class={css!(
                 r#"
                     font-size: 5rem;
@@ -53,7 +58,7 @@ pub(crate) fn home_content() -> Html {
             )}>
                 {fl!("default-title")}
             </div>
-            <div class={css!(r#"height: 150px;"#)}>
+            <div class={css!(r#"height: ${area_size}px;"#, area_size = area_size)}>
                 <div
                     class={css!(r#"
                         cursor: pointer;
@@ -61,7 +66,7 @@ pub(crate) fn home_content() -> Html {
                     "#)}
                     onclick={*scroll_to_main}
                 >
-                    <ChevronDown size={100} />
+                    <ChevronDown size={down_arrow_size} />
                 </div>
             </div>
         </div>

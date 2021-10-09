@@ -40,7 +40,7 @@ fn set_theme_kind(kind: Option<ThemeKind>) {
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ThemeState {
-    inner: UseStateHandle<ThemeKind>,
+    inner: UseEqualStateHandle<ThemeKind>,
 }
 
 impl ThemeState {
@@ -50,7 +50,7 @@ impl ThemeState {
     }
 
     pub fn kind(&self) -> ThemeKind {
-        *self.inner
+        *self.inner.borrow()
     }
 }
 
@@ -58,7 +58,7 @@ impl Deref for ThemeState {
     type Target = Theme;
 
     fn deref(&self) -> &Self::Target {
-        Theme::from_kind(&*self.inner)
+        Theme::from_kind(&self.kind())
     }
 }
 
@@ -95,15 +95,13 @@ fn global_style() -> Html {
 
 #[function_component(ThemeProvider)]
 pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
-    let theme_kind = use_state(get_theme_kind);
+    let theme_kind = use_equal_state(get_theme_kind);
 
     let theme_kind_clone = theme_kind.clone();
     use_event(&window(), "storage", move |_event| {
         let next_theme_kind = get_theme_kind();
 
-        if *theme_kind_clone != next_theme_kind {
-            theme_kind_clone.set(next_theme_kind);
-        }
+        theme_kind_clone.set(next_theme_kind);
     });
 
     let prefer_dark_theme = use_media_query("(prefers-color-scheme: dark)");
@@ -112,9 +110,7 @@ pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
         |(theme_kind, _)| {
             let next_theme_kind = get_theme_kind();
 
-            if **theme_kind != next_theme_kind {
-                theme_kind.set(next_theme_kind);
-            }
+            theme_kind.set(next_theme_kind);
 
             || {}
         },

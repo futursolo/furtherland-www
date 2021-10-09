@@ -13,10 +13,7 @@ pub(crate) fn use_app_route() -> AppRoute {
             .unwrap_or_default()
     };
 
-    let route = use_state(get_current_route);
-
-    log::debug!("Path: {:?}", window().location().pathname());
-    log::debug!("Route Changed: {:?}", route);
+    let route = use_equal_state(get_current_route);
 
     let route_clone = route.clone();
     use_event(&window(), "popstate", move |_| {
@@ -32,7 +29,9 @@ pub(crate) fn use_app_route() -> AppRoute {
         (),
     );
 
-    (*route).clone()
+    let route = route.borrow().to_owned();
+
+    (*route).to_owned()
 }
 
 #[function_component(RoutingListener)]
