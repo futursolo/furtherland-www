@@ -9,7 +9,7 @@ use styling::{use_media_query, Global, Theme, ThemeKind};
 static STORAGE_KEY: &str = "fl_theme";
 
 fn get_theme_kind() -> ThemeKind {
-    if let Some(stor) = window().session_storage().ok().and_then(|m| m) {
+    if let Some(stor) = window().local_storage().ok().and_then(|m| m) {
         if let Some(kind) = stor
             .get_item(STORAGE_KEY)
             .ok()
@@ -27,7 +27,7 @@ fn get_theme_kind() -> ThemeKind {
 }
 
 fn set_theme_kind(kind: Option<ThemeKind>) {
-    if let Some(stor) = window().session_storage().ok().and_then(|m| m) {
+    if let Some(stor) = window().local_storage().ok().and_then(|m| m) {
         if let Some(ref m) = kind {
             stor.set_item(STORAGE_KEY, m.as_str())
                 .expect("Failed to set item.");

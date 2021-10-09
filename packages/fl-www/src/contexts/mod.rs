@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+mod client;
 mod highlight;
 mod i18n;
 mod metadata;
@@ -7,6 +8,7 @@ mod routing;
 mod theme;
 mod title;
 
+use client::ClientProvider;
 use highlight::HighlightProvider;
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
@@ -29,7 +31,9 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                     <MetaProvider>
                         <TitleProvider>
                             <HighlightProvider>
-                                {children}
+                                <ClientProvider>
+                                    {children}
+                                </ClientProvider>
                             </HighlightProvider>
                         </TitleProvider>
                     </MetaProvider>

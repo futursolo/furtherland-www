@@ -8,3 +8,6 @@ ignore = [
     "packages/fl-www-macros/target/",
     "packages/fl-www-common/target/",
 ]
+
+[tools]
+wasm_bindgen = "0.2.77"
