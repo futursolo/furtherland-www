@@ -58,8 +58,6 @@ impl HighlightOutput {
             for frag in h.highlight(line, &SYNTAX_SET) {
                 fragments.push((frag.0, frag.1.to_string()));
             }
-
-            TimeoutFuture::new(1).await;
         }
 
         let self_ = Self { fragments };

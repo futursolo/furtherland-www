@@ -8,6 +8,7 @@ use hooks::use_render_event;
 #[styled_component(Footer)]
 pub(crate) fn footer() -> Html {
     let year = Local::now().year();
+    use_language();
 
     let theme = use_theme();
 

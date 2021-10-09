@@ -3,6 +3,7 @@ use crate::prelude::*;
 #[styled_component(Comments)]
 pub(crate) fn comments() -> Html {
     let theme = use_theme();
+    use_language();
 
     html! {
         <div class={css!(r#"

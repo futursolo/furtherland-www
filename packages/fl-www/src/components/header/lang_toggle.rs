@@ -13,15 +13,14 @@ pub(crate) struct LangToggleProps {
 #[styled_component(LangToggle)]
 pub(crate) fn lang_toggle(props: &LangToggleProps) -> Html {
     let lang = use_language();
+    let route = use_app_route();
 
     let other_lang = match lang {
         Language::Chinese => Language::English,
         Language::English => Language::Chinese,
     };
 
-    let current_route = AppRoute::current_route()
-        .unwrap_or_default()
-        .with_lang(other_lang);
+    let current_route = route.with_lang(other_lang);
 
     html! {
         <Link to={current_route}>

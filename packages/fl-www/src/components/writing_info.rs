@@ -11,6 +11,7 @@ pub(crate) struct WritingInfoProps {
 pub(crate) fn writing_info(props: &WritingInfoProps) -> Html {
     let date_str = props.date.format("%Y-%m-%d");
     let theme = use_theme();
+    use_language();
 
     html! {
         <div class={css!(
@@ -33,7 +34,7 @@ pub(crate) fn writing_info(props: &WritingInfoProps) -> Html {
                     background-repeat: no-repeat;
                     background-size: cover;
                 "#,
-                avatar_url = "https://www.gravatar.com/avatar/0dd494a963ae648caebe34288b664ca6"
+                avatar_url = "https://www.gravatar.com/avatar/0dd494a963ae648caebe34288b664ca6?s=200"
             )}></div>
             <div class={css!(
                 r#"

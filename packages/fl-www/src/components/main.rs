@@ -4,14 +4,11 @@ use crate::prelude::*;
 pub(crate) fn main(props: &ChildrenProps) -> Html {
     let children = props.children.clone();
     let theme = use_theme();
+    let route = use_app_route();
 
-    let min_height_str = if let Some(m) = AppRoute::current_route() {
-        match m {
-            AppRoute::Home { .. } => "calc(100vh - 160px)",
-            _ => "auto",
-        }
-    } else {
-        "auto"
+    let min_height_str = match route {
+        AppRoute::HomeZh | AppRoute::HomeEn => "calc(100vh - 160px)",
+        _ => "auto",
     };
 
     html! {

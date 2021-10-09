@@ -1,25 +1,30 @@
 use crate::prelude::*;
-
-use hooks::use_event;
 use i18n::Language;
+use utils::Id;
+
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct LanguageState {
+    lang: Language,
+    id: Id,
+}
 
 pub(crate) fn use_language() -> Language {
-    use_context::<Language>().unwrap_or_else(Language::detect)
+    use_context::<LanguageState>()
+        .map(|m| m.lang)
+        .unwrap_or_else(Language::detect)
 }
 
 #[function_component(I18nProvider)]
 pub(crate) fn i18n_provider(props: &ChildrenProps) -> Html {
     let children = props.children.clone();
+    use_app_route(); // Refresh when route changes.
 
-    let lang = use_state(Language::detect);
+    let lang = Language::detect();
 
-    let lang_clone = lang.clone();
-    use_event(&window(), "popstate", move |_event| {
-        lang_clone.set(Language::detect());
-    });
-
+    let id = use_state(Id::new);
+    let id_clone = id.clone();
     use_effect_with_deps(
-        |lang| {
+        move |lang| {
             let html_element = document()
                 .document_element()
                 .expect("Failed to get <html /> element.");
@@ -29,11 +34,17 @@ pub(crate) fn i18n_provider(props: &ChildrenProps) -> Html {
                 .expect("Failed to set language.");
 
             lang.activate();
+            id_clone.set(Id::new());
 
             || {}
         },
-        lang.clone(),
+        lang,
     );
 
-    html! {<ContextProvider<Language> context={*lang}>{children}</ContextProvider<Language>>}
+    let state = LanguageState {
+        lang,
+        id: (*id).clone(),
+    };
+
+    html! {<ContextProvider<LanguageState> context={state}>{children}</ContextProvider<LanguageState>>}
 }

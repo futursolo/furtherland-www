@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use styling::Colour;
+use styling::{use_style, Colour};
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct ItemProps {
@@ -9,6 +9,16 @@ pub(crate) struct ItemProps {
 
 #[styled_component(Item)]
 pub(crate) fn item(props: &ItemProps) -> Html {
+    let indicator_style = use_style!(
+        r#"
+            height: 3px;
+            width: 0%;
+            transition: width 0.2s ease-out;
+            background-color: ${bg_colour};
+        "#,
+        bg_colour = props.colour
+    );
+
     html! {
         <div class={css!(
             r#"
@@ -25,24 +35,17 @@ pub(crate) fn item(props: &ItemProps) -> Html {
                 justify-content: center;
                 align-items: center;
 
-                & .fl-header-item-indicator {
-                    height: 3px;
-                    width: 0%;
-                    transition: width 0.2s ease-out;
-                    background-color: ${bg_colour};
-                }
-
-                &:hover .fl-header-item-indicator {
+                &:hover .${indicator_class_name} {
                     width: 100%;
                 }
             "#,
-            bg_colour = props.colour
+            indicator_class_name = indicator_style.get_class_name()
         )}>
             <div class={css!(r#"
                 flex-grow: 1;
                 line-height: 57px;
             "#)}>{props.children.clone()}</div>
-            <div class="fl-header-item-indicator" />
+            <div class={indicator_style} />
         </div>
     }
 }

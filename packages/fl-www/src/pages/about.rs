@@ -6,6 +6,8 @@ use components::{Main, SectionTitle};
 
 #[function_component(About)]
 pub(crate) fn about() -> Html {
+    use_language();
+
     html! {
         <>
             <Title value={fl!("about")} />

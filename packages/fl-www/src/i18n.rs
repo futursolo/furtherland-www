@@ -25,9 +25,13 @@ pub(crate) enum Language {
 
 impl Language {
     pub fn detect() -> Self {
-        log::debug!("{:?}", AppRoute::current_route());
-
-        if let Some(m) = AppRoute::current_route().and_then(|m| m.lang()) {
+        if let Some(m) = window()
+            .location()
+            .pathname()
+            .ok()
+            .and_then(|m| AppRoute::recognize(&m))
+            .and_then(|m| m.lang())
+        {
             return m;
         }
 

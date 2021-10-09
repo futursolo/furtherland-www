@@ -6,6 +6,7 @@ use crate::prelude::*;
 #[styled_component(HomeContent)]
 pub(crate) fn home_content() -> Html {
     let theme = use_theme();
+    use_language();
 
     let scroll_to_main = use_state(|| {
         |_| {

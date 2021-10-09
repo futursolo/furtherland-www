@@ -15,6 +15,17 @@ use writing::Writing;
 use components::Redirect;
 use i18n::Language;
 
+#[function_component(HomeRedirect)]
+fn home_redirect() -> Html {
+    let lang = use_language();
+    let home_route = match lang {
+        Language::Chinese => AppRoute::HomeZh,
+        Language::English => AppRoute::HomeEn,
+    };
+
+    html! {<Redirect to={home_route} />}
+}
+
 #[derive(Routable, Debug, Clone, PartialEq)]
 pub(crate) enum AppRoute {
     #[at("/:lang/writings/:slug")]
@@ -23,19 +34,27 @@ pub(crate) enum AppRoute {
     About { lang: Language },
     #[at("/:lang/page-not-found")]
     PageNotFound { lang: Language },
-    #[at("/:lang/")]
-    Home { lang: Language },
+    #[at("/en")]
+    HomeEn,
+    #[at("/zh")]
+    HomeZh,
+    #[at("/")]
+    HomeRedirect,
+    #[at("/404")]
     #[not_found]
-    #[at("/page-not-found")]
     Other,
 }
 
 impl AppRoute {
     fn render_route(&self) -> Html {
         match self {
-            Self::Home { .. } => {
+            Self::HomeEn | Self::HomeZh { .. } => {
                 html! {<Home />}
             }
+            Self::HomeRedirect => {
+                html! {<HomeRedirect />}
+            }
+
             Self::About { .. } => {
                 html! {<About />}
             }
@@ -49,9 +68,13 @@ impl AppRoute {
 
     pub fn with_lang(self, lang: Language) -> Self {
         match self {
-            Self::Home { .. } => Self::Home { lang },
+            Self::HomeEn | Self::HomeZh => match lang {
+                Language::Chinese => Self::HomeZh,
+                Language::English => Self::HomeEn,
+            },
             Self::About { .. } => Self::About { lang },
 
+            Self::HomeRedirect => Self::HomeRedirect,
             Self::Other => Self::Other,
 
             Self::PageNotFound { .. } => Self::PageNotFound { lang },
@@ -61,12 +84,15 @@ impl AppRoute {
 
     pub fn lang(&self) -> Option<Language> {
         match self {
-            Self::Home { lang, .. } => Some(*lang),
+            Self::HomeEn => Some(Language::English),
+            Self::HomeZh => Some(Language::Chinese),
             Self::About { lang, .. } => Some(*lang),
 
             Self::PageNotFound { lang, .. } => Some(*lang),
             Self::Writing { lang, .. } => Some(*lang),
-            _ => None,
+
+            Self::HomeRedirect => None,
+            Self::Other => None,
         }
     }
 }
@@ -80,6 +106,8 @@ impl Default for AppRoute {
 
 #[function_component(AppRouter)]
 pub(crate) fn app_router() -> Html {
+    log::debug!("{:?}", AppRoute::not_found_route());
+
     html! {
         <Router<AppRoute>
              render={Router::render(AppRoute::render_route)}

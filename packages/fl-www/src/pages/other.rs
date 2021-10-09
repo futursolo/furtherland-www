@@ -6,9 +6,10 @@ use components::{Main, SectionTitle};
 
 #[function_component(Other)]
 pub(crate) fn other() -> Html {
+    use_language();
     html! {
         <>
-            // <Title value={fl!("not-found-title")} />
+            <Title value={fl!("not-found-title")} />
             <Main>
                 <SectionTitle>{fl!("not-found-title")}</SectionTitle>
                 <div><p>{fl!("not-found-description")}</p></div>

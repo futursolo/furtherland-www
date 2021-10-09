@@ -3,6 +3,7 @@ use crate::prelude::*;
 #[styled_component(Content)]
 pub(crate) fn content() -> Html {
     let theme = use_theme();
+    use_language();
 
     html! {
         <div class={css!(r#"

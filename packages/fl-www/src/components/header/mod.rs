@@ -22,6 +22,7 @@ use utils::get_scroll_y;
 pub(crate) fn header() -> Html {
     let theme = use_theme();
     let home_colour = theme.colour.primary.with_opacity(0.9);
+    let route = use_app_route();
 
     let lang = use_language();
 
@@ -146,11 +147,12 @@ pub(crate) fn header() -> Html {
         nav_classes.push("fl-nav-fixed".to_string());
     }
 
-    let content = if let Some(AppRoute::Home { .. }) = AppRoute::current_route() {
-        header_classes.push("currently-home".to_string());
-        html! {<HomeContent />}
-    } else {
-        html! {<Content />}
+    let content = match route {
+        AppRoute::HomeEn | AppRoute::HomeZh => {
+            header_classes.push("currently-home".to_string());
+            html! {<HomeContent />}
+        }
+        _ => html! {<Content />},
     };
 
     let home_text = match lang {
@@ -162,6 +164,11 @@ pub(crate) fn header() -> Html {
         theme.colour.text.primary
     } else {
         Colour::from_rgb(255, 255, 255)
+    };
+
+    let home_route = match lang {
+        Language::Chinese => AppRoute::HomeZh,
+        Language::English => AppRoute::HomeEn,
     };
 
     html! {
@@ -186,7 +193,7 @@ pub(crate) fn header() -> Html {
             >
                 {content}
                 <nav class={classes!(nav_classes)}>
-                    <Link to={AppRoute::Home { lang }} colour={nav_colour}>
+                    <Link to={home_route} colour={nav_colour}>
                         <Item colour={home_colour}>{home_text}</Item>
                     </Link>
                     <Link to={AppRoute::About { lang }} colour={nav_colour}>
