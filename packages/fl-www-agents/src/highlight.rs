@@ -47,6 +47,6 @@ impl Agent for Worker {
     }
 
     fn name_of_resource() -> &'static str {
-        "worker-highlight.js"
+        option_env!("WORKER_HIGHLIGHT_PATH").unwrap_or("worker-highlight.js")
     }
 }
