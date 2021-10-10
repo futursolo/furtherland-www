@@ -23,6 +23,54 @@ pub(crate) struct HeaderLinksProps {
     nav_colour: Colour,
 }
 
+#[styled_component(HeaderBackgound)]
+pub(crate) fn header_background() -> Html {
+    let route = use_app_route();
+    let theme = use_theme();
+
+    let home_class = match route {
+        AppRoute::HomeEn | AppRoute::HomeZh => "currently-home",
+        _ => "",
+    };
+
+    html! {
+        <div class={classes!(
+            css!(
+                r#"
+                    position: absolute;
+
+                    height: 200px;
+                    width: 100%;
+
+                    &.currently-home {
+                        height: 100vh;
+                    }
+
+                    @media ${md_up} {
+                        height: 300px;
+
+                        &.currently-home {
+                            height: 100vh;
+                        }
+                    }
+                "#,
+                md_up = theme.breakpoint.md.up(),
+            ), home_class
+        )}>
+            <picture>
+                <source srcset="/assets/images/background.webp" type="image/webp" />
+                <img src="/assets/images/background.jpg" class={css!(r#"
+                    height: 100%;
+                    width: 100%;
+
+                    object-fit: cover;
+                    object-position: top right;
+                "#)} />
+            </picture>
+        </div>
+    }
+}
+
 #[function_component(HeaderLinks)]
 pub(crate) fn header_links(props: &HeaderLinksProps) -> Html {
     let lang = use_language();
@@ -64,6 +112,7 @@ pub(crate) fn header() -> Html {
     let theme = use_theme();
     let route = use_app_route();
     let viewport_height = use_viewport_height();
+    // let browser = BrowserKind::detect();
 
     use_language();
 
@@ -132,6 +181,13 @@ pub(crate) fn header() -> Html {
         sync_header_height_clone()
     });
 
+    // let bg_url = match browser {
+    //     BrowserKind::Firefox | BrowserKind::Chrome | BrowserKind::Safari => {
+    //         "/assets/images/background.webp"
+    //     }
+    //     _ => "/assets/images/background.jpg",
+    // };
+
     use_effect_with_deps(
         move |_| {
             sync_header_height();
@@ -150,10 +206,12 @@ pub(crate) fn header() -> Html {
             color: white;
             height: 200px;
 
-            background-image: url(/assets/images/background.jpg);
+            /*
+            background-image: url(${bg_url});
             background-repeat: no-repeat;
             background-size: cover;
             background-position: top right;
+            */
 
             box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
 
@@ -174,6 +232,7 @@ pub(crate) fn header() -> Html {
             }
         "#,
         md_up = theme.breakpoint.md.up(),
+        // bg_url = bg_url,
     );
 
     let nav_style = use_style!(
@@ -250,6 +309,7 @@ pub(crate) fn header() -> Html {
 
     html! {
         <header class={classes!(header_classes)} ref={header_ref}>
+            <HeaderBackgound />
             <div class={css!(
                 r#"
                     background-color: ${bg_colour};
@@ -257,6 +317,9 @@ pub(crate) fn header() -> Html {
 
                     width: 100%;
                     height: 100%;
+
+                    position: relative;
+                    z-index: 10;
                 "#,
                 bg_colour = background_colour
             )}>

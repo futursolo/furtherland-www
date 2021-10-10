@@ -24,4 +24,6 @@ pub use crate::styling;
 pub use crate::error::{Error, Result};
 pub use crate::misc;
 
+pub use crate::browser::BrowserKind;
+
 pub use crate::utils;

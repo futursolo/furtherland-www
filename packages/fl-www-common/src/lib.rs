@@ -1,3 +1,4 @@
+pub mod browser;
 pub mod client;
 pub mod error;
 pub mod hooks;
