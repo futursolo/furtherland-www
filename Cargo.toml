@@ -1,6 +1,8 @@
 [workspace]
 members = [
     "packages/fl-www",
+    "packages/fl-www-cli",
+    "packages/fl-www-core",
     "packages/fl-www-macros",
     "packages/fl-www-common",
     "packages/fl-www-agents",

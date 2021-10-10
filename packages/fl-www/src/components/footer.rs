@@ -29,6 +29,9 @@ pub(crate) fn footer() -> Html {
                 align-items: center;
 
                 box-sizing: border-box;
+
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
             "#
         )}>
             <div class={css!(

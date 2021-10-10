@@ -10,7 +10,6 @@ use components::{FlexSpace, Link};
 use content::Content;
 use home_content::HomeContent;
 use hooks::{use_event, use_viewport_height};
-use i18n::Language;
 use item::Item;
 use lang_toggle::LangToggle;
 use styling::Colour;

@@ -4,16 +4,17 @@ use crate::prelude::*;
 
 mod about;
 mod home;
+mod loading;
 mod other;
 mod writing;
 
 use about::About;
 use home::Home;
+use loading::Loading;
 use other::Other;
 use writing::Writing;
 
 use components::Redirect;
-use i18n::Language;
 
 #[function_component(HomeRedirect)]
 fn home_redirect() -> Html {
@@ -38,6 +39,8 @@ pub(crate) enum AppRoute {
     HomeEn,
     #[at("/zh")]
     HomeZh,
+    #[at("/loading")]
+    Loading,
     #[at("/")]
     HomeRedirect,
     #[at("/404")]
@@ -53,6 +56,10 @@ impl AppRoute {
             }
             Self::HomeRedirect => {
                 html! {<HomeRedirect />}
+            }
+
+            Self::Loading => {
+                html! {<Loading />}
             }
 
             Self::About { .. } => {
@@ -73,6 +80,7 @@ impl AppRoute {
                 Language::English => Self::HomeEn,
             },
             Self::About { .. } => Self::About { lang },
+            Self::Loading => Self::Loading,
 
             Self::HomeRedirect => Self::HomeRedirect,
             Self::Other => Self::Other,
@@ -91,8 +99,7 @@ impl AppRoute {
             Self::PageNotFound { lang, .. } => Some(*lang),
             Self::Writing { lang, .. } => Some(*lang),
 
-            Self::HomeRedirect => None,
-            Self::Other => None,
+            Self::HomeRedirect | Self::Other | Self::Loading => None,
         }
     }
 }
@@ -106,8 +113,6 @@ impl Default for AppRoute {
 
 #[function_component(AppRouter)]
 pub(crate) fn app_router() -> Html {
-    log::debug!("{:?}", AppRoute::not_found_route());
-
     html! {
         <Router<AppRoute>
              render={Router::render(AppRoute::render_route)}

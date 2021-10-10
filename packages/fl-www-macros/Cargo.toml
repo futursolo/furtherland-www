@@ -10,7 +10,7 @@ proc-macro = true
 once_cell = "1.8.0"
 proc-macro-error = "1.0.4"
 proc-macro2 = "1.0.29"
-quote = "1.0.9"
+quote = "1.0.10"
 
 syntect = { version = "4.6.0", default-features = false, features = ["default-fancy"] }
 flate2 = { version = "1.0.22", default-features = false, features = ["rust_backend"] }

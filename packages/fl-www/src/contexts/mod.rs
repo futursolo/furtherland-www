@@ -1,6 +1,7 @@
 use crate::prelude::*;
 
 mod client;
+mod error;
 mod highlight;
 mod i18n;
 mod metadata;
@@ -9,6 +10,8 @@ mod theme;
 mod title;
 
 use client::ClientProvider;
+use error::ErrorProvider;
+pub(crate) use error::{use_error_state, ErrorKind};
 use highlight::HighlightProvider;
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
@@ -25,20 +28,22 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
     let children = props.children.clone();
 
     html! {
-        <RoutingListener>
-            <I18nProvider>
-                <ThemeProvider>
-                    <MetaProvider>
-                        <TitleProvider>
-                            <HighlightProvider>
-                                <ClientProvider>
-                                    {children}
-                                </ClientProvider>
-                            </HighlightProvider>
-                        </TitleProvider>
-                    </MetaProvider>
-                </ThemeProvider>
-            </I18nProvider>
-        </RoutingListener>
+        <ErrorProvider>
+            <RoutingListener>
+                <I18nProvider>
+                    <ThemeProvider>
+                        <MetaProvider>
+                            <TitleProvider>
+                                <HighlightProvider>
+                                    <ClientProvider>
+                                        {children}
+                                    </ClientProvider>
+                                </HighlightProvider>
+                            </TitleProvider>
+                        </MetaProvider>
+                    </ThemeProvider>
+                </I18nProvider>
+            </RoutingListener>
+        </ErrorProvider>
     }
 }

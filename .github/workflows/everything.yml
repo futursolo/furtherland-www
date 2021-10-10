@@ -84,7 +84,7 @@ jobs:
           wasm-opt -Oz -o $WORKER_HIGHLIGHT_NAME"_bg.wasm" $WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
           rm $WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
 
-          echo "WORKER_HIGHLIGHT_PATH=worker-hightlight-$HASH.js" >> $GITHUB_ENV
+          echo "WORKER_HIGHLIGHT_PATH=$WORKER_HIGHLIGHT_NAME.js" >> $GITHUB_ENV
 
       - name: Build Website
         run: trunk --config Trunk.build.toml build --release index.release.html

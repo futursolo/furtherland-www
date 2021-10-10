@@ -2,7 +2,6 @@ use yew_feather::globe::Globe;
 
 use crate::prelude::*;
 use components::Link;
-use i18n::Language;
 use styling::Colour;
 
 #[derive(Properties, Clone, PartialEq)]
