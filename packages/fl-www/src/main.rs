@@ -8,11 +8,9 @@ mod common;
 mod components;
 mod contexts;
 mod i18n;
-mod metadata;
 mod misc;
 mod pages;
 mod prelude;
-mod tmpfs;
 
 use prelude::*;
 

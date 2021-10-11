@@ -2,6 +2,7 @@ use std::convert::TryInto;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use once_cell::sync::Lazy;
+use reqwest::Url;
 
 use crate::prelude::*;
 
@@ -19,6 +20,10 @@ impl Default for Id {
 impl Id {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn to_u64(&self) -> u64 {
+        self.0
     }
 }
 
@@ -47,4 +52,12 @@ pub fn get_viewport_height() -> u64 {
         .and_then(|m| m.as_f64())
         .and_then(|m| (m as i64).try_into().ok())
         .unwrap_or_default()
+}
+
+pub fn get_base_url() -> Option<Url> {
+    window()
+        .location()
+        .href()
+        .ok()
+        .and_then(|m| Url::parse(&m).ok())
 }

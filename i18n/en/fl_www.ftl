@@ -8,3 +8,5 @@ not-found-description = The page you requested does not exist.
 my-name = Kaede Hoshikawa
 footer-copy = All articles on this site are licensed under a CC-BY-SA 4.0 International Licence.
 comments = Comments
+error-message-server = Failed to load content.
+error-message-unknown = Something went wrong...

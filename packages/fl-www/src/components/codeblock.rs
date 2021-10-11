@@ -1,7 +1,8 @@
 use std::cell::RefCell;
 
 use crate::prelude::*;
-use misc::highlight::HighlightInput;
+use agents::highlight::HighlightInput;
+use misc::ToHtml;
 use styling::ThemeKind;
 use yew_agent::Bridged;
 

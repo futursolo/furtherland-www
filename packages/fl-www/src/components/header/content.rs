@@ -19,19 +19,19 @@ pub(crate) fn content() -> Html {
         "#)}>
             <div class={css!(
                 r#"
-                font-size: 5rem;
+                    font-size: 5rem;
 
-                @media ${lg_down} {
-                    font-size: 4rem;
-                }
+                    @media ${lg_down} {
+                        font-size: 4rem;
+                    }
 
-                @media ${md_down} {
-                    font-size: 3rem;
-                }
+                    @media ${md_down} {
+                        font-size: 3rem;
+                    }
 
-                @media ${sm_down} {
-                    font-size: 2rem;
-                }
+                    @media ${sm_down} {
+                        font-size: 2rem;
+                    }
                 "#,
                 lg_down = theme.breakpoint.lg.down(),
                 md_down = theme.breakpoint.md.down(),

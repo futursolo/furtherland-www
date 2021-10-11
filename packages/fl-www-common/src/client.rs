@@ -1,9 +1,17 @@
 use crate::prelude::*;
+use std::cell::RefCell;
 use std::rc::Rc;
+
+use reqwest::header::HeaderMap;
+use reqwest::Url;
+use std::str::FromStr;
+use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct ClientState {
+    // We use Rc here for PartialEq
     inner: Rc<reqwest::Client>,
+    base_url: Option<Url>,
 }
 
 impl PartialEq for ClientState {
@@ -17,6 +25,8 @@ pub struct ClientProviderProps {
     pub client: Rc<reqwest::Client>,
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub base_url: Option<Url>,
 }
 
 impl PartialEq for ClientProviderProps {
@@ -30,6 +40,7 @@ pub fn client_provider(props: &ClientProviderProps) -> Html {
     let children = props.children.clone();
     let state = ClientState {
         inner: props.client.clone(),
+        base_url: props.base_url.clone(),
     };
 
     html! {<ContextProvider<ClientState> context={state}>{children}</ContextProvider<ClientState>>}
@@ -41,17 +52,76 @@ pub fn use_client() -> reqwest::Client {
         .unwrap_or_else(reqwest::Client::new)
 }
 
-#[derive(Debug)]
-pub enum UseFetchHandle {
-    Ok(Rc<reqwest::Response>),
-    Loading,
-    Err(Rc<reqwest::Error>),
+pub fn use_base_url() -> Option<Url> {
+    let default_url = use_state(|| {
+        window()
+            .location()
+            .href()
+            .ok()
+            .and_then(|m| Url::parse(&m).ok())
+            .map(|mut m| {
+                m.set_path("/");
+                m
+            })
+    });
+
+    use_context::<ClientState>()
+        .and_then(|m| m.base_url)
+        .or_else(|| (*default_url).clone())
 }
 
-impl UseFetchHandle {
-    pub fn into_result(
-        self,
-    ) -> Option<std::result::Result<Rc<reqwest::Response>, Rc<reqwest::Error>>> {
+#[derive(Debug, Clone)]
+pub struct ClientResponse<T>
+where
+    T: Clone + 'static,
+{
+    // inner: Rc<reqwest::Response>,
+    data: Rc<T>,
+    headers: Rc<HeaderMap>,
+}
+
+impl<T> ClientResponse<T>
+where
+    T: Clone + 'static,
+{
+    pub fn data(&self) -> Rc<T> {
+        self.data.clone()
+    }
+
+    pub fn headers(&self) -> Rc<HeaderMap> {
+        self.headers.clone()
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum ClientError<E>
+where
+    E: std::error::Error + 'static,
+{
+    #[error("Failed to parse")]
+    Parse(#[source] E),
+
+    #[error("Failed to communicate with server")]
+    Reqwest(#[from] reqwest::Error),
+}
+
+#[derive(Debug)]
+pub enum UseFetchHandle<T, E>
+where
+    T: Clone + 'static,
+    E: std::error::Error + 'static,
+{
+    Ok(ClientResponse<T>),
+    Loading,
+    Err(Rc<ClientError<E>>),
+}
+
+impl<T, E> UseFetchHandle<T, E>
+where
+    T: Clone + 'static,
+    E: std::error::Error + 'static,
+{
+    pub fn into_result(self) -> Option<std::result::Result<ClientResponse<T>, Rc<ClientError<E>>>> {
         match self {
             Self::Ok(m) => Some(Ok(m)),
             Self::Loading => None,
@@ -60,7 +130,11 @@ impl UseFetchHandle {
     }
 }
 
-impl Clone for UseFetchHandle {
+impl<T, E> Clone for UseFetchHandle<T, E>
+where
+    T: Clone + 'static,
+    E: std::error::Error + 'static,
+{
     fn clone(&self) -> Self {
         match self {
             Self::Ok(m) => Self::Ok(m.clone()),
@@ -70,6 +144,75 @@ impl Clone for UseFetchHandle {
     }
 }
 
-pub fn use_request(_req: reqwest::Request) -> UseFetchHandle {
-    todo!();
+pub fn use_request<T, F, E>(req_fn: F) -> UseFetchHandle<T, E>
+where
+    T: FromStr<Err = E> + Clone + 'static,
+    F: FnOnce() -> reqwest::Request + 'static,
+    E: std::error::Error + 'static,
+{
+    use_pausable_request(move || Some(req_fn()))
+}
+
+pub fn use_pausable_request<T, F, E>(req_fn: F) -> UseFetchHandle<T, E>
+where
+    T: FromStr<Err = E> + Clone + 'static,
+    F: FnOnce() -> Option<reqwest::Request> + 'static,
+    E: std::error::Error + 'static,
+{
+    let client = use_client();
+
+    let state = use_state(|| UseFetchHandle::Loading);
+    let dispatched = use_state(|| RefCell::new(false));
+
+    let state_clone = state.clone();
+    use_effect(move || {
+        let mut dispatched = dispatched.borrow_mut();
+
+        if !*dispatched {
+            if let Some(req) = req_fn() {
+                *dispatched = true;
+
+                spawn_local(async move {
+                    let resp_result = client.execute(req).await;
+
+                    let resp = match resp_result.and_then(|m| m.error_for_status()) {
+                        Ok(m) => m,
+                        Err(e) => {
+                            state_clone.set(UseFetchHandle::Err(Rc::new(ClientError::from(e))));
+                            return;
+                        }
+                    };
+                    let headers = resp.headers().to_owned();
+
+                    let data_s = match resp.text().await {
+                        Ok(m) => m,
+                        Err(e) => {
+                            state_clone.set(UseFetchHandle::Err(Rc::new(ClientError::from(e))));
+                            return;
+                        }
+                    };
+
+                    let data = match data_s.parse::<T>() {
+                        Ok(m) => m,
+                        Err(e) => {
+                            state_clone.set(UseFetchHandle::Err(Rc::new(ClientError::Parse(e))));
+
+                            return;
+                        }
+                    };
+
+                    let resp = ClientResponse {
+                        data: Rc::new(data),
+                        headers: Rc::new(headers),
+                    };
+
+                    state_clone.set(UseFetchHandle::Ok(resp));
+                });
+            };
+        }
+
+        || {}
+    });
+
+    (*state).clone()
 }

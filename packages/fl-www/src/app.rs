@@ -1,7 +1,7 @@
 use crate::pages::AppRouter;
 use crate::prelude::*;
 
-use components::{Footer, Header, Layout};
+use components::{ErrorPopup, Footer, Header, Layout};
 
 #[function_component(App)]
 pub(crate) fn app() -> Html {
@@ -10,6 +10,7 @@ pub(crate) fn app() -> Html {
             <Header />
             <AppRouter />
             <Footer />
+            <ErrorPopup />
         </Layout>
     }
 }

@@ -139,7 +139,7 @@ impl Theme {
                     component: Colour::from_rgb(244, 245, 249),
                     component_shadow: Colour::from_rgb(150, 150, 150),
 
-                    code: Colour::from_rgb(249, 250, 254),
+                    code: Colour::from_rgb(246, 248, 255),
                 },
                 text: TextColours {
                     primary: Colour::from_rgb(0, 0, 0),

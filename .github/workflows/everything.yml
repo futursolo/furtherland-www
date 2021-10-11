@@ -69,26 +69,49 @@ jobs:
           tar zxvf binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
           echo "PATH=$PATH:$(pwd)/binaryen-version_$WASM_OPT_VER/bin" >> $GITHUB_ENV
 
-      - name: Build worker-highlight
+      - name: Build fl-worker-highlight
         run: |
-          cargo build --target wasm32-unknown-unknown --bin worker-highlight --release
+          cargo build --target wasm32-unknown-unknown --bin fl-worker-highlight --release
 
-          HASH=$(sha256sum target/wasm32-unknown-unknown/release/worker-highlight.wasm)
+          HASH=$(sha256sum target/wasm32-unknown-unknown/release/fl-worker-highlight.wasm)
           HASH=${HASH:0:12}
-          WORKER_HIGHLIGHT_NAME=worker-hightlight-$HASH
+          FL_WORKER_HIGHLIGHT_NAME=fl-worker-highlight-$HASH
 
-          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name $WORKER_HIGHLIGHT_NAME target/wasm32-unknown-unknown/release/worker-highlight.wasm
+          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name $FL_WORKER_HIGHLIGHT_NAME target/wasm32-unknown-unknown/release/fl-worker-highlight.wasm
 
           cd worker-dist/
-          mv $WORKER_HIGHLIGHT_NAME"_bg.wasm" $WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-          wasm-opt -Oz -o $WORKER_HIGHLIGHT_NAME"_bg.wasm" $WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-          rm $WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
+          mv $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
+          wasm-opt -Oz -o $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
+          rm $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
 
-          echo "WORKER_HIGHLIGHT_PATH=worker-hightlight-$HASH.js" >> $GITHUB_ENV
+          echo "FL_WORKER_HIGHLIGHT_PATH=$FL_WORKER_HIGHLIGHT_NAME.js" >> $GITHUB_ENV
+
+      - name: Build fl-worker-markdown
+        run: |
+          cargo build --target wasm32-unknown-unknown --bin fl-worker-markdown --release
+
+          HASH=$(sha256sum target/wasm32-unknown-unknown/release/fl-worker-markdown.wasm)
+          HASH=${HASH:0:12}
+          FL_WORKER_MARKDOWN_NAME=fl-worker-markdown-$HASH
+
+          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name $FL_WORKER_MARKDOWN_NAME target/wasm32-unknown-unknown/release/fl-worker-markdown.wasm
+
+          cd worker-dist/
+          mv $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
+          wasm-opt -Oz -o $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
+          rm $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
+
+          echo "FL_WORKER_MARKDOWN_PATH=$FL_WORKER_MARKDOWN_NAME.js" >> $GITHUB_ENV
 
       - name: Build Website
         run: trunk --config Trunk.build.toml build --release index.release.html
 
-      - name: Copy worker-highlight
+      - name: Copy workers
         run: |
           cp worker-dist/* dist/
+
+      - name: Build Metadata
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --bin fl-www-cli -- --in-dir . --out-dir dist/
