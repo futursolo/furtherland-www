@@ -70,6 +70,7 @@ where
                 }
 
                 *dispatched = Some(req.clone());
+                state_clone.set(UseFetchHandle { result: None });
 
                 let resp = match ready(
                     window()
