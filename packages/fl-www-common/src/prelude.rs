@@ -14,13 +14,11 @@ pub use yew::utils::{document, window};
 pub use wasm_bindgen_futures::spawn_local;
 
 pub use crate as common;
-pub use fl_www_macros as macros;
+// pub use fl_www_macros as macros;
 
 pub use crate::hooks;
 pub use crate::hooks::{use_equal_state, UseEqualStateHandle};
 pub use crate::styling;
-
-pub use crate::misc;
 
 pub use crate::browser::BrowserKind;
 

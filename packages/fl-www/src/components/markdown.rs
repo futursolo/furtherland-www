@@ -1,16 +1,72 @@
-use pulldown_cmark::Parser;
+use std::cell::RefCell;
 
 use crate::prelude::*;
-use misc::markdown::HtmlCreator;
+use misc::ToHtml;
+use yew_agent::Bridged;
+
+use super::Placeholder;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct MarkdownProps {
     pub markdown_text: String,
 }
 
-#[function_component(Markdown)]
+#[styled_component(Markdown)]
 pub(crate) fn markdown(props: &MarkdownProps) -> Html {
-    let children = HtmlCreator::new(Parser::new(&props.markdown_text)).into_html();
+    let md_html = use_equal_state(|| -> Option<Html> { None });
+
+    let md_html_clone = md_html.clone();
+    let worker = use_state(move || {
+        RefCell::new(agents::markdown::Worker::bridge(Callback::from(move |m| {
+            let agents::markdown::Response::Html(m) = m;
+
+            md_html_clone.set(Some(m.to_html()));
+        })))
+    });
+
+    use_effect_with_deps(
+        move |content| {
+            let content = content.clone();
+            worker
+                .borrow_mut()
+                .send(agents::markdown::Request::Html(content));
+
+            || {}
+        },
+        props.markdown_text.clone(),
+    );
+
+    let children = match (*md_html.borrow()).clone() {
+        Some(m) => m,
+        None => {
+            return html! {
+                <>
+                    <div class={css!("
+                        margin-bottom: 10px;
+                    ")}>
+                        <Placeholder height="1rem" width="100%" />
+                    </div>
+                    <div class={css!("
+                        margin-bottom: 10px;
+                    ")}>
+                        <Placeholder height="1rem" width="100%" />
+                    </div>
+                    <div class={css!("
+                        margin-bottom: 30px;
+                    ")}>
+                        <Placeholder height="1rem" width="75%" />
+                    </div>
+
+                    <div class={css!("
+                        margin-bottom: 10px;
+                    ")}>
+                        <Placeholder height="10rem" width="100%" />
+                    </div>
+                </>
+            }
+        }
+    };
+
     html! {
         <div>{children}</div>
     }

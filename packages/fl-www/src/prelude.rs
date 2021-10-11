@@ -1,6 +1,5 @@
 // pub use fl_www_agents as agents;
 pub(crate) use fl_www_agents as agents;
-pub(crate) use fl_www_agents::prelude::*;
 pub(crate) use fl_www_common::prelude::*;
 
 // pub(crate) use wasm_bindgen::prelude::*;
@@ -14,11 +13,8 @@ pub(crate) use crate::pages::AppRoute;
 pub(crate) use crate::fl;
 pub(crate) use crate::metadata::Metadata;
 
-pub(crate) mod misc {
-    pub(crate) use crate::misc::*;
-    pub(crate) use fl_www_common::misc::*;
-}
 pub(crate) use crate::i18n::LanguageExt;
+pub(crate) use crate::misc;
 
 pub(crate) use crate::common::ChildrenProps;
 

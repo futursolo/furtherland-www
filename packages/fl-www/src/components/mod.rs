@@ -1,4 +1,5 @@
 mod code;
+mod code_span;
 mod codeblock;
 mod comments;
 mod error_popup;
@@ -16,6 +17,7 @@ mod title;
 mod writing_info;
 
 pub(crate) use code::Code;
+pub(crate) use code_span::CodeSpan;
 pub(crate) use codeblock::CodeBlock;
 pub(crate) use comments::Comments;
 pub(crate) use error_popup::ErrorPopup;

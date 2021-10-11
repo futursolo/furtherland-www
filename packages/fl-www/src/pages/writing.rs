@@ -5,11 +5,10 @@ use crate::prelude::*;
 use yew_side_effect::title::Title;
 
 use super::{Loading, Other};
-use client::{use_pausable_request, ClientError, UseFetchHandle};
+use client::{use_base_url, use_pausable_request, ClientError, UseFetchHandle};
 use components::{Comments, Main, Markdown, SectionTitle, WritingInfo};
 use reqwest::header::CONTENT_TYPE;
 use reqwest::{Method, Request, StatusCode};
-use utils::get_base_url;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct WritingProps {
@@ -31,11 +30,13 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             .cloned()
     });
 
+    let base_url = use_base_url();
+
     let writing_metadata_clone = writing_metadata.clone();
     let req: UseFetchHandle<String, Infallible> = use_pausable_request(move || {
         let writing_metadata = writing_metadata_clone?;
 
-        let mut url = get_base_url()?;
+        let mut url = base_url?;
 
         let path = format!(
             "/writings/{lang}/{date}/{slug}.md",

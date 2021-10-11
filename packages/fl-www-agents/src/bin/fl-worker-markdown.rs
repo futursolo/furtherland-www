@@ -1,3 +1,6 @@
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 use yew_agent::Threaded;
 
 fn main() {
@@ -8,5 +11,5 @@ fn main() {
     #[cfg(not(debug_assertions))]
     console_log::init_with_level(Level::Error).expect("Failed to initialise Log!");
 
-    fl_www_agents::highlight::Worker::register();
+    fl_www_agents::markdown::Worker::register();
 }

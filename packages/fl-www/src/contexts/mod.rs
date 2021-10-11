@@ -2,17 +2,16 @@ use crate::prelude::*;
 
 mod client;
 mod error;
-mod highlight;
 mod i18n;
 mod metadata;
 mod routing;
 mod theme;
 mod title;
+mod worker;
 
 use client::ClientProvider;
 use error::ErrorProvider;
 pub(crate) use error::{use_error_state, ErrorKind};
-use highlight::HighlightProvider;
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
 pub(crate) use metadata::use_metadata;
@@ -22,6 +21,7 @@ use routing::RoutingListener;
 pub(crate) use theme::use_theme;
 use theme::ThemeProvider;
 use title::TitleProvider;
+use worker::WorkerProvider;
 
 #[function_component(Providers)]
 pub(crate) fn providers(props: &ChildrenProps) -> Html {
@@ -34,11 +34,11 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                     <ThemeProvider>
                         <MetaProvider>
                             <TitleProvider>
-                                <HighlightProvider>
+                                <WorkerProvider>
                                     <ClientProvider>
                                         {children}
                                     </ClientProvider>
-                                </HighlightProvider>
+                                </WorkerProvider>
                             </TitleProvider>
                         </MetaProvider>
                     </ThemeProvider>

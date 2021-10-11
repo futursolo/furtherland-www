@@ -2,21 +2,25 @@ use serde::{Deserialize, Serialize};
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
-use misc::highlight::{HighlightInput, HighlightOutput};
+
+mod parser;
+mod types;
+
+pub use types::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Request {
-    Highlight(HighlightInput),
+    Html(String),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Response {
-    Highlighted(Option<HighlightOutput>),
+    Html(Root),
 }
 
 #[derive(Debug)]
 pub enum Msg {
-    Highlighted((Option<HighlightOutput>, HandlerId)),
+    Html((Root, HandlerId)),
 }
 
 pub struct Worker {
@@ -34,19 +38,24 @@ impl Agent for Worker {
     }
 
     fn update(&mut self, msg: Self::Message) {
-        let Msg::Highlighted(m) = msg;
+        let Msg::Html(m) = msg;
 
-        self.link.respond(m.1, Response::Highlighted(m.0));
+        self.link.respond(m.1, Response::Html(m.0));
     }
 
     fn handle_input(&mut self, msg: Self::Input, who: HandlerId) {
-        let Request::Highlight(i) = msg;
+        use pulldown_cmark::Parser;
 
-        self.link
-            .send_future(async move { Msg::Highlighted((HighlightOutput::new(i).await, who)) })
+        use parser::HtmlCreator;
+
+        let Request::Html(i) = msg;
+
+        let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
+
+        self.link.send_message(Msg::Html((root, who)))
     }
 
     fn name_of_resource() -> &'static str {
-        option_env!("WORKER_HIGHLIGHT_PATH").unwrap_or("worker-highlight.js")
+        option_env!("FL_WORKER_MARKDOWN_PATH").unwrap_or("fl-worker-markdown.js")
     }
 }

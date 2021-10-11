@@ -3,12 +3,15 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use reqwest::header::HeaderMap;
+use reqwest::Url;
 use std::str::FromStr;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct ClientState {
+    // We use Rc here for PartialEq
     inner: Rc<reqwest::Client>,
+    base_url: Option<Url>,
 }
 
 impl PartialEq for ClientState {
@@ -22,6 +25,8 @@ pub struct ClientProviderProps {
     pub client: Rc<reqwest::Client>,
     #[prop_or_default]
     pub children: Children,
+    #[prop_or_default]
+    pub base_url: Option<Url>,
 }
 
 impl PartialEq for ClientProviderProps {
@@ -35,6 +40,7 @@ pub fn client_provider(props: &ClientProviderProps) -> Html {
     let children = props.children.clone();
     let state = ClientState {
         inner: props.client.clone(),
+        base_url: props.base_url.clone(),
     };
 
     html! {<ContextProvider<ClientState> context={state}>{children}</ContextProvider<ClientState>>}
@@ -44,6 +50,24 @@ pub fn use_client() -> reqwest::Client {
     use_context::<ClientState>()
         .map(|m| (*m.inner).clone())
         .unwrap_or_else(reqwest::Client::new)
+}
+
+pub fn use_base_url() -> Option<Url> {
+    let default_url = use_state(|| {
+        window()
+            .location()
+            .href()
+            .ok()
+            .and_then(|m| Url::parse(&m).ok())
+            .map(|mut m| {
+                m.set_path("/");
+                m
+            })
+    });
+
+    use_context::<ClientState>()
+        .and_then(|m| m.base_url)
+        .or_else(|| (*default_url).clone())
 }
 
 #[derive(Debug, Clone)]
@@ -142,11 +166,11 @@ where
 
     let state_clone = state.clone();
     use_effect(move || {
-        let mut dispatched_ = dispatched.borrow_mut();
+        let mut dispatched = dispatched.borrow_mut();
 
-        if !*dispatched_ {
+        if !*dispatched {
             if let Some(req) = req_fn() {
-                *dispatched_ = true;
+                *dispatched = true;
 
                 spawn_local(async move {
                     let resp_result = client.execute(req).await;

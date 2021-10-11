@@ -1,6 +1,8 @@
 use std::fmt;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Colour {
     pub red: u8,
     pub green: u8,
@@ -49,3 +51,5 @@ impl fmt::Display for Colour {
         }
     }
 }
+
+impl yew::html::ImplicitClone for Colour {}
