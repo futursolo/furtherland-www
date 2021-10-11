@@ -6,6 +6,7 @@ members = [
     #"packages/fl-www-macros",
     "packages/fl-www-common",
     "packages/fl-www-agents",
+    "packages/yew-query",
 ]
 resolver = "2"
 

@@ -5,10 +5,8 @@ use crate::prelude::*;
 use yew_side_effect::title::Title;
 
 use super::{Loading, Other};
-use client::{use_base_url, use_pausable_request, ClientError, UseFetchHandle};
 use components::{Comments, Main, Markdown, SectionTitle, WritingInfo};
-use reqwest::header::CONTENT_TYPE;
-use reqwest::{Method, Request, StatusCode};
+use yew_query::{use_pausable_query, Request, UseFetchHandle};
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct WritingProps {
@@ -30,24 +28,22 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             .cloned()
     });
 
-    let base_url = use_base_url();
+    // let base_url = use_base_url();
 
     let writing_metadata_clone = writing_metadata.clone();
-    let req: UseFetchHandle<String, Infallible> = use_pausable_request(move || {
+    let req: UseFetchHandle<String, Infallible> = use_pausable_query(move || {
         let writing_metadata = writing_metadata_clone?;
 
-        let mut url = base_url?;
-
-        let path = format!(
-            "/writings/{lang}/{date}/{slug}.md",
-            lang = writing_metadata.lang.as_str(),
-            date = writing_metadata.date.format("%Y-%m-%d"),
-            slug = writing_metadata.slug,
-        );
-
-        url.set_path(&path);
-
-        Some(Request::new(Method::GET, url))
+        Some(
+            Request::builder()
+                .url(format!(
+                    "/writings/{lang}/{date}/{slug}.md",
+                    lang = writing_metadata.lang.as_str(),
+                    date = writing_metadata.date.format("%Y-%m-%d"),
+                    slug = writing_metadata.slug,
+                ))
+                .build(),
+        )
     });
 
     if metadata.is_none() {
@@ -59,8 +55,8 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
         None => return html! {<Other />},
     };
 
-    let content = match req {
-        UseFetchHandle::Loading => {
+    let content = match req.result() {
+        None => {
             return html! {
                 <>
                     <Title value={writing_metadata.title} />
@@ -68,9 +64,9 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 </>
             }
         }
-        UseFetchHandle::Err(e) => {
-            if let ClientError::Reqwest(ref e) = *e {
-                if e.status() == Some(StatusCode::NOT_FOUND) {
+        Some(Err(e)) => {
+            if let yew_query::Error::Response(ref e) = *e {
+                if e.status() == 404 {
                     return html! {<Other />};
                 }
             }
@@ -84,11 +80,12 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 </>
             };
         }
-        UseFetchHandle::Ok(m) => {
+        Some(Ok(m)) => {
             if !m
                 .headers()
-                .get(CONTENT_TYPE)
-                .map(|m| m.to_str().map(|m| m.contains("markdown")).unwrap_or(false))
+                .get("content-type")
+                .ok()
+                .map(|m| m.map(|m| m.contains("markdown")).unwrap_or(false))
                 .unwrap_or(false)
             {
                 return html! {<Other />};

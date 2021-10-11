@@ -3,7 +3,7 @@ use crate::prelude::*;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub(crate) enum ErrorKind {
     Server,
-    Unknown,
+    // Unknown,
 }
 
 #[derive(Clone, Debug, PartialEq)]

@@ -12,10 +12,9 @@ pub(crate) fn error_popup() -> Html {
         None => return Html::default(),
         Some(ErrorKind::Server) => {
             fl!("error-message-server")
-        }
-        Some(ErrorKind::Unknown) => {
-            fl!("error-message-unknown")
-        }
+        } // Some(ErrorKind::Unknown) => {
+          //     fl!("error-message-unknown")
+          // }
     };
 
     html! {

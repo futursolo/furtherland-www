@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use once_cell::sync::Lazy;
-use reqwest::Url;
+// use reqwest::Url;
 
 use crate::prelude::*;
 
@@ -54,10 +54,10 @@ pub fn get_viewport_height() -> u64 {
         .unwrap_or_default()
 }
 
-pub fn get_base_url() -> Option<Url> {
-    window()
-        .location()
-        .href()
-        .ok()
-        .and_then(|m| Url::parse(&m).ok())
-}
+// pub fn get_base_url() -> Option<Url> {
+//     window()
+//         .location()
+//         .href()
+//         .ok()
+//         .and_then(|m| Url::parse(&m).ok())
+// }

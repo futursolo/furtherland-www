@@ -3,7 +3,7 @@ pub use std::borrow::Cow;
 
 pub use gloo;
 pub use log;
-pub use reqwest;
+// pub use reqwest;
 pub use stylist;
 pub use stylist::YieldStyle;
 pub use wasm_bindgen::JsCast;
@@ -22,5 +22,5 @@ pub use crate::styling;
 
 pub use crate::browser::BrowserKind;
 
-pub use crate::client;
+// pub use crate::client;
 pub use crate::utils;
