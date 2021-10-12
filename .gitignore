@@ -12,3 +12,4 @@ packages/*/target/
 
 dist/
 worker-dist/
+meta-dist/
