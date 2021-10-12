@@ -24,7 +24,6 @@ pub(crate) fn home() -> Html {
     let writings = metadata
         .writings()
         .iter()
-        .rev()
         .filter(|m| m.lang == lang)
         .map(|m| {
             html! {
