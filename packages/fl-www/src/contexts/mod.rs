@@ -2,6 +2,7 @@ use crate::prelude::*;
 
 mod client;
 mod error;
+mod helmet;
 mod i18n;
 mod metadata;
 mod routing;
@@ -12,6 +13,8 @@ mod worker;
 use client::ClientProvider;
 use error::ErrorProvider;
 pub(crate) use error::{use_error_state, ErrorKind};
+use helmet::HelmetProvider;
+pub(crate) use helmet::Meta;
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
 pub(crate) use metadata::use_metadata;
@@ -36,7 +39,9 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                             <TitleProvider>
                                 <WorkerProvider>
                                     <ClientProvider>
-                                        {children}
+                                        <HelmetProvider>
+                                            {children}
+                                        </HelmetProvider>
                                     </ClientProvider>
                                 </WorkerProvider>
                             </TitleProvider>

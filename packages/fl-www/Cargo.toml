@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+fl-www-core = { path = "../fl-www-core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 
@@ -53,6 +54,7 @@ version = "0.3.55"
 features = [
   "Window",
   "MediaQueryList",
+  "HtmlMetaElement",
   "Storage",
   "CssStyleDeclaration",
   "Element",

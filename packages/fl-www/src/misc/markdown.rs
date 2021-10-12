@@ -1,8 +1,8 @@
 // Based on pulldown_cmark's HtmlWriter.
 
 use crate::prelude::*;
-use agents::markdown::*;
 use components::{Code, CodeBlock as CompCodeBlock, Hyperlink, SectionTitle};
+use fl_www_core::markdown::*;
 use yew::prelude::Html;
 
 use super::ToHtml;

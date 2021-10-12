@@ -18,9 +18,9 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
     let md_html_clone = md_html.clone();
     let worker = use_state(move || {
         RefCell::new(agents::markdown::Worker::bridge(Callback::from(move |m| {
-            let agents::markdown::Response::Html(m) = m;
-
-            md_html_clone.set(Some(m.to_html()));
+            if let agents::markdown::Response::Html(root) = m {
+                md_html_clone.set(Some(root.to_html()));
+            }
         })))
     });
 

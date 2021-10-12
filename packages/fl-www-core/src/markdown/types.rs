@@ -194,3 +194,92 @@ pub enum Node {
 
     HyperLink(HyperLink),
 }
+
+impl Root {
+    pub fn to_text(&self) -> String {
+        let children: Vec<String> = self.nodes.iter().map(|m| m.to_text()).collect();
+
+        children.join(" ")
+    }
+}
+
+impl Node {
+    pub fn to_text(&self) -> String {
+        match self {
+            Self::Text(text) => format!(" {} ", text),
+            Self::Code(code) => {
+                format!(" {} ", code)
+            }
+            Self::Html(_) => {
+                panic!("Html is not supported for now!");
+            }
+            Self::Paragraph(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::Heading(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            // Table(Table) =>{}
+
+            // \n
+            Self::SoftBreak => "\n".into(),
+
+            // <br />
+            Self::HardBreak => " ".to_string(),
+
+            // <hr />
+            Self::Rule => " ".to_string(),
+
+            Self::Checkbox(_checkbox) => " ".to_string(),
+
+            Self::Blockquote(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::CodeBlock(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::List(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::ListItem(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+
+            Self::Emphasis(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::Strong(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+            Self::Strikethrough(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+
+            Self::Image(_p) => " ".to_string(),
+
+            Self::HyperLink(p) => {
+                let children: Vec<String> = p.children.iter().map(|m| m.to_text()).collect();
+
+                children.join(" ")
+            }
+        }
+    }
+}

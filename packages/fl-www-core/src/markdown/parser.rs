@@ -93,7 +93,7 @@ impl Node {
 //}
 
 #[derive(Debug)]
-pub(crate) struct HtmlCreator<'a, I> {
+pub struct HtmlCreator<'a, I> {
     iter: I,
 
     root: Vec<Node>,

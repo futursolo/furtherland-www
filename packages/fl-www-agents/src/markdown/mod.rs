@@ -1,33 +1,48 @@
 use serde::{Deserialize, Serialize};
+use unicode_segmentation::UnicodeSegmentation;
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
 use crate::types::Msg;
 
-mod parser;
-mod types;
-
-pub use types::*;
+use fl_www_core::markdown::{HtmlCreator, Root};
 
 pub async fn markdown(input: Request) -> Response {
-    use parser::HtmlCreator;
     use pulldown_cmark::Parser;
 
-    let Request::Html(i) = input;
+    match input {
+        Request::Html(i) => {
+            let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
 
-    let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
+            Response::Html(root)
+        }
+        Request::Summary(i) => {
+            let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
 
-    Response::Html(root)
+            Response::Summary(root.to_text().graphemes(true).take(200).fold(
+                String::new(),
+                |mut s, c| {
+                    if c != " " || !s.ends_with(' ') {
+                        s.push_str(c);
+                    }
+
+                    s
+                },
+            ))
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Request {
     Html(String),
+    Summary(String),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Response {
     Html(Root),
+    Summary(String),
 }
 
 pub struct Worker {

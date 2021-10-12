@@ -1,12 +1,15 @@
 // use futures::future::Future;
 use std::path::Path;
+use unicode_segmentation::UnicodeSegmentation;
 
 use async_trait::async_trait;
 use chrono::NaiveDate;
+use pulldown_cmark::Parser;
 use tokio::fs::{read_dir, File};
 use tokio::io::AsyncReadExt;
 
 use crate::prelude::*;
+use fl_www_core::markdown::HtmlCreator;
 pub(crate) use metadata::*;
 
 #[async_trait]
@@ -48,30 +51,41 @@ impl MetadataExt for Metadata {
                     None => continue,
                 };
 
-                let mut content = String::new();
+                let mut full_content = String::new();
                 File::open(m.path())
                     .await?
-                    .read_to_string(&mut content)
+                    .read_to_string(&mut full_content)
                     .await?;
 
-                let mut title = content
-                    .split_once("\n")
-                    .map(|m| m.0)
-                    .unwrap_or("")
-                    .trim()
-                    .to_string();
+                let (title, content) = full_content.split_once('\n').unwrap_or((&full_content, ""));
+                let mut title = title.to_string();
+                let content = content.trim().to_string();
+
+                let root = HtmlCreator::new(Parser::new(&content)).into_root_node();
 
                 while title.starts_with('#') {
                     title.remove(0);
                 }
+                let title = title.trim().to_string();
 
-                title.trim().to_string();
+                let summary: String =
+                    root.to_text()
+                        .graphemes(true)
+                        .take(200)
+                        .fold(String::new(), |mut s, c| {
+                            if c != " " || !s.ends_with(' ') {
+                                s.push_str(c);
+                            }
+
+                            s
+                        });
 
                 writings.push(WritingMetadata {
                     slug,
                     lang,
                     date,
                     title,
+                    summary,
                 });
             }
 
@@ -125,60 +139,3 @@ impl MetadataExt for Metadata {
         Ok(Metadata::builder().writings(writings).build())
     }
 }
-
-// fn load_writings(&mut self) {
-//     for path in crate::tmpfs::Writings::iter() {
-//         // {language}/{date}/{slug}.md
-//         let path_buf = PathBuf::from(path.as_ref());
-
-//         if path_buf.extension() != Some("md".as_ref()) {
-//             continue;
-//         }
-
-//         let mut path_iter = path_buf.iter();
-
-//         let lang = match path_iter
-//             .next()
-//             .and_then(|m| m.to_str())
-//             .and_then(|m| m.parse::<Language>().ok())
-//         {
-//             Some(m) => m,
-//             None => continue,
-//         };
-
-//         let date = match path_iter
-//             .next()
-//             .and_then(|m| m.to_str())
-//             .and_then(|m| NaiveDate::parse_from_str(m, "%Y-%m-%d").ok())
-//         {
-//             Some(m) => m,
-//             None => continue,
-//         };
-
-//         let slug = match path_iter
-//             .next()
-//             .and_then(|m| m.to_str())
-//             .and_then(|m| m.rsplit_once('.'))
-//         {
-//             Some(m) => m.0.to_owned(),
-//             None => continue,
-//         };
-
-//         let content = match crate::tmpfs::Writings::get(&path) {
-//             Some(m) => m.data,
-//             None => continue,
-//         };
-
-//         self.writings.push({
-//             WritingMetadata {
-//                 slug,
-//                 lang,
-//                 date,
-//                 content,
-//             }
-//         });
-//     }
-
-//     // Sort by date.
-//     self.writings.sort_by(|a, b| a.date.cmp(&b.date));
-// }
