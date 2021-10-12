@@ -1,6 +1,7 @@
 use std::convert::Infallible;
 
 use typed_builder::TypedBuilder;
+use web_sys::window;
 
 use crate::client::Client;
 use crate::error::Error;
@@ -17,10 +18,15 @@ impl Request {
         client: &Client,
     ) -> std::result::Result<web_sys::Request, Error<Infallible>> {
         let url = if let Some(m) = client.base_url() {
-            format!("{}{}", m, self.url)
+            web_sys::Url::new_with_base(&self.url, m)
         } else {
-            self.url.to_string()
-        };
+            let window = window().ok_or(Error::Web(None))?;
+            let base_url = window.location().href().map_err(|e| Error::Web(Some(e)))?;
+
+            web_sys::Url::new_with_base(&self.url, &base_url)
+        }
+        .map(|m| m.href())
+        .map_err(|e| Error::Web(Some(e)))?;
 
         web_sys::Request::new_with_str(&url).map_err(|e| Error::Web(Some(e)))
     }

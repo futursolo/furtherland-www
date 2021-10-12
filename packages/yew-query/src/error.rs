@@ -24,7 +24,7 @@ where
 impl Error<Infallible> {
     pub fn cast_parse_err<E: std::error::Error + 'static>(self) -> Error<E> {
         match self {
-            Self::Parse(_) => panic!(),
+            Self::Parse(_) => unreachable!(),
             Self::Response(m) => Error::Response(m),
             Self::Fetch(m) => Error::Fetch(m),
             Self::Web(m) => Error::Web(m),

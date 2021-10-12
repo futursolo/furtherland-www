@@ -5,13 +5,12 @@ use web_sys::window;
 use yew::prelude::*;
 
 use crate::client::Client;
-use crate::error::Error;
+use crate::error::{Error, Result};
 use crate::handle::UseFetchHandle;
 use crate::provider::ClientState;
 use crate::request::Request;
 use crate::response::Response;
-use futures::future;
-use futures::future::{ready, FutureExt, TryFutureExt};
+use futures::future::{ready, TryFutureExt};
 use futures::lock::Mutex;
 
 use wasm_bindgen::JsCast;
@@ -39,6 +38,39 @@ pub fn use_client() -> Option<Rc<Client>> {
 //         .or_else(|| (*default_url).clone())
 // }
 
+pub async fn fetch<T, E>(client: &Client, req: Request) -> Result<Response<T>, E>
+where
+    T: FromStr<Err = E> + Clone + 'static,
+    E: std::error::Error + 'static,
+{
+    let window = window().ok_or_else(|| Rc::new(Error::Web(None)))?;
+    let req = req
+        .to_fetch_request(client)
+        .map_err(|e| e.cast_parse_err::<E>())?;
+    let resp = JsFuture::from(window.fetch_with_request(&req))
+        .await
+        .and_then(|m| m.dyn_into::<web_sys::Response>())
+        .map_err(|e| Error::Web(Some(e)))?;
+
+    if resp.status() >= 400 {
+        return Err(Rc::new(Error::Response(resp)));
+    }
+
+    let headers = resp.headers().to_owned();
+    let data_s = ready(resp.text().map(JsFuture::from))
+        .try_flatten()
+        .await
+        .map_err(|e| Rc::new(Error::Fetch(e)))
+        .and_then(|m| m.as_string().ok_or_else(|| Rc::new(Error::Web(None))))?;
+
+    let data = data_s.parse::<T>().map_err(|e| Rc::new(Error::Parse(e)))?;
+
+    Ok(Response {
+        data: Rc::new(data),
+        headers,
+    })
+}
+
 pub fn use_query<T, F, E>(req_fn: F) -> UseFetchHandle<T, E>
 where
     T: FromStr<Err = E> + Clone + 'static,
@@ -62,7 +94,10 @@ where
     let state_clone = state.clone();
     use_effect(move || {
         spawn_local(async move {
-            let mut dispatched = dispatched.lock().await;
+            let mut dispatched = match dispatched.try_lock() {
+                Some(m) => m,
+                None => return,
+            };
 
             if let Some(req) = req_fn() {
                 if (*dispatched).as_ref() == Some(&req) {
@@ -72,62 +107,10 @@ where
                 *dispatched = Some(req.clone());
                 state_clone.set(UseFetchHandle { result: None });
 
-                let resp = match ready(
-                    window()
-                        .ok_or(Error::Web(None))
-                        .and_then(|m| req.to_fetch_request(&client).map(|req| (m, req)))
-                        .map(|(window, req)| JsFuture::from(window.fetch_with_request(&req)))
-                        .map(|m| {
-                            m.map(|m| {
-                                m.and_then(|m| m.dyn_into::<web_sys::Response>())
-                                    .map_err(|e| Error::Web(Some(e)))
-                            })
-                        }),
-                )
-                .try_flatten()
-                .and_then(|m| {
-                    if m.status() >= 400 {
-                        future::err(Error::Response(m))
-                    } else {
-                        future::ok(m)
-                    }
-                })
-                .await
-                {
-                    Ok(m) => m,
-                    Err(e) => {
-                        state_clone.set(UseFetchHandle {
-                            result: Some(Err(Rc::new(e.cast_parse_err::<E>()))),
-                        });
-                        return;
-                    }
-                };
-
-                let headers = resp.headers().to_owned();
-
-                let data = match future::ready(resp.text().map(JsFuture::from))
-                    .try_flatten()
-                    .map_err(|e| Rc::new(Error::Fetch(e)))
-                    .and_then(|m| ready(m.as_string().ok_or_else(|| Rc::new(Error::Web(None)))))
-                    .and_then(|m| ready(m.parse::<T>().map_err(|e| Rc::new(Error::Parse(e)))))
-                    .await
-                {
-                    Ok(m) => m,
-                    Err(e) => {
-                        state_clone.set(UseFetchHandle {
-                            result: Some(Err(e)),
-                        });
-                        return;
-                    }
-                };
-
-                let resp = Response {
-                    data: Rc::new(data),
-                    headers,
-                };
+                let result = fetch(&client, req).await;
 
                 state_clone.set(UseFetchHandle {
-                    result: Some(Ok(resp)),
+                    result: Some(result),
                 });
             }
         });

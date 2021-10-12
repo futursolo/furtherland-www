@@ -2,11 +2,23 @@ use serde::{Deserialize, Serialize};
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
+use crate::types::Msg;
 
 mod parser;
 mod types;
 
 pub use types::*;
+
+pub async fn markdown(input: Request) -> Response {
+    use parser::HtmlCreator;
+    use pulldown_cmark::Parser;
+
+    let Request::Html(i) = input;
+
+    let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
+
+    Response::Html(root)
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Request {
@@ -18,18 +30,13 @@ pub enum Response {
     Html(Root),
 }
 
-#[derive(Debug)]
-pub enum Msg {
-    Html((Root, HandlerId)),
-}
-
 pub struct Worker {
     link: AgentLink<Worker>,
 }
 
 impl Agent for Worker {
     type Reach = Public<Self>;
-    type Message = Msg;
+    type Message = Msg<Response>;
     type Input = Request;
     type Output = Response;
 
@@ -38,21 +45,14 @@ impl Agent for Worker {
     }
 
     fn update(&mut self, msg: Self::Message) {
-        let Msg::Html(m) = msg;
+        let Msg::Respond(m) = msg;
 
-        self.link.respond(m.1, Response::Html(m.0));
+        self.link.respond(m.1, m.0);
     }
 
     fn handle_input(&mut self, msg: Self::Input, who: HandlerId) {
-        use pulldown_cmark::Parser;
-
-        use parser::HtmlCreator;
-
-        let Request::Html(i) = msg;
-
-        let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
-
-        self.link.send_message(Msg::Html((root, who)))
+        self.link
+            .send_future(async move { Msg::Respond((markdown(msg).await, who)) })
     }
 
     fn name_of_resource() -> &'static str {
