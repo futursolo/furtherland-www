@@ -20,24 +20,6 @@ pub fn use_client() -> Option<Rc<Client>> {
     use_context::<ClientState>().map(|m| m.inner)
 }
 
-// pub fn use_base_url() -> Option<Url> {
-//     let default_url = use_state(|| {
-//         window()
-//             .location()
-//             .href()
-//             .ok()
-//             .and_then(|m| Url::parse(&m).ok())
-//             .map(|mut m| {
-//                 m.set_path("/");
-//                 m
-//             })
-//     });
-
-//     use_context::<ClientState>()
-//         .and_then(|m| m.base_url)
-//         .or_else(|| (*default_url).clone())
-// }
-
 pub async fn fetch<T, E>(client: &Client, req: Request) -> Result<Response<T>, E>
 where
     T: FromStr<Err = E> + Clone + 'static,

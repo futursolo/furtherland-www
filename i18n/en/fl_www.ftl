@@ -3,6 +3,7 @@ home = Home
 default-title = Hoshikawa's Secret Room
 title = {$title} - Hoshikawa's Secret Room
 coming-soon = Coming Soon!
+friendly-links = Links
 not-found-title = 404 - Page Not Found
 not-found-description = The page you requested does not exist.
 my-name = Kaede Hoshikawa

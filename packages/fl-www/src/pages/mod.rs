@@ -2,16 +2,18 @@ use yew_router::prelude::*;
 
 use crate::prelude::*;
 
-mod about;
+// mod about;
 mod home;
 mod loading;
 mod other;
+mod page;
 mod writing;
 
-use about::About;
+// use about::About;
 use home::Home;
 use loading::Loading;
 use other::Other;
+use page::Page;
 use writing::Writing;
 
 use components::Redirect;
@@ -31,8 +33,10 @@ fn home_redirect() -> Html {
 pub(crate) enum AppRoute {
     #[at("/:lang/writings/:slug")]
     Writing { lang: Language, slug: String },
-    #[at("/:lang/pages/about")]
-    About { lang: Language },
+    // #[at("/:lang/pages/about")]
+    // About { lang: Language },
+    #[at("/:lang/pages/:slug")]
+    Page { lang: Language, slug: String },
     #[at("/:lang/page-not-found")]
     PageNotFound { lang: Language },
     #[at("/en")]
@@ -43,7 +47,7 @@ pub(crate) enum AppRoute {
     Loading,
     #[at("/")]
     HomeRedirect,
-    #[at("/404")]
+    #[at("/page-not-found")]
     #[not_found]
     Other,
 }
@@ -62,14 +66,14 @@ impl AppRoute {
                 html! {<Loading />}
             }
 
-            Self::About { .. } => {
-                html! {<About />}
-            }
-
+            // Self::About { .. } => {
+            //     html! {<About />}
+            // }
             Self::Other | Self::PageNotFound { .. } => {
                 html! {<Other />}
             }
             Self::Writing { slug, .. } => html! {<Writing slug={slug.clone()} />},
+            Self::Page { slug, .. } => html! {<Page slug={slug.clone()} />},
         }
     }
 
@@ -79,7 +83,7 @@ impl AppRoute {
                 Language::Chinese => Self::HomeZh,
                 Language::English => Self::HomeEn,
             },
-            Self::About { .. } => Self::About { lang },
+            // Self::About { .. } => Self::About { lang },
             Self::Loading => Self::Loading,
 
             Self::HomeRedirect => Self::HomeRedirect,
@@ -87,6 +91,7 @@ impl AppRoute {
 
             Self::PageNotFound { .. } => Self::PageNotFound { lang },
             Self::Writing { slug, .. } => Self::Writing { slug, lang },
+            Self::Page { slug, .. } => Self::Page { slug, lang },
         }
     }
 
@@ -94,10 +99,10 @@ impl AppRoute {
         match self {
             Self::HomeEn => Some(Language::English),
             Self::HomeZh => Some(Language::Chinese),
-            Self::About { lang, .. } => Some(*lang),
-
+            // Self::About { lang, .. } => Some(*lang),
             Self::PageNotFound { lang, .. } => Some(*lang),
             Self::Writing { lang, .. } => Some(*lang),
+            Self::Page { lang, .. } => Some(*lang),
 
             Self::HomeRedirect | Self::Other | Self::Loading => None,
         }

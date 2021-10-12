@@ -13,7 +13,7 @@ use hooks::{use_event, use_viewport_height};
 use item::Item;
 use lang_toggle::LangToggle;
 use styling::Colour;
-use styling::{use_style, ThemeKind};
+use styling::{use_media_query, use_style, ThemeKind};
 use theme_toggle::ThemeToggle;
 use utils::get_scroll_y;
 
@@ -77,9 +77,11 @@ pub(crate) fn header_links(props: &HeaderLinksProps) -> Html {
     let home_colour = theme.colour.primary.with_opacity(0.9);
     let nav_colour = props.nav_colour;
 
-    let home_text = match lang {
-        Language::Chinese => fl!("default-title"),
-        Language::English => fl!("home"),
+    let is_mobile = use_media_query(&theme.breakpoint.sm.down());
+
+    let home_text = match (is_mobile, lang) {
+        (false, Language::Chinese) => fl!("default-title"),
+        _ => fl!("home"),
     };
 
     let home_route = match lang {
@@ -92,8 +94,11 @@ pub(crate) fn header_links(props: &HeaderLinksProps) -> Html {
             <Link to={home_route} colour={nav_colour}>
                 <Item colour={home_colour}>{home_text}</Item>
             </Link>
-            <Link to={AppRoute::About { lang }} colour={nav_colour}>
+            <Link to={AppRoute::Page { lang, slug: "about".to_string() }} colour={nav_colour}>
                 <Item colour={Colour::from_rgba(255, 242, 66, 0.9)}>{fl!("about")}</Item>
+            </Link>
+            <Link to={AppRoute::Page { lang, slug: "links".to_string() }} colour={nav_colour}>
+                <Item colour={Colour::from_rgba(230, 117, 92, 0.9)}>{fl!("friendly-links")}</Item>
             </Link>
         </>
     }

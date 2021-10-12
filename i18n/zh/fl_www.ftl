@@ -2,6 +2,7 @@ about = 關於
 home = 主頁
 default-title = 星川の秘密部屋
 title = {$title} - 星川の秘密部屋
+friendly-links = 友鏈
 coming-soon = 敬請期待...
 not-found-title = 404 - 找不到頁面
 not-found-description = 這個頁面已經消失在時空的夾縫裡了呢。
