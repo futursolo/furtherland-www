@@ -119,6 +119,9 @@ impl MetadataExt for Metadata {
             writings.extend(load_writings_by_lang(&m.path(), lang).await?);
         }
 
+        writings.sort_by_key(|m| m.date);
+        writings.reverse();
+
         Ok(Metadata::builder().writings(writings).build())
     }
 }
