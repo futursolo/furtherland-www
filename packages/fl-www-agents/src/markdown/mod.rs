@@ -20,7 +20,7 @@ pub async fn markdown(input: Request) -> Response {
             let root = HtmlCreator::new(Parser::new(&i)).into_root_node();
 
             Response::Summary(root.to_text().graphemes(true).take(200).fold(
-                String::new(),
+                String::with_capacity(200),
                 |mut s, c| {
                     if c != " " || !s.ends_with(' ') {
                         s.push_str(c);
