@@ -1,6 +1,9 @@
+use std::cell::RefCell;
 use std::convert::Infallible;
 
+use crate::contexts::Meta;
 use crate::prelude::*;
+use yew_agent::Bridged;
 
 use yew_side_effect::title::Title;
 
@@ -28,6 +31,17 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             .cloned()
     });
 
+    let summary = use_equal_state(|| -> Option<String> { None });
+
+    let summary_clone = summary.clone();
+    let worker = use_state(move || {
+        RefCell::new(agents::markdown::Worker::bridge(Callback::from(move |m| {
+            if let agents::markdown::Response::Summary(s) = m {
+                summary_clone.set(Some(s));
+            }
+        })))
+    });
+
     // let base_url = use_base_url();
 
     let writing_metadata_clone = writing_metadata.clone();
@@ -45,6 +59,20 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 .build(),
         )
     });
+
+    let summary_clone = summary.clone();
+    use_effect_with_deps(
+        move |data| {
+            summary_clone.set(None);
+            if let Some(m) = data {
+                worker
+                    .borrow_mut()
+                    .send(agents::markdown::Request::Summary(m.to_string()));
+            }
+            || {}
+        },
+        req.result().and_then(|m| m.ok()).map(|m| m.data()),
+    );
 
     if metadata.is_none() {
         return html! {<Loading />};
@@ -103,6 +131,11 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
     html! {
         <>
             <Title value={writing_metadata.title.clone()} />
+            {if let Some(m) = (*summary.borrow()).clone() {
+                html! {<Meta name="description" content={m} />}
+            } else {
+                Html::default()
+            }}
             <Main>
                 <SectionTitle>{&writing_metadata.title}</SectionTitle>
                 <WritingInfo date={writing_metadata.date} />

@@ -1,6 +1,9 @@
 use crate::prelude::*;
+use once_cell::sync::Lazy;
 use styling::ThemeKind;
 use utils::Id;
+
+static KEYFRAME_ID: Lazy<Id> = Lazy::new(Id::new);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum PlaceholderKind {
@@ -25,7 +28,6 @@ pub(crate) fn placeholder(props: &Props) -> Html {
         PlaceholderKind::Circle => "50%",
     };
 
-    let keyframe_id = use_state(Id::new);
     let wave_colour = match theme.kind() {
         ThemeKind::Light => "rgb(255, 255, 255, 0.7)",
         ThemeKind::Dark => "rgb(255, 255, 255, 0.05)",
@@ -71,7 +73,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
                         }
                     }
                 "#,
-                keyframe_id = (*keyframe_id).to_u64(),
+                keyframe_id = (*KEYFRAME_ID).to_u64(),
             )}>
                 <div class={css!(r#"
                     background-image: linear-gradient(to right, rgba(255, 255, 255, 0), ${wave_colour}, rgba(255, 255, 255, 0));
