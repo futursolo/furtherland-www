@@ -11,6 +11,7 @@ pub struct WritingMetadata {
     pub lang: Language,
     pub date: NaiveDate,
     pub title: String,
+
     #[serde(skip_serializing)]
     #[serde(skip_deserializing)]
     pub summary: String,

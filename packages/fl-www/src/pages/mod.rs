@@ -1,5 +1,6 @@
 use yew_router::prelude::*;
 
+use crate::contexts::MetaLink;
 use crate::prelude::*;
 
 // mod about;
@@ -118,9 +119,19 @@ impl Default for AppRoute {
 
 #[function_component(AppRouter)]
 pub(crate) fn app_router() -> Html {
+    let lang = use_language();
+
+    let feed_url = match lang {
+        Language::Chinese => "/feed-zh.xml",
+        Language::English => "/feed-en.xml",
+    };
+
     html! {
-        <Router<AppRoute>
-             render={Router::render(AppRoute::render_route)}
-         />
+        <>
+            <MetaLink rel="alternate" href={feed_url} type_="application/atom+xml" />
+            <Router<AppRoute>
+                 render={Router::render(AppRoute::render_route)}
+             />
+        </>
     }
 }

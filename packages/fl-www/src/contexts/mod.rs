@@ -14,7 +14,7 @@ use client::ClientProvider;
 use error::ErrorProvider;
 pub(crate) use error::{use_error_state, ErrorKind};
 use helmet::HelmetProvider;
-pub(crate) use helmet::Meta;
+pub(crate) use helmet::{Meta, MetaLink};
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
 pub(crate) use metadata::use_metadata;

@@ -55,6 +55,7 @@ features = [
   "Window",
   "MediaQueryList",
   "HtmlMetaElement",
+  "HtmlLinkElement",
   "Storage",
   "CssStyleDeclaration",
   "Element",
