@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::prelude::*;
+use utils::is_ssr;
 
 use wasm_bindgen::JsValue;
 use web_sys::{Element, HtmlLinkElement, HtmlMetaElement};
@@ -47,6 +48,29 @@ pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
 
     let elements = use_state(|| -> RefCell<Vec<Element>> { RefCell::new(Vec::new()) });
 
+    use_effect_with_deps(
+        |_| {
+            if !is_ssr() {
+                if let Some(m) = document().head() {
+                    let m: &Element = m.as_ref();
+
+                    if let Ok(nodes) = m.query_selector_all("[data-helmet='prerendered']") {
+                        for i in 0..nodes.length() {
+                            if let Some(node) = nodes.get(i) {
+                                if let Some(m) = node.parent_node() {
+                                    m.remove_child(&node).unwrap();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            || {}
+        },
+        (),
+    );
+
     let sync = use_state(move || {
         Rc::new(move |tags: SideEffects<Tag>| {
             let mut elements = elements.borrow_mut();
@@ -70,6 +94,10 @@ pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
                         element.set_name(&meta.name);
                         element.set_content(&meta.content);
 
+                        if is_ssr() {
+                            element.set_attribute("data-helmet", "prerendered").unwrap();
+                        }
+
                         let element: &Element = element.as_ref();
 
                         document().head().unwrap().append_child(element).unwrap();
@@ -85,6 +113,10 @@ pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
                         element.set_href(&link.href);
                         element.set_type(&link.type_);
                         element.set_rel(&link.rel);
+
+                        if is_ssr() {
+                            element.set_attribute("data-helmet", "prerendered").unwrap();
+                        }
 
                         let element: &Element = element.as_ref();
 

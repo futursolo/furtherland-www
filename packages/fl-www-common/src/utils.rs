@@ -61,3 +61,7 @@ pub fn get_viewport_height() -> u64 {
 //         .ok()
 //         .and_then(|m| Url::parse(&m).ok())
 // }
+
+pub fn is_ssr() -> bool {
+    window().location().port().unwrap_or_else(|_| "".into()) == "9742"
+}
