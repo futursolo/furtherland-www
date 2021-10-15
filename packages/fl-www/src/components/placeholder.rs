@@ -34,7 +34,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
     };
 
     html! {
-        <div class={css!(
+        <div data-status="loading" class={css!(
             r#"
                 height: ${height};
                 width: ${width};

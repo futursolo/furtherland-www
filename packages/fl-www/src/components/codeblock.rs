@@ -89,10 +89,16 @@ pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
 
     let hl_html = use_highlight(props.content.clone(), props.language.clone(), theme.kind());
 
+    let status = if props.language.is_some() && hl_html.is_none() {
+        "loading"
+    } else {
+        "done"
+    };
+
     let children = hl_html.unwrap_or_else(|| props.content.as_str().into());
 
     html! {
-        <pre class={css!(
+        <pre data-status={status} class={css!(
             r#"
                 background-color: ${bg_colour};
                 padding: 20px;
