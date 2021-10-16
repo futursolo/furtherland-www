@@ -1,9 +1,9 @@
 use std::ops::Deref;
 
+use gloo::timers::future::TimeoutFuture;
+
 use crate::prelude::*;
-
 use hooks::use_event;
-
 use styling::{use_media_query, Global, Theme, ThemeKind};
 
 static STORAGE_KEY: &str = "fl_theme";
@@ -70,6 +70,20 @@ pub(crate) fn use_theme() -> ThemeState {
 fn global_style() -> Html {
     let theme = use_theme();
 
+    let rendered = use_state(|| false);
+
+    let rendered_clone = rendered.clone();
+    use_effect_with_deps(
+        move |_| {
+            spawn_local(async move {
+                TimeoutFuture::new(10).await;
+                rendered_clone.set(true);
+            });
+            || {}
+        },
+        (),
+    );
+
     let style = css!(
         r#"
 
@@ -80,7 +94,6 @@ fn global_style() -> Html {
             color: ${font_color};
             font-family: ${font_family};
             font-size: ${font_size};
-            transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -90,7 +103,20 @@ fn global_style() -> Html {
         font_family = &theme.font_family,
         font_size = &theme.font_size.root,
     );
-    html! {<Global css={style} />}
+
+    let transition_global = if *rendered {
+        html! {
+           <Global css={css!("html, body { transition: background-color 0.3s, color 0.3s; }")} />
+        }
+    } else {
+        Html::default()
+    };
+    html! {
+        <>
+            <Global css={style} />
+            {transition_global}
+        </>
+    }
 }
 
 #[function_component(ThemeProvider)]
