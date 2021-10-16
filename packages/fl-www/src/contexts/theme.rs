@@ -1,7 +1,5 @@
 use std::ops::Deref;
 
-use gloo::timers::future::TimeoutFuture;
-
 use crate::prelude::*;
 use hooks::use_event;
 use styling::{use_media_query, Global, Theme, ThemeKind};
@@ -70,20 +68,6 @@ pub(crate) fn use_theme() -> ThemeState {
 fn global_style() -> Html {
     let theme = use_theme();
 
-    let rendered = use_state(|| false);
-
-    let rendered_clone = rendered.clone();
-    use_effect_with_deps(
-        move |_| {
-            spawn_local(async move {
-                TimeoutFuture::new(10).await;
-                rendered_clone.set(true);
-            });
-            || {}
-        },
-        (),
-    );
-
     let style = css!(
         r#"
 
@@ -96,6 +80,7 @@ fn global_style() -> Html {
             font-size: ${font_size};
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s, color 0.3s;
         }
     "#,
         background_color = theme.colour.background.default,
@@ -104,17 +89,9 @@ fn global_style() -> Html {
         font_size = &theme.font_size.root,
     );
 
-    let transition_global = if *rendered {
-        html! {
-           <Global css={css!("html, body { transition: background-color 0.3s, color 0.3s; }")} />
-        }
-    } else {
-        Html::default()
-    };
     html! {
         <>
             <Global css={style} />
-            {transition_global}
         </>
     }
 }
