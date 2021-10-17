@@ -944,9 +944,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "libc"
-version = "0.2.103"
+version = "0.2.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd8f7255a17a627354f321ef0055d63b898c6fb27eff628af4d1b66b7331edf6"
+checksum = "7b2f96d100e1cf1929e7719b7edb3b90ab5298072638fccd77be9ce942ecdfce"
 
 [[package]]
 name = "line-wrap"
@@ -1020,9 +1020,9 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "0.7.13"
+version = "0.7.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c2bdb6314ec10835cd3293dd268473a835c02b7b352e788be788b3c6ca6bb16"
+checksum = "8067b404fe97c70829f082dec8bcf4f71225d7eaea1d8645349cb76fa06205cc"
 dependencies = [
  "libc",
  "log",
@@ -1189,9 +1189,9 @@ dependencies = [
 
 [[package]]
 name = "ppv-lite86"
-version = "0.2.10"
+version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac74c624d6b2d21f425f752262f42188365d7b8ff1aff74c82e45136510a4857"
+checksum = "c3ca011bd0129ff4ae15cd04c4eef202cadf6c51c21e47aba319b4e0501db741"
 
 [[package]]
 name = "proc-macro-error"
@@ -1675,9 +1675,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "1.4.1"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "154794c8f499c2619acd19e839294703e9e32e7630ef5f46ea80d4ef0fbee5eb"
+checksum = "b2dd85aeaba7b68df939bd357c6afb36c87951be9e80bf9c859f2fc3e9fca0fd"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1924,7 +1924,7 @@ checksum = "d2d7d3948613f75c98fd9328cfdcc45acc4d360655289d0a7d4ec931392200a3"
 [[package]]
 name = "yew"
 version = "0.18.0"
-source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",
@@ -1942,7 +1942,7 @@ dependencies = [
 [[package]]
 name = "yew-agent"
 version = "0.1.0"
-source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "anymap2",
  "bincode",
@@ -1967,7 +1967,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.18.0"
-source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "boolinator",
  "lazy_static",
@@ -1993,7 +1993,7 @@ dependencies = [
 [[package]]
 name = "yew-router"
 version = "0.15.0"
-source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "gloo",
  "js-sys",
@@ -2009,7 +2009,7 @@ dependencies = [
 [[package]]
 name = "yew-router-macro"
 version = "0.15.0"
-source = "git+https://github.com/yewstack/yew#77b46bfa407fd8ff5da098f42fa838ff4e3995ed"
+source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "proc-macro2",
  "quote",

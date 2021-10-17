@@ -28,7 +28,7 @@ pub(crate) fn header_background() -> Html {
     let theme = use_theme();
 
     let home_class = match route {
-        AppRoute::HomeEn | AppRoute::HomeZh => "currently-home",
+        AppRoute::Home { .. } => "currently-home",
         _ => "",
     };
 
@@ -84,10 +84,7 @@ pub(crate) fn header_links(props: &HeaderLinksProps) -> Html {
         _ => fl!("home"),
     };
 
-    let home_route = match lang {
-        Language::Chinese => AppRoute::HomeZh,
-        Language::English => AppRoute::HomeEn,
-    };
+    let home_route = AppRoute::Home { lang };
 
     html! {
         <>
@@ -294,7 +291,7 @@ pub(crate) fn header() -> Html {
     }
 
     let content = match route {
-        AppRoute::HomeEn | AppRoute::HomeZh => {
+        AppRoute::Home { .. } => {
             header_is_home.set(true);
             header_classes.push("currently-home".to_string());
             html! {<HomeContent />}

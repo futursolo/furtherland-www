@@ -7,7 +7,7 @@ pub(crate) fn main(props: &ChildrenProps) -> Html {
     let route = use_app_route();
 
     let min_height_str = match route {
-        AppRoute::HomeZh | AppRoute::HomeEn => "calc(100vh - 160px)",
+        AppRoute::Home { .. } => "calc(100vh - 160px)",
         _ => "auto",
     };
 

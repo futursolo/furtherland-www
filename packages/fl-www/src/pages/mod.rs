@@ -22,11 +22,7 @@ use components::Redirect;
 #[function_component(HomeRedirect)]
 fn home_redirect() -> Html {
     let lang = use_language();
-    let home_route = match lang {
-        Language::Chinese => AppRoute::HomeZh,
-        Language::English => AppRoute::HomeEn,
-    };
-
+    let home_route = AppRoute::Home { lang };
     html! {<Redirect to={home_route} />}
 }
 
@@ -40,10 +36,8 @@ pub(crate) enum AppRoute {
     Page { lang: Language, slug: String },
     #[at("/:lang/page-not-found")]
     PageNotFound { lang: Language },
-    #[at("/en")]
-    HomeEn,
-    #[at("/zh")]
-    HomeZh,
+    #[at("/:lang/")]
+    Home { lang: Language },
     #[at("/loading")]
     Loading,
     #[at("/")]
@@ -56,7 +50,7 @@ pub(crate) enum AppRoute {
 impl AppRoute {
     fn render_route(&self) -> Html {
         match self {
-            Self::HomeEn | Self::HomeZh { .. } => {
+            Self::Home { .. } => {
                 html! {<Home />}
             }
             Self::HomeRedirect => {
@@ -80,10 +74,7 @@ impl AppRoute {
 
     pub fn with_lang(self, lang: Language) -> Self {
         match self {
-            Self::HomeEn | Self::HomeZh => match lang {
-                Language::Chinese => Self::HomeZh,
-                Language::English => Self::HomeEn,
-            },
+            Self::Home { .. } => Self::Home { lang },
             // Self::About { .. } => Self::About { lang },
             Self::Loading => Self::Loading,
 
@@ -98,8 +89,7 @@ impl AppRoute {
 
     pub fn lang(&self) -> Option<Language> {
         match self {
-            Self::HomeEn => Some(Language::English),
-            Self::HomeZh => Some(Language::Chinese),
+            Self::Home { lang } => Some(*lang),
             // Self::About { lang, .. } => Some(*lang),
             Self::PageNotFound { lang, .. } => Some(*lang),
             Self::Writing { lang, .. } => Some(*lang),
