@@ -26,9 +26,7 @@ where
     E: std::error::Error + 'static,
 {
     let window = window().ok_or_else(|| Rc::new(Error::Web(None)))?;
-    let req = req
-        .to_fetch_request(client)
-        .map_err(|e| e.cast_parse_err::<E>())?;
+    let req = req.to_fetch_request::<E>(client)?;
     let resp = JsFuture::from(window.fetch_with_request(&req))
         .await
         .and_then(|m| m.dyn_into::<web_sys::Response>())

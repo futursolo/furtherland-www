@@ -3,14 +3,12 @@ use yew_router::prelude::*;
 use crate::contexts::MetaLink;
 use crate::prelude::*;
 
-// mod about;
 mod home;
 mod loading;
 mod other;
 mod page;
 mod writing;
 
-// use about::About;
 use home::Home;
 use loading::Loading;
 use other::Other;
@@ -30,8 +28,6 @@ fn home_redirect() -> Html {
 pub(crate) enum AppRoute {
     #[at("/:lang/writings/:slug")]
     Writing { lang: Language, slug: String },
-    // #[at("/:lang/pages/about")]
-    // About { lang: Language },
     #[at("/:lang/pages/:slug")]
     Page { lang: Language, slug: String },
     #[at("/:lang/page-not-found")]
@@ -61,9 +57,6 @@ impl AppRoute {
                 html! {<Loading />}
             }
 
-            // Self::About { .. } => {
-            //     html! {<About />}
-            // }
             Self::Other | Self::PageNotFound { .. } => {
                 html! {<Other />}
             }
@@ -75,7 +68,6 @@ impl AppRoute {
     pub fn with_lang(self, lang: Language) -> Self {
         match self {
             Self::Home { .. } => Self::Home { lang },
-            // Self::About { .. } => Self::About { lang },
             Self::Loading => Self::Loading,
 
             Self::HomeRedirect => Self::HomeRedirect,
@@ -90,20 +82,12 @@ impl AppRoute {
     pub fn lang(&self) -> Option<Language> {
         match self {
             Self::Home { lang } => Some(*lang),
-            // Self::About { lang, .. } => Some(*lang),
             Self::PageNotFound { lang, .. } => Some(*lang),
             Self::Writing { lang, .. } => Some(*lang),
             Self::Page { lang, .. } => Some(*lang),
 
             Self::HomeRedirect | Self::Other | Self::Loading => None,
         }
-    }
-}
-
-impl Default for AppRoute {
-    fn default() -> Self {
-        let lang = Language::detect();
-        Self::PageNotFound { lang }
     }
 }
 
@@ -119,8 +103,8 @@ pub(crate) fn app_router() -> Html {
     html! {
         <>
             <MetaLink rel="alternate" href={feed_url} type_="application/atom+xml" />
-            <Router<AppRoute>
-                 render={Router::render(AppRoute::render_route)}
+            <Switch<AppRoute>
+                 render={Switch::render(AppRoute::render_route)}
              />
         </>
     }

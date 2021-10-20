@@ -47,6 +47,6 @@ pub(crate) fn link(props: &LinkProps) -> Html {
     let style = if props.styled { styled } else { unstyled };
 
     html! {
-        <AppLink route={route} classes={classes!(style)}>{children}</AppLink>
+        <AppLink to={route} classes={classes!(style)}>{children}</AppLink>
     }
 }

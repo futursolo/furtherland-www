@@ -1,5 +1,3 @@
-use std::convert::Infallible;
-
 use typed_builder::TypedBuilder;
 use web_sys::window;
 
@@ -13,10 +11,10 @@ pub struct Request {
 }
 
 impl Request {
-    pub(crate) fn to_fetch_request(
+    pub(crate) fn to_fetch_request<E: std::error::Error + 'static>(
         &self,
         client: &Client,
-    ) -> std::result::Result<web_sys::Request, Error<Infallible>> {
+    ) -> std::result::Result<web_sys::Request, Error<E>> {
         let url = if let Some(m) = client.base_url() {
             web_sys::Url::new_with_base(&self.url, m)
         } else {

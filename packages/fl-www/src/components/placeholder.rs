@@ -61,6 +61,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
                     animation-duration: 1.6s;
                     animation-iteration-count: infinite;
                     animation-timing-during: linear;
+                    transform: translateX(-100px);
 
 
                     @keyframes fl-keyframe-${keyframe_id} {

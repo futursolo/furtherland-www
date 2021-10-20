@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+use yew_router::prelude::BrowserRouter;
+
 mod client;
 mod error;
 mod helmet;
@@ -41,7 +43,9 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                                 <WorkerProvider>
                                     <ClientProvider>
                                         <HelmetProvider>
-                                            {children}
+                                            <BrowserRouter>
+                                                {children}
+                                            </BrowserRouter>
                                         </HelmetProvider>
                                     </ClientProvider>
                                 </WorkerProvider>
