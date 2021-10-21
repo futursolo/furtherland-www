@@ -1998,8 +1998,11 @@ dependencies = [
 name = "yew-query"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "futures",
  "js-sys",
+ "log",
+ "once_cell",
  "thiserror",
  "typed-builder",
  "wasm-bindgen",
