@@ -5,7 +5,7 @@ use crate::prelude::*;
 use utils::is_ssr;
 
 use wasm_bindgen::JsValue;
-use web_sys::{Element, HtmlLinkElement, HtmlMetaElement};
+use web_sys::{Element, HtmlLinkElement, HtmlMetaElement, HtmlScriptElement};
 
 use yew_side_effect::{SideEffect, SideEffectProvider, SideEffects};
 
@@ -13,6 +13,7 @@ use yew_side_effect::{SideEffect, SideEffectProvider, SideEffects};
 pub(crate) enum Tag {
     Meta(MetaProps),
     Link(MetaLinkProps),
+    Script(ScriptProps),
 }
 
 #[derive(Properties, Debug, Clone, PartialEq)]
@@ -28,6 +29,12 @@ pub(crate) struct MetaLinkProps {
     pub href: String,
 }
 
+#[derive(Properties, Debug, Clone, PartialEq)]
+pub(crate) struct ScriptProps {
+    pub content: String,
+    pub type_: String,
+}
+
 #[function_component(Meta)]
 pub(crate) fn meta(props: &MetaProps) -> Html {
     let value = Rc::new(Tag::Meta(props.to_owned()));
@@ -38,6 +45,13 @@ pub(crate) fn meta(props: &MetaProps) -> Html {
 #[function_component(MetaLink)]
 pub(crate) fn meta_link(props: &MetaLinkProps) -> Html {
     let value = Rc::new(Tag::Link(props.to_owned()));
+
+    html! {<SideEffect<Tag> value={value} />}
+}
+
+#[function_component(Script)]
+pub(crate) fn script(props: &ScriptProps) -> Html {
+    let value = Rc::new(Tag::Script(props.to_owned()));
 
     html! {<SideEffect<Tag> value={value} />}
 }
@@ -113,6 +127,27 @@ pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
                         element.set_href(&link.href);
                         element.set_type(&link.type_);
                         element.set_rel(&link.rel);
+
+                        if is_ssr() {
+                            element.set_attribute("data-helmet", "prerendered").unwrap();
+                        }
+
+                        let element: &Element = element.as_ref();
+
+                        document().head().unwrap().append_child(element).unwrap();
+
+                        new_elements.push(element.to_owned());
+                    }
+                    Tag::Script(ref script) => {
+                        let element = document()
+                            .create_element("script")
+                            .and_then(|m| JsValue::from(&m).dyn_into::<HtmlScriptElement>())
+                            .unwrap();
+
+                        element
+                            .set_text(&script.content)
+                            .expect_throw("failed to set script content");
+                        element.set_type(&script.type_);
 
                         if is_ssr() {
                             element.set_attribute("data-helmet", "prerendered").unwrap();

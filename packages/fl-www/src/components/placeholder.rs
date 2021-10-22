@@ -48,7 +48,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
             height = &props.height,
             width = &props.width,
             radius = radius,
-            bg_color = theme.colour.background.code,
+            bg_color = css_var!(theme.colour.background.code),
         )}>
             <div class={css!(
                 r#"

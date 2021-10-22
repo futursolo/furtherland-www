@@ -17,7 +17,7 @@ use client::ClientProvider;
 use error::ErrorProvider;
 pub(crate) use error::{use_error_state, ErrorKind};
 use helmet::HelmetProvider;
-pub(crate) use helmet::{Meta, MetaLink};
+pub(crate) use helmet::{Meta, MetaLink, Script};
 pub(crate) use i18n::use_language;
 use i18n::I18nProvider;
 pub(crate) use metadata::use_metadata;
@@ -35,25 +35,25 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
 
     html! {
         <ErrorProvider>
-            <RoutingListener>
-                <I18nProvider>
-                    <ThemeProvider>
-                        <MetaProvider>
-                            <TitleProvider>
-                                <WorkerProvider>
-                                    <ClientProvider>
-                                        <HelmetProvider>
-                                            <BrowserRouter>
-                                                {children}
-                                            </BrowserRouter>
-                                        </HelmetProvider>
-                                    </ClientProvider>
-                                </WorkerProvider>
-                            </TitleProvider>
-                        </MetaProvider>
-                    </ThemeProvider>
-                </I18nProvider>
-            </RoutingListener>
+            <BrowserRouter>
+                <RoutingListener>
+                    <I18nProvider>
+                        <HelmetProvider>
+                            <ThemeProvider>
+                                <MetaProvider>
+                                    <TitleProvider>
+                                        <WorkerProvider>
+                                            <ClientProvider>
+                                                    {children}
+                                            </ClientProvider>
+                                        </WorkerProvider>
+                                    </TitleProvider>
+                                </MetaProvider>
+                            </ThemeProvider>
+                        </HelmetProvider>
+                    </I18nProvider>
+                </RoutingListener>
+            </BrowserRouter>
         </ErrorProvider>
     }
 }

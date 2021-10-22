@@ -1,10 +1,9 @@
 use crate::prelude::*;
 use once_cell::sync::Lazy;
 
-use styling::Colour;
-use styling::ThemeKind;
+use styling::{Colour, ThemeKind};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct FontSizes {
     pub root: String,
     pub default: String,
@@ -97,7 +96,7 @@ impl Default for Breakpoints {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct Backgrounds {
     pub invalid: Colour,
     pub component: Colour,
@@ -105,31 +104,41 @@ pub struct Backgrounds {
     pub component_shadow: Colour,
 
     pub code: Colour,
+
+    pub header: Colour,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct TextColours {
     pub primary: Colour,
     pub secondary: Colour,
     pub hint: Colour,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct Colours {
     pub primary: Colour,
     pub primary_hover: Colour,
 
     pub invalid: Colour,
 
+    #[css_vars(nested)]
     pub background: Backgrounds,
+    #[css_vars(nested)]
     pub text: TextColours,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct Theme {
     pub font_family: String,
+
+    #[css_vars(nested)]
     pub font_size: FontSizes,
+
+    #[css_vars(nested)]
     pub colour: Colours,
+
+    #[css_vars(skipped)]
     pub breakpoint: Breakpoints,
 }
 
@@ -154,6 +163,7 @@ impl Theme {
                     component_shadow: Colour::from_rgb(150, 150, 150),
 
                     code: Colour::from_rgb(246, 248, 255),
+                    header: Colour::from_rgba(0, 0, 0, 0.3),
                 },
                 text: TextColours {
                     primary: Colour::from_rgb(0, 0, 0),
@@ -187,6 +197,7 @@ impl Theme {
                     component_shadow: Colour::from_rgb(35, 35, 35),
 
                     code: Colour::from_rgb(41, 48, 66),
+                    header: Colour::from_rgba(0, 0, 0, 0.5),
                 },
                 text: TextColours {
                     primary: Colour::from_rgb(255, 255, 255),

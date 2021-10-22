@@ -60,7 +60,7 @@ pub(crate) fn footer() -> Html {
                     r#"
                         color: ${colour};
                     "#,
-                    colour = theme.colour.text.secondary,
+                    colour = css_var!(theme.colour.text.secondary),
                 )}>
                     {fl!("footer-copy")}
                 </div>

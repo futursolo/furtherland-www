@@ -53,7 +53,7 @@ pub(crate) fn writing_info(props: &WritingInfoProps) -> Html {
                         color: ${colour};
                     "#,
                     font_size = &theme.font_size.default,
-                    colour = theme.colour.text.primary,
+                    colour = css_var!(theme.colour.text.primary),
                 )}>{fl!("my-name")}</div>
                 <div class={css!(
                     r#"
@@ -61,7 +61,7 @@ pub(crate) fn writing_info(props: &WritingInfoProps) -> Html {
                         color: ${colour};
                     "#,
                     font_size = &theme.font_size.secondary,
-                    colour = theme.colour.text.secondary,
+                    colour = css_var!(theme.colour.text.secondary),
                 )}>{date_str}</div>
             </div>
         </div>

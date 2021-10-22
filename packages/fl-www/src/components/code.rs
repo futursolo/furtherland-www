@@ -13,7 +13,7 @@ pub(crate) fn code(props: &ChildrenProps) -> Html {
                 padding-right:2px;
                 border-radius: 2px;
             "#,
-            bg_colour = theme.colour.background.code
+            bg_colour = css_var!(theme.colour.background.code)
         )}>
             {children}
         </code>

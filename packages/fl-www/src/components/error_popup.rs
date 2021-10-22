@@ -45,7 +45,7 @@ pub(crate) fn error_popup() -> Html {
                     align-items: center;
                     justify-content: center;
                 "#,
-                invalid_bg = theme.colour.invalid,
+                invalid_bg = css_var!(theme.colour.invalid),
             )}>
                 <AlertCircle size={20} />
                 <div class={css!(r#"width: 7px;"#)} />

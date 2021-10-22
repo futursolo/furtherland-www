@@ -49,6 +49,7 @@ features = [
   "MediaQueryList",
   "HtmlMetaElement",
   "HtmlLinkElement",
+  "HtmlScriptElement",
   "Storage",
   "CssStyleDeclaration",
   "Element",

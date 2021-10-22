@@ -29,7 +29,7 @@ pub(crate) fn comments() -> Html {
                         color: ${colour};
                         font-size: 2rem;
                     "#,
-                    colour = theme.colour.text.hint
+                    colour = css_var!(theme.colour.text.hint)
                 )}>{"Coming Soon..."}</div>
             </div>
         </div>

@@ -62,31 +62,6 @@ pub(crate) fn use_highlight(
 pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
     let theme = use_theme();
 
-    // use_effect_with_deps(
-    //     move |(content, language, theme_kind)| {
-    //         let theme_kind = *theme_kind;
-    //         let language = language.to_owned();
-    //         let content = content.to_owned();
-
-    //         if let Some(m) = language {
-    //             spawn_local(async move {
-    //                 let high_lighted = HighlightOutput::new(HighlightInput {
-    //                     content,
-    //                     language: m,
-    //                     theme_kind,
-    //                 })
-    //                 .await
-    //                 .map(|m| m.to_html());
-
-    //                 hl_html.set(high_lighted);
-    //             })
-    //         }
-
-    //         || {}
-    //     },
-    //     (props.content.clone(), props.language.clone(), theme.kind()),
-    // );
-
     let hl_html = use_highlight(props.content.clone(), props.language.clone(), theme.kind());
 
     let status = if props.language.is_some() && hl_html.is_none() {
@@ -107,7 +82,7 @@ pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
 
                 overflow-x: auto;
             "#,
-            bg_colour = theme.colour.background.code,
+            bg_colour = css_var!(theme.colour.background.code),
         )}>
             <code>
                 {children}

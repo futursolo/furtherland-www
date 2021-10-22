@@ -18,9 +18,10 @@ pub(crate) fn layout(props: &ChildrenProps) -> Html {
 
                 background-color: ${background_color};
                 color: ${font_color};
+                transition: background-color 0.3s, color 0.3s;
             "#,
-            background_color = theme.colour.background.default,
-            font_color = theme.colour.text.primary,
+            background_color = css_var!(theme.colour.background.default),
+            font_color = css_var!(theme.colour.text.primary),
         )}>{children}</div>
     }
 }

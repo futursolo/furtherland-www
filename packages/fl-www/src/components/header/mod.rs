@@ -13,7 +13,7 @@ use hooks::{use_event, use_viewport_height};
 use item::Item;
 use lang_toggle::LangToggle;
 use styling::Colour;
-use styling::{use_media_query, use_style, ThemeKind};
+use styling::{use_media_query, use_style};
 use theme_toggle::ThemeToggle;
 use utils::get_scroll_y;
 
@@ -119,13 +119,6 @@ pub(crate) fn header() -> Html {
 
     let header_ref: NodeRef = use_ref(NodeRef::default).borrow_mut().clone();
 
-    let background_colour = match theme.kind() {
-        ThemeKind::Light => Colour::from_rgba(0, 0, 0, 0.3),
-        ThemeKind::Dark => Colour::from_rgba(0, 0, 0, 0.5),
-    };
-
-    let primary_text_color = &theme.colour.text.primary;
-
     let nav_pos = use_equal_state(|| NavPosition::InPlace);
 
     let header_is_home = use_equal_state(|| false);
@@ -181,13 +174,6 @@ pub(crate) fn header() -> Html {
     use_event(&window(), "orientationchange", move |_| {
         sync_header_height_clone()
     });
-
-    // let bg_url = match browser {
-    //     BrowserKind::Firefox | BrowserKind::Chrome | BrowserKind::Safari => {
-    //         "/assets/images/background.webp"
-    //     }
-    //     _ => "/assets/images/background.jpg",
-    // };
 
     use_effect_with_deps(
         move |_| {
@@ -274,8 +260,8 @@ pub(crate) fn header() -> Html {
             }
         "#,
         bg_colour_transparent = theme.colour.background.component.with_opacity(0.0),
-        bg_colour = theme.colour.background.component,
-        text_colour = primary_text_color,
+        bg_colour = css_var!(theme.colour.background.component),
+        text_colour = css_var!(theme.colour.text.primary),
     );
 
     let mut header_classes = vec![header_style.get_class_name().to_owned()];
@@ -322,7 +308,7 @@ pub(crate) fn header() -> Html {
                     position: relative;
                     z-index: 10;
                 "#,
-                bg_colour = background_colour
+                bg_colour = css_var!(theme.colour.background.header)
             )}>
                 <div class={css!(
                     r#"

@@ -30,8 +30,8 @@ pub(crate) fn hyperlink(props: &HyperlinkProps) -> Html {
                 text-decoration: underline;
             }
         "#,
-        colour = theme.colour.primary,
-        hover_colour = theme.colour.primary_hover,
+        colour = css_var!(theme.colour.primary),
+        hover_colour = css_var!(theme.colour.primary_hover),
     );
 
     let unstyled = use_style!(
@@ -39,7 +39,11 @@ pub(crate) fn hyperlink(props: &HyperlinkProps) -> Html {
             text-decoration: none;
             color: ${colour};
         "#,
-        colour = props.colour.as_ref().unwrap_or(&theme.colour.text.primary)
+        colour = props
+            .colour
+            .as_ref()
+            .map(|m| m.to_string())
+            .unwrap_or(css_var!(theme.colour.text.primary))
     );
 
     let style = if props.styled { styled } else { unstyled };

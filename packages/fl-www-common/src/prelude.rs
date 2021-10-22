@@ -1,4 +1,5 @@
 pub use fl_www_core::prelude::*;
+pub use fl_www_macros::*;
 pub use std::borrow::Cow;
 
 pub use gloo;

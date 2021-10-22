@@ -1,8 +1,10 @@
 use std::ops::Deref;
 
+use super::Script;
 use crate::prelude::*;
 use hooks::use_event;
-use styling::{use_media_query, Global, Theme, ThemeKind};
+use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
+// use utils::is_ssr;
 
 static STORAGE_KEY: &str = "fl_theme";
 
@@ -83,18 +85,35 @@ fn global_style() -> Html {
             transition: background-color 0.3s, color 0.3s;
         }
     "#,
-        background_color = theme.colour.background.default,
-        font_color = theme.colour.text.primary,
+        background_color = css_var!(theme.colour.background.default),
+        font_color = css_var!(theme.colour.text.primary),
         font_family = &theme.font_family,
         font_size = &theme.font_size.root,
     );
 
     html! {
         <>
+            <Global css={Theme::light().to_css_vars_for("html[data-theme='light']")} />
+            <Global css={Theme::dark().to_css_vars_for("html[data-theme='dark']")} />
             <Global css={style} />
         </>
     }
 }
+
+static THEME_DETECT_SCRIPT: &str = r#"
+(() => {
+    let theme = localStorage.getItem("fl_theme");
+
+    if (theme === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+    } else if (theme === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+        localStorage.removeItem("fl_theme");
+        document.documentElement.removeAttribute("data-theme");
+    }
+})();
+"#;
 
 #[function_component(ThemeProvider)]
 pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
@@ -115,6 +134,11 @@ pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
 
             theme_kind.set(next_theme_kind);
 
+            document()
+                .document_element()
+                .expect_throw("failed to get html element.")
+                .set_attribute("data-theme", next_theme_kind.as_str())
+                .expect_throw("failed to set theme.");
             || {}
         },
         (theme_kind.clone(), prefer_dark_theme),
@@ -127,6 +151,7 @@ pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
     html! {
         <ContextProvider<ThemeState> context={state}>
             <GlobalStyle />
+            <Script content={THEME_DETECT_SCRIPT.to_string()} type_="text/javascript" />
             {children}
         </ContextProvider<ThemeState>>
     }
