@@ -22,7 +22,21 @@ impl Default for FontSizes {
         }
     }
 }
-
+// css_var!(theme.colour.primary) -> var(--stylist-[entropy]-theme-colour-primary, #123456)
+//
+// #[derive(CssVariables)]
+// struct Theme {
+//     #[css_vars(nested)]
+//     colour: Colours,
+// }
+//
+// trait CssVariables {
+//     fn entropy() -> &'static str;
+//     fn to_css_vars_nested_with_prefix()
+//     fn to_css_vars_for(selector: &str) -> StyleSource<'static>;
+// }
+//
+// <Global style={theme.to_css_vars_for("html")} />
 #[derive(Debug, Clone, PartialEq)]
 pub struct Breakpoint {
     width: u64,
