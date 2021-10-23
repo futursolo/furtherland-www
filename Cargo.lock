@@ -412,6 +412,7 @@ dependencies = [
 name = "fl-www-agents"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "console_log",
  "fl-www-common",
  "fl-www-core",

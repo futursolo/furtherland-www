@@ -5,6 +5,7 @@ use yew_agent::Threaded;
 
 fn main() {
     use log::Level;
+    console_error_panic_hook::set_once();
 
     #[cfg(debug_assertions)]
     console_log::init_with_level(Level::Debug).expect("Failed to initialise Log!");
