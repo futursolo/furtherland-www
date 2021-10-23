@@ -20,7 +20,7 @@ pub(crate) struct WritingProps {
 pub(crate) fn writing(props: &WritingProps) -> Html {
     let lang = use_language();
     let metadata = use_metadata();
-    let error = use_error_state();
+    let error = use_atom::<ErrorState>();
 
     let writing_metadata = metadata.as_ref().and_then(|m| {
         m.writings()
@@ -99,7 +99,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 }
             }
 
-            error.set(ErrorKind::Server);
+            error.set(ErrorKind::Server.into());
 
             return html! {
                 <>

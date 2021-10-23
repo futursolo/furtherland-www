@@ -20,8 +20,8 @@ pub(crate) use crate::misc;
 
 pub(crate) use crate::common::ChildrenProps;
 
-pub(crate) use crate::contexts::{
-    use_app_route, use_error_state, use_language, use_metadata, use_theme, ErrorKind,
-};
+pub(crate) use crate::atoms::{ErrorKind, ErrorState};
+pub(crate) use crate::contexts::{use_app_route, use_language, use_metadata, use_theme};
+pub(crate) use bounce::use_atom;
 
 pub(crate) use styling::styled_component;

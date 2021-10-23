@@ -8,6 +8,8 @@ fl-www-core = { path = "../fl-www-core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 
+bounce = { path = "../bounce" }
+
 yew-query = { path = "../yew-query" }
 
 wasm-bindgen = "0.2.78"

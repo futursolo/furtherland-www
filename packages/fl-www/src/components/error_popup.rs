@@ -4,7 +4,7 @@ use crate::prelude::*;
 
 #[styled_component(ErrorPopup)]
 pub(crate) fn error_popup() -> Html {
-    let error = use_error_state();
+    let error = use_atom::<ErrorState>();
     use_language();
     let theme = use_theme();
 

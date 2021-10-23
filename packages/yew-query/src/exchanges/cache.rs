@@ -16,6 +16,11 @@ type RequestMap = HashMap<Request, Shared<LocalBoxFuture<'static, InternalResult
 #[derive(Debug, Default)]
 pub struct CacheExchange {
     requests: Rc<Mutex<RequestMap>>,
+    completed_requests: Rc<Mutex<HashMap<Request, BaseResponse>>>,
+}
+
+impl CacheExchange {
+    async fn update_persisted_cache(&self, _request: Request, _response: BaseResponse) {}
 }
 
 #[async_trait(?Send)]
@@ -40,13 +45,17 @@ impl Exchange for CacheExchange {
 
                 // Only cache Get requests.
                 if request.method() == Method::Get {
-                    requests.insert(request, m.clone());
+                    requests.insert(request.clone(), m.clone());
                 }
 
                 m
             }
         };
 
-        fur.await
+        let resp = fur.await?;
+
+        self.update_persisted_cache(request, resp.clone()).await;
+
+        Ok(resp)
     }
 }
