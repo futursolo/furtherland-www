@@ -1,5 +1,9 @@
 use std::ops::Deref;
 
+use chrono::{DateTime, Duration, NaiveDateTime, Utc};
+use gloo::storage::{LocalStorage, Storage};
+use serde::{Deserialize, Serialize};
+
 use super::Script;
 use crate::prelude::*;
 use hooks::use_event;
@@ -8,33 +12,45 @@ use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
 
 static STORAGE_KEY: &str = "fl_theme";
 
-fn get_theme_kind() -> ThemeKind {
-    if let Some(stor) = window().local_storage().ok().and_then(|m| m) {
-        if let Some(kind) = stor
-            .get_item(STORAGE_KEY)
-            .ok()
-            .and_then(|m| m)
-            .and_then(|m| m.parse::<ThemeKind>().ok())
-        {
-            return kind;
-        }
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct PersistedThemeState {
+    kind: ThemeKind,
+    last_updated: i64,
+}
 
-        stor.remove_item(STORAGE_KEY)
-            .expect("Failed to remove item.");
+impl From<ThemeKind> for PersistedThemeState {
+    fn from(kind: ThemeKind) -> Self {
+        Self {
+            kind,
+            last_updated: Utc::now().timestamp(),
+        }
+    }
+}
+
+fn get_theme_kind() -> ThemeKind {
+    let persisted_state: Option<PersistedThemeState> = LocalStorage::get(STORAGE_KEY).ok();
+
+    if let Some(m) = persisted_state {
+        let updated =
+            DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(m.last_updated, 0), Utc);
+
+        // theme selection is persisted for 6 hours.
+        if Utc::now() - updated <= Duration::hours(6) {
+            return m.kind;
+        }
     }
 
+    LocalStorage::delete(STORAGE_KEY);
     ThemeKind::current()
 }
 
 fn set_theme_kind(kind: Option<ThemeKind>) {
-    if let Some(stor) = window().local_storage().ok().and_then(|m| m) {
-        if let Some(ref m) = kind {
-            stor.set_item(STORAGE_KEY, m.as_str())
-                .expect("Failed to set item.");
-        } else {
-            stor.remove_item(STORAGE_KEY)
-                .expect("Failed to remove item.");
+    match kind {
+        Some(m) => {
+            let persisted_state = PersistedThemeState::from(m);
+            LocalStorage::set(STORAGE_KEY, persisted_state).expect_throw("failed to set theme.");
         }
+        None => LocalStorage::delete(STORAGE_KEY),
     }
 }
 
@@ -104,13 +120,34 @@ static THEME_DETECT_SCRIPT: &str = r#"
 (() => {
     let theme = localStorage.getItem("fl_theme");
 
-    if (theme === "light") {
-        document.documentElement.setAttribute("data-theme", "light");
-    } else if (theme === "dark") {
+    if (theme) {
+        try {
+            let themeState = JSON.parse(theme);
+
+            if ((Date.now() / 1000) - themeState.last_updated <= 6 * 60 * 60) {
+                let themeKind = themeState.kind;
+
+                if (themeKind === "light") {
+                    document.documentElement.setAttribute("data-theme", "light");
+
+                    return;
+                }
+                if (themeKind === "dark") {
+                    document.documentElement.setAttribute("data-theme", "dark");
+
+                    return;
+                }
+
+            }
+        } catch (_e) {}
+    }
+
+    localStorage.removeItem("fl_theme");
+
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         document.documentElement.setAttribute("data-theme", "dark");
     } else {
-        localStorage.removeItem("fl_theme");
-        document.documentElement.removeAttribute("data-theme");
+        document.documentElement.setAttribute("data-theme", "light");
     }
 })();
 "#;

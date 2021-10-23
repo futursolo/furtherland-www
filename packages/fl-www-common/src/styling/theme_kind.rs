@@ -7,7 +7,9 @@ use crate::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Copy)]
 pub enum ThemeKind {
+    #[serde(rename = "dark")]
     Dark,
+    #[serde(rename = "light")]
     Light,
 }
 
