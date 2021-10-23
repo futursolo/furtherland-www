@@ -95,7 +95,7 @@ impl Feed {
             .entries(zh_entries)
             .link(
                 LinkBuilder::default()
-                    .href(format!("https://www.futures.moe/zh/"))
+                    .href("https://www.futures.moe/zh/")
                     .hreflang(Language::Chinese.as_str().to_owned())
                     .mime_type(Some("text/html".to_owned()))
                     .rel("alternate")
@@ -111,7 +111,7 @@ impl Feed {
                     .version(Some(env!("CARGO_PKG_VERSION").to_string()))
                     .build(),
             )
-            .updated(latest_datetime.clone())
+            .updated(latest_datetime)
             .build();
 
         let en_chn = ChannelBuilder::default()
@@ -119,7 +119,7 @@ impl Feed {
             .entries(en_entries)
             .link(
                 LinkBuilder::default()
-                    .href(format!("https://www.futures.moe/en/"))
+                    .href("https://www.futures.moe/en/")
                     .hreflang(Language::Chinese.as_str().to_owned())
                     .mime_type(Some("text/html".to_owned()))
                     .rel("alternate")
