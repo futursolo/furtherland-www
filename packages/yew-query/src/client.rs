@@ -47,8 +47,6 @@ impl Client {
     }
 
     pub(crate) async fn fetch(self: Rc<Self>, request: Request) -> InternalResult<BaseResponse> {
-        log::debug!("{:?}", self.exchanges);
-
         let mut fur = Box::new(
             |_req: Request| -> LocalBoxFuture<'static, InternalResult<BaseResponse>> {
                 Box::pin(async {

@@ -44,7 +44,7 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                                     <TitleProvider>
                                         <WorkerProvider>
                                             <ClientProvider>
-                                                    {children}
+                                                {children}
                                             </ClientProvider>
                                         </WorkerProvider>
                                     </TitleProvider>
