@@ -119,9 +119,9 @@ pub(crate) fn header() -> Html {
 
     let header_ref: NodeRef = use_ref(NodeRef::default).borrow_mut().clone();
 
-    let nav_pos = use_equal_state(|| NavPosition::InPlace);
+    let nav_pos = use_state_eq(|| NavPosition::InPlace);
 
-    let header_is_home = use_equal_state(|| false);
+    let header_is_home = use_state_eq(|| false);
 
     let nav_pos_clone = nav_pos.clone();
     let header_ref_clone = header_ref.clone();
@@ -180,7 +180,7 @@ pub(crate) fn header() -> Html {
             sync_header_height();
             || {}
         },
-        *header_is_home.borrow(),
+        *header_is_home,
     );
 
     let header_style = use_style!(
@@ -267,7 +267,7 @@ pub(crate) fn header() -> Html {
     let mut header_classes = vec![header_style.get_class_name().to_owned()];
     let mut nav_classes = vec![nav_style.get_class_name().to_owned()];
 
-    let nav_pos = *nav_pos.borrow();
+    let nav_pos = *nav_pos;
 
     if nav_pos == NavPosition::Top {
         header_classes.push("fl-header-no-shadow".to_string());

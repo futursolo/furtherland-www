@@ -13,7 +13,7 @@ pub(crate) struct MarkdownProps {
 
 #[styled_component(Markdown)]
 pub(crate) fn markdown(props: &MarkdownProps) -> Html {
-    let md_html = use_equal_state(|| -> Option<Html> { None });
+    let md_html = use_state_eq(|| -> Option<Html> { None });
 
     let md_html_clone = md_html.clone();
     let worker = use_state(move || {
@@ -36,7 +36,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
         props.markdown_text.clone(),
     );
 
-    let children = match (*md_html.borrow()).clone() {
+    let children = match (*md_html).clone() {
         Some(m) => m,
         None => {
             return html! {

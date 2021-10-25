@@ -56,8 +56,21 @@ pub(crate) fn script(props: &ScriptProps) -> Html {
     html! {<SideEffect<Tag> value={value} />}
 }
 
+pub(crate) fn create_element<T>(tag_name: &str) -> T
+where
+    T: AsRef<Element> + JsCast,
+{
+    let element = document().create_element(tag_name).unwrap_throw();
+
+    if is_ssr() {
+        element.set_attribute("data-helmet", "prerendered").unwrap();
+    }
+
+    JsValue::from(&element).dyn_into::<T>().unwrap_throw()
+}
+
 #[function_component(HelmetProvider)]
-pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
+pub(crate) fn helmet_provider(props: &ChildrenProps) -> Html {
     let children = props.children.clone();
 
     let elements = use_state(|| -> RefCell<Vec<Element>> { RefCell::new(Vec::new()) });
@@ -95,68 +108,44 @@ pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
                 }
             }
 
-            let mut new_elements = Vec::new();
+            let mut new_elements: Vec<Element> = Vec::new();
 
             for tag in tags.iter() {
                 match **tag {
                     Tag::Meta(ref meta) => {
-                        let element = document()
-                            .create_element("meta")
-                            .and_then(|m| JsValue::from(&m).dyn_into::<HtmlMetaElement>())
-                            .unwrap();
+                        let element = create_element::<HtmlMetaElement>("meta");
 
                         element.set_name(&meta.name);
                         element.set_content(&meta.content);
 
-                        if is_ssr() {
-                            element.set_attribute("data-helmet", "prerendered").unwrap();
-                        }
-
                         let element: &Element = element.as_ref();
 
                         document().head().unwrap().append_child(element).unwrap();
-
                         new_elements.push(element.to_owned());
                     }
                     Tag::Link(ref link) => {
-                        let element = document()
-                            .create_element("link")
-                            .and_then(|m| JsValue::from(&m).dyn_into::<HtmlLinkElement>())
-                            .unwrap();
+                        let element = create_element::<HtmlLinkElement>("link");
 
                         element.set_href(&link.href);
                         element.set_type(&link.type_);
                         element.set_rel(&link.rel);
 
-                        if is_ssr() {
-                            element.set_attribute("data-helmet", "prerendered").unwrap();
-                        }
-
                         let element: &Element = element.as_ref();
 
                         document().head().unwrap().append_child(element).unwrap();
-
                         new_elements.push(element.to_owned());
                     }
                     Tag::Script(ref script) => {
-                        let element = document()
-                            .create_element("script")
-                            .and_then(|m| JsValue::from(&m).dyn_into::<HtmlScriptElement>())
-                            .unwrap();
+                        let element = create_element::<HtmlScriptElement>("script");
 
                         element
                             .set_text(&script.content)
                             .expect_throw("failed to set script content");
                         element.set_type(&script.type_);
 
-                        if is_ssr() {
-                            element.set_attribute("data-helmet", "prerendered").unwrap();
-                        }
-
                         let element: &Element = element.as_ref();
 
                         document().head().unwrap().append_child(element).unwrap();
-
                         new_elements.push(element.to_owned());
                     }
                 }

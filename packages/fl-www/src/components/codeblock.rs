@@ -18,7 +18,7 @@ pub(crate) fn use_highlight(
     language: Option<String>,
     theme_kind: ThemeKind,
 ) -> Option<Html> {
-    let hl_html = use_equal_state(|| -> Option<Html> { None });
+    let hl_html = use_state_eq(|| -> Option<Html> { None });
 
     let hl_html_clone = hl_html.clone();
     let worker = use_state(move || {
@@ -55,7 +55,7 @@ pub(crate) fn use_highlight(
         (content, language, theme_kind),
     );
 
-    (*hl_html.borrow()).clone()
+    (*hl_html).clone()
 }
 
 #[styled_component(CodeBlock)]
