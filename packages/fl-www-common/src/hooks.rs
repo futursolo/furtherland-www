@@ -56,105 +56,9 @@ pub fn use_viewport_height() -> u64 {
 
 type DispatchFn<T> = Rc<dyn Fn(<T as Reduce>::Action)>;
 
-struct UseReducerRef<T>
-where
-    T: Reduce + 'static,
-{
-    current_state: Rc<RefCell<Rc<T>>>,
-
-    // To be replaced with OnceCell once it becomes available in std.
-    dispatch: RefCell<Option<DispatchFn<T>>>,
-}
-
-pub struct UseReducerRefHandle<T>
-where
-    T: Reduce,
-{
-    value: Rc<RefCell<Rc<T>>>,
-    dispatch: DispatchFn<T>,
-}
-
-impl<T> Clone for UseReducerRefHandle<T>
-where
-    T: Reduce,
-{
-    fn clone(&self) -> Self {
-        Self {
-            value: Rc::clone(&self.value),
-            dispatch: Rc::clone(&self.dispatch),
-        }
-    }
-}
-
-impl<T> fmt::Debug for UseReducerRefHandle<T>
-where
-    T: Reduce,
-{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("UseReducerRefHandle").finish()
-    }
-}
-
-impl<T> UseReducerRefHandle<T>
-where
-    T: Reduce,
-{
-    /// Calls the dispatch with the given value
-    pub fn dispatch(&self, value: T::Action) {
-        (self.dispatch)(value)
-    }
-
-    pub fn get(&self) -> Rc<T> {
-        self.value.borrow().clone()
-    }
-}
-
 pub trait Reduce {
     type Action;
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self>;
-}
-
-pub fn use_reducer_ref<T, F>(initial_fn: F) -> UseReducerRefHandle<T>
-where
-    T: Reduce + 'static,
-    F: FnOnce() -> T,
-{
-    use_hook(
-        move || UseReducerRef {
-            current_state: Rc::new(RefCell::new(Rc::new(initial_fn()))),
-            dispatch: RefCell::default(),
-        },
-        |s, updater| {
-            let mut dispatch_ref = s.dispatch.borrow_mut();
-
-            // Create dispatch once.
-            let dispatch = match *dispatch_ref {
-                Some(ref m) => (*m).to_owned(),
-                None => {
-                    let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
-                        updater.callback(move |state: &mut UseReducerRef<T>| {
-                            let mut current_state = state.current_state.borrow_mut();
-
-                            let next_state = current_state.clone().reduce(action);
-                            *current_state = next_state;
-
-                            true
-                        });
-                    });
-
-                    *dispatch_ref = Some(dispatch.clone());
-
-                    dispatch
-                }
-            };
-
-            UseReducerRefHandle {
-                value: Rc::clone(&s.current_state),
-                dispatch,
-            }
-        },
-        |_| {},
-    )
 }
 
 struct UseReducer<T>
@@ -228,10 +132,11 @@ where
     }
 }
 
-pub fn use_reducer<T, F>(initial_fn: F) -> UseReducerHandle<T>
+fn use_reducer_base<T, F, R>(initial_fn: F, should_render_fn: R) -> UseReducerHandle<T>
 where
     T: Reduce + 'static,
     F: FnOnce() -> T,
+    R: (Fn(&T, &T) -> bool) + 'static,
 {
     use_hook(
         move || UseReducer {
@@ -245,94 +150,14 @@ where
             let dispatch = match *dispatch_ref {
                 Some(ref m) => (*m).to_owned(),
                 None => {
+                    let should_render_fn = Rc::new(should_render_fn);
+
                     let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
-                        updater.callback(move |state: &mut UseReducer<T>| {
-                            state.current_state = state.current_state.clone().reduce(action);
+                        let should_render_fn = should_render_fn.clone();
 
-                            true
-                        });
-                    });
-
-                    *dispatch_ref = Some(dispatch.clone());
-
-                    dispatch
-                }
-            };
-
-            UseReducerHandle {
-                value: Rc::clone(&s.current_state),
-                dispatch,
-            }
-        },
-        |_| {},
-    )
-}
-
-pub fn use_reducer_ref_eq<T, F>(initial_fn: F) -> UseReducerRefHandle<T>
-where
-    T: Reduce + PartialEq + 'static,
-    F: FnOnce() -> T,
-{
-    use_hook(
-        move || UseReducerRef {
-            current_state: Rc::new(RefCell::new(Rc::new(initial_fn()))),
-            dispatch: RefCell::default(),
-        },
-        |s, updater| {
-            let mut dispatch_ref = s.dispatch.borrow_mut();
-
-            // Create dispatch once.
-            let dispatch = match *dispatch_ref {
-                Some(ref m) => (*m).to_owned(),
-                None => {
-                    let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
-                        updater.callback(move |state: &mut UseReducerRef<T>| {
-                            let mut current_state = state.current_state.borrow_mut();
-
-                            let next_state = current_state.clone().reduce(action);
-                            let should_render = next_state != *current_state;
-                            *current_state = next_state;
-
-                            should_render
-                        });
-                    });
-
-                    *dispatch_ref = Some(dispatch.clone());
-
-                    dispatch
-                }
-            };
-
-            UseReducerRefHandle {
-                value: Rc::clone(&s.current_state),
-                dispatch,
-            }
-        },
-        |_| {},
-    )
-}
-
-pub fn use_reducer_eq<T, F>(initial_fn: F) -> UseReducerHandle<T>
-where
-    T: Reduce + PartialEq + 'static,
-    F: FnOnce() -> T,
-{
-    use_hook(
-        move || UseReducer {
-            current_state: Rc::new(initial_fn()),
-            dispatch: RefCell::default(),
-        },
-        |s, updater| {
-            let mut dispatch_ref = s.dispatch.borrow_mut();
-
-            // Create dispatch once.
-            let dispatch = match *dispatch_ref {
-                Some(ref m) => (*m).to_owned(),
-                None => {
-                    let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
                         updater.callback(move |state: &mut UseReducer<T>| {
                             let next_state = state.current_state.clone().reduce(action);
-                            let should_render = next_state != state.current_state;
+                            let should_render = should_render_fn(&next_state, &state.current_state);
                             state.current_state = next_state;
 
                             should_render
@@ -354,6 +179,104 @@ where
     )
 }
 
+pub fn use_reducer<T, F>(initial_fn: F) -> UseReducerHandle<T>
+where
+    T: Reduce + 'static,
+    F: FnOnce() -> T,
+{
+    use_reducer_base(initial_fn, |_, _| true)
+}
+
+// pub fn use_reducer<T, F>(initial_fn: F) -> UseReducerHandle<T>
+// where
+//     T: Reduce + 'static,
+//     F: FnOnce() -> T,
+// {
+//     use_hook(
+//         move || UseReducer {
+//             current_state: Rc::new(initial_fn()),
+//             dispatch: RefCell::default(),
+//         },
+//         |s, updater| {
+//             let mut dispatch_ref = s.dispatch.borrow_mut();
+
+//             // Create dispatch once.
+//             let dispatch = match *dispatch_ref {
+//                 Some(ref m) => (*m).to_owned(),
+//                 None => {
+//                     let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
+//                         updater.callback(move |state: &mut UseReducer<T>| {
+//                             state.current_state = state.current_state.clone().reduce(action);
+
+//                             true
+//                         });
+//                     });
+
+//                     *dispatch_ref = Some(dispatch.clone());
+
+//                     dispatch
+//                 }
+//             };
+
+//             UseReducerHandle {
+//                 value: Rc::clone(&s.current_state),
+//                 dispatch,
+//             }
+//         },
+//         |_| {},
+//     )
+// }
+
+pub fn use_reducer_eq<T, F>(initial_fn: F) -> UseReducerHandle<T>
+where
+    T: Reduce + PartialEq + 'static,
+    F: FnOnce() -> T,
+{
+    use_reducer_base(initial_fn, T::ne)
+}
+
+// pub fn use_reducer_eq<T, F>(initial_fn: F) -> UseReducerHandle<T>
+// where
+//     T: Reduce + PartialEq + 'static,
+//     F: FnOnce() -> T,
+// {
+//     use_hook(
+//         move || UseReducer {
+//             current_state: Rc::new(initial_fn()),
+//             dispatch: RefCell::default(),
+//         },
+//         |s, updater| {
+//             let mut dispatch_ref = s.dispatch.borrow_mut();
+
+//             // Create dispatch once.
+//             let dispatch = match *dispatch_ref {
+//                 Some(ref m) => (*m).to_owned(),
+//                 None => {
+//                     let dispatch: Rc<dyn Fn(T::Action)> = Rc::new(move |action: T::Action| {
+//                         updater.callback(move |state: &mut UseReducer<T>| {
+//                             let next_state = state.current_state.clone().reduce(action);
+//                             let should_render = next_state != state.current_state;
+//                             state.current_state = next_state;
+
+//                             should_render
+//                         });
+//                     });
+
+//                     *dispatch_ref = Some(dispatch.clone());
+
+//                     dispatch
+//                 }
+//             };
+
+//             UseReducerHandle {
+//                 value: Rc::clone(&s.current_state),
+//                 dispatch,
+//             }
+//         },
+//         |_| {},
+//     )
+// }
+
 pub struct UseStateReducer<T> {
     value: Rc<T>,
 }
@@ -374,46 +297,6 @@ where
     fn eq(&self, rhs: &Self) -> bool {
         self.value == rhs.value
     }
-}
-
-pub struct UseStateRefHandle<T> {
-    inner: UseReducerRefHandle<UseStateReducer<T>>,
-}
-
-impl<T> Clone for UseStateRefHandle<T> {
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-        }
-    }
-}
-
-impl<T> fmt::Debug for UseStateRefHandle<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("UseStateRefHandle").finish()
-    }
-}
-
-impl<T> UseStateRefHandle<T> {
-    pub fn set(&self, value: T) {
-        self.inner.dispatch(value)
-    }
-
-    pub fn get(&self) -> Rc<T> {
-        self.inner.get().value.clone()
-    }
-}
-
-pub fn use_state_ref<T, F>(init_fn: F) -> UseStateRefHandle<T>
-where
-    T: 'static,
-    F: FnOnce() -> T,
-{
-    let handle = use_reducer_ref(move || UseStateReducer {
-        value: Rc::new(init_fn()),
-    });
-
-    UseStateRefHandle { inner: handle }
 }
 
 pub struct UseStateHandle<T> {
@@ -471,18 +354,6 @@ where
     });
 
     UseStateHandle { inner: handle }
-}
-
-pub fn use_state_ref_eq<T, F>(init_fn: F) -> UseStateRefHandle<T>
-where
-    T: PartialEq + 'static,
-    F: FnOnce() -> T,
-{
-    let handle = use_reducer_ref_eq(move || UseStateReducer {
-        value: Rc::new(init_fn()),
-    });
-
-    UseStateRefHandle { inner: handle }
 }
 
 pub fn use_state_eq<T, F>(init_fn: F) -> UseStateHandle<T>

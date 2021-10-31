@@ -1,10 +1,8 @@
-use std::cell::RefCell;
-
 use crate::prelude::*;
 use agents::highlight::HighlightInput;
+use agents::prelude::*;
 use misc::ToHtml;
 use styling::ThemeKind;
-use yew_agent::Bridged;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeBlockProps {
@@ -21,16 +19,12 @@ pub(crate) fn use_highlight(
     let hl_html = use_state_eq(|| -> Option<Html> { None });
 
     let hl_html_clone = hl_html.clone();
-    let worker = use_state(move || {
-        RefCell::new(agents::highlight::Worker::bridge(Callback::from(
-            move |m| {
-                let agents::highlight::Response::Highlighted(m) = m;
+    let worker: UseBridgeHandle<agents::highlight::Worker> = use_bridge(move |m| {
+        let agents::highlight::Response::Highlighted(m) = m;
 
-                if let Some(m) = m.map(|m| m.to_html()) {
-                    hl_html_clone.set(Some(m));
-                }
-            },
-        )))
+        if let Some(m) = m.map(|m| m.to_html()) {
+            hl_html_clone.set(Some(m));
+        }
     });
 
     use_effect_with_deps(
@@ -45,9 +39,7 @@ pub(crate) fn use_highlight(
                     theme_kind,
                 };
 
-                worker
-                    .borrow_mut()
-                    .send(agents::highlight::Request::Highlight(input));
+                worker.send(agents::highlight::Request::Highlight(input));
             }
 
             || {}
