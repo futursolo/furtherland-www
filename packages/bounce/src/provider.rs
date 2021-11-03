@@ -9,7 +9,7 @@ use yew::prelude::*;
 use crate::slice::Slice;
 use crate::utils::Id;
 
-pub(crate) type AtomMap = Map<dyn CloneAny>;
+pub(crate) type SliceMap = Map<dyn CloneAny>;
 type ListenerVec = Rc<RefCell<Vec<Weak<Callback<BounceRootState>>>>>;
 
 #[derive(Properties, Debug, PartialEq)]
@@ -25,7 +25,7 @@ pub struct SliceListener {
 #[derive(Clone)]
 pub(crate) struct BounceRootState {
     id: Id,
-    atoms: Rc<RefCell<AtomMap>>,
+    slices: Rc<RefCell<SliceMap>>,
     listeners: ListenerVec,
 }
 
@@ -34,9 +34,9 @@ impl BounceRootState {
     where
         T: Slice + 'static,
     {
-        let mut atoms = self.atoms.borrow_mut();
+        let mut atoms = self.slices.borrow_mut();
         let prev_val = atoms.remove::<Rc<T>>().unwrap_or_default();
-        let next_val = Rc::new(prev_val.reduce(val));
+        let next_val = prev_val.clone().reduce(val);
 
         let should_notify = prev_val != next_val;
 
@@ -62,7 +62,7 @@ impl BounceRootState {
     where
         T: Slice + 'static,
     {
-        let mut atoms = self.atoms.borrow_mut();
+        let mut atoms = self.slices.borrow_mut();
         if let Some(m) = atoms.get::<Rc<T>>().cloned() {
             m
         } else {
@@ -119,7 +119,7 @@ pub fn bounce_root(props: &BounceRootProps) -> Html {
 
     let root_state = use_state(|| BounceRootState {
         id: Id::new(),
-        atoms: Rc::default(),
+        slices: Rc::default(),
         listeners: Rc::default(),
     });
 

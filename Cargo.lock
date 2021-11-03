@@ -141,6 +141,7 @@ name = "bounce"
 version = "0.1.0"
 dependencies = [
  "anymap2",
+ "fl-www-macros",
  "once_cell",
  "wasm-bindgen",
  "wasm-bindgen-futures",

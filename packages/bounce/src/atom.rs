@@ -1,6 +1,10 @@
+use std::rc::Rc;
+
 use crate::slice::Slice;
 
-pub trait Atom: PartialEq + Default + Clone {}
+pub use fl_www_macros::Atom;
+
+pub trait Atom: PartialEq + Default {}
 
 impl<T> Slice for T
 where
@@ -8,7 +12,7 @@ where
 {
     type Action = T;
 
-    fn reduce(&self, action: Self::Action) -> Self {
-        action
+    fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+        action.into()
     }
 }

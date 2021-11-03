@@ -17,8 +17,4 @@ impl Id {
     pub fn new() -> Self {
         Self::default()
     }
-
-    // pub fn to_u64(&self) -> u64 {
-    //     self.0
-    // }
 }

@@ -6,7 +6,7 @@ pub(crate) enum ErrorKind {
     // Unknown,
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default, Atom)]
 pub(crate) struct ErrorState {
     inner: Option<ErrorKind>,
 }
@@ -21,5 +21,3 @@ impl From<ErrorKind> for ErrorState {
         Self { inner: Some(m) }
     }
 }
-
-impl Atom for ErrorState {}
