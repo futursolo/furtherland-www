@@ -11,11 +11,11 @@ repository = "https://github.com/yewstack/yew"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.30"
+proc-macro2 = "1.0.32"
 quote = "1.0.10"
-syn = { version = "1.0.80", features = ["full","extra-traits"] }
+syn = { version = "1.0.81", features = ["full","extra-traits"] }
 
 [dev-dependencies]
 rustversion = "1.0.5"
-trybuild = "1.0.50"
+trybuild = "1.0.52"
 yew-router = { path = "../yew-router" }

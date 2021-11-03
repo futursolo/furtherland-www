@@ -20,6 +20,7 @@ pub(crate) use crate::misc;
 
 pub(crate) use crate::common::ChildrenProps;
 
+pub(crate) use crate::atoms;
 pub(crate) use crate::atoms::{use_language, ErrorKind, ErrorState};
 pub(crate) use crate::contexts::{use_app_route, use_metadata, use_theme};
 pub(crate) use bounce::use_atom;

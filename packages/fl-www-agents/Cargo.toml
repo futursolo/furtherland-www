@@ -15,7 +15,7 @@ js-sys = "0.3.55"
 # web-sys
 wee_alloc = "0.4.5"
 futures = "0.3.17"
-gloo = { version = "0.3.0", features = ["futures"] }
+gloo = { version = "0.4.0", features = ["futures"] }
 
 console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"

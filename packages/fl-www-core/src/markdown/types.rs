@@ -4,13 +4,13 @@ use std::sync::{Arc, Mutex};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Root {
     pub nodes: Vec<Node>,
 }
 
 // <pre><code>...</code></pre>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct CodeBlock {
     pub language: Option<String>,
     pub children: Vec<Node>,
@@ -20,7 +20,7 @@ pub struct CodeBlock {
 }
 
 // <p>...</p>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Paragraph {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -29,7 +29,7 @@ pub struct Paragraph {
 }
 
 // <h1 - h6>...</h1 - h6>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Heading {
     pub level: u32,
     pub children: Vec<Node>,
@@ -39,7 +39,7 @@ pub struct Heading {
 }
 
 // <blockquote>...</blockquote>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Blockquote {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -49,7 +49,7 @@ pub struct Blockquote {
 
 // no start: ul, Unordered List
 // start: ol, Ordered List
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct List {
     pub start: Option<u64>,
     pub children: Vec<Node>,
@@ -59,7 +59,7 @@ pub struct List {
 }
 
 // <li>...</li>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct ListItem {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -68,7 +68,7 @@ pub struct ListItem {
 }
 
 // <em>...</em>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Emphasis {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -77,7 +77,7 @@ pub struct Emphasis {
 }
 
 // <strong>...</strong>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Strong {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -86,7 +86,7 @@ pub struct Strong {
 }
 
 // <del>...</del>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Strikethrough {
     pub children: Vec<Node>,
     #[serde(skip_serializing)]
@@ -95,7 +95,7 @@ pub struct Strikethrough {
 }
 
 // <img src="..." title="..." />
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Image {
     pub src: String,
     pub alt: String,
@@ -103,7 +103,7 @@ pub struct Image {
 }
 
 // <img src="..." title="..." />
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct HyperLink {
     pub href: String,
     pub title: Option<String>,
@@ -156,12 +156,12 @@ pub struct HyperLink {
 //}
 
 // <input type="checkbox" disabled>
-#[derive(Default, Debug, Deserialize, Serialize)]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Checkbox {
     pub checked: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum Node {
     Text(String),
     Code(String),

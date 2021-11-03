@@ -1,8 +1,11 @@
 use crate::prelude::*;
-use agents::highlight::HighlightInput;
+use agents::highlight::{HighlightInput, HighlightOutput};
 use agents::prelude::*;
+use atoms::CacheState;
 use misc::ToHtml;
 use styling::ThemeKind;
+
+use bounce::use_slice;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeBlockProps {
@@ -16,36 +19,71 @@ pub(crate) fn use_highlight(
     language: Option<String>,
     theme_kind: ThemeKind,
 ) -> Option<Html> {
-    let hl_html = use_state_eq(|| -> Option<Html> { None });
+    let cache_state = use_slice::<CacheState>();
 
-    let hl_html_clone = hl_html.clone();
-    let worker: UseBridgeHandle<agents::highlight::Worker> = use_bridge(move |m| {
-        let agents::highlight::Response::Highlighted(m) = m;
-
-        if let Some(m) = m.map(|m| m.to_html()) {
-            hl_html_clone.set(Some(m));
-        }
+    let input = language.as_ref().cloned().map(|m| HighlightInput {
+        content: content.clone(),
+        language: m,
+        theme_kind,
     });
 
-    use_effect_with_deps(
-        move |(content, language, theme_kind)| {
-            let content = content.clone();
-            if let Some(m) = language {
-                let theme_kind = *theme_kind;
+    let hl_html = {
+        let cache_state = cache_state.clone();
+        let input = input.clone();
 
-                let input = HighlightInput {
-                    content,
-                    language: m.to_owned(),
-                    theme_kind,
-                };
+        use_state_eq(move || -> Option<Html> {
+            input.and_then(|m| {
+                cache_state
+                    .get::<HighlightInput, Option<HighlightOutput>>(&m)
+                    .flatten()
+                    .map(|m| m.to_html())
+            })
+        })
+    };
 
-                worker.send(agents::highlight::Request::Highlight(input));
+    let worker: UseBridgeHandle<agents::highlight::Worker> = {
+        let hl_html = hl_html.clone();
+        let input = input.clone();
+        let cache_state = cache_state.clone();
+        use_bridge(move |m| {
+            let agents::highlight::Response::Highlighted(m) = m;
+
+            let action = CacheState::convert_action::<HighlightInput, Option<HighlightOutput>>(
+                input.as_ref().unwrap(),
+                m.clone(),
+            )
+            .unwrap_throw();
+            cache_state.dispatch(action);
+
+            if let Some(m) = m.map(|m| m.to_html()) {
+                hl_html.set(Some(m));
             }
+        })
+    };
 
-            || {}
-        },
-        (content, language, theme_kind),
-    );
+    {
+        let hl_html = hl_html.clone();
+        use_effect_with_deps(
+            move |input| {
+                if let Some(ref m) = input {
+                    if let Some(cached) = cache_state
+                        .get::<HighlightInput, Option<HighlightOutput>>(m)
+                        .flatten()
+                        .map(|m| m.to_html())
+                    {
+                        hl_html.set(Some(cached));
+                    } else {
+                        worker.send(agents::highlight::Request::Highlight(m.clone()));
+                    }
+                } else {
+                    hl_html.set(None);
+                }
+
+                || {}
+            },
+            input,
+        );
+    }
 
     (*hl_html).clone()
 }

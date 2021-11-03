@@ -12,8 +12,8 @@ pub trait Slice: PartialEq + Default {
 }
 
 pub trait CloneSlice: Slice + Clone {
-    fn clone_slice(self: Rc<Self>) -> Self {
-        (*self).clone()
+    fn clone_slice(&self) -> Self {
+        self.clone()
     }
 }
 

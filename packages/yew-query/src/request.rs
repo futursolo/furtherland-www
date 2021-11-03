@@ -3,8 +3,9 @@ use web_sys::window;
 
 use crate::client::Client;
 use crate::error::{InternalError, InternalResult};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum Method {
     Get,
     Head,
@@ -16,7 +17,7 @@ impl Default for Method {
     }
 }
 
-#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct Request {
     #[builder(setter(into))]
     url: String,

@@ -33,7 +33,7 @@ pub async fn markdown(input: Request) -> Response {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub enum Request {
     Html(String),
     Summary(String),

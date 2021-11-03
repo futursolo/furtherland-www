@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::fmt;
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -34,6 +35,29 @@ where
 
     fn deref(&self) -> &Self::Target {
         &self.inner
+    }
+}
+
+impl<T> Clone for UseSliceHandle<T>
+where
+    T: Slice,
+{
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+            root: self.root.clone(),
+        }
+    }
+}
+
+impl<T> fmt::Debug for UseSliceHandle<T>
+where
+    T: Slice + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("UseSliceHandle")
+            .field("inner", &self.inner)
+            .finish()
     }
 }
 
@@ -88,6 +112,28 @@ where
 
     fn deref(&self) -> &Self::Target {
         &self.inner
+    }
+}
+
+impl<T> Clone for UseAtomHandle<T>
+where
+    T: Atom,
+{
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+        }
+    }
+}
+
+impl<T> fmt::Debug for UseAtomHandle<T>
+where
+    T: Atom + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("UseAtomHandle")
+            .field("inner", &self.inner)
+            .finish()
     }
 }
 
