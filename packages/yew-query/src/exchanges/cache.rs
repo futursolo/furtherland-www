@@ -1,4 +1,4 @@
-use std::collections::hash_map::DefaultHasher;
+use ahash::AHasher;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
@@ -121,7 +121,7 @@ impl Exchange for CacheExchange {
                 + 'static,
         >,
     ) -> InternalResult<BaseResponse> {
-        let mut h = DefaultHasher::new();
+        let mut h = AHasher::new_with_keys(1234, 5678);
         request.hash(&mut h);
         let key = h.finish();
 

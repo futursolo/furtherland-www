@@ -1,9 +1,8 @@
-use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-// use std::ops::Deref;
 use std::rc::Rc;
 
+use ahash::AHasher;
 use bounce::prelude::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -73,7 +72,7 @@ impl CacheState {
         K: Hash,
         T: DeserializeOwned,
     {
-        let mut h = DefaultHasher::new();
+        let mut h = AHasher::new_with_keys(1234, 5678);
         k.hash(&mut h);
         let key = h.finish();
 
@@ -88,7 +87,7 @@ impl CacheState {
         K: Hash,
         V: Serialize,
     {
-        let mut h = DefaultHasher::new();
+        let mut h = AHasher::new_with_keys(1234, 5678);
         k.hash(&mut h);
         let key = h.finish();
 

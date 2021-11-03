@@ -44,6 +44,7 @@ serde = "1.0.130"
 serde_json = "1.0.68"
 
 fastrand = "1.5.0"
+ahash = "0.7.6"
 
 [dependencies.web-sys]
 version = "0.3.55"
