@@ -33,12 +33,12 @@ dependencies = ["bindgen-dev-worker-markdown"]
 # wasm-opt
 [tasks.opt-dev-worker-highlight]
 command = "wasm-opt"
-args = ["-O3", "-o", "worker-dist/fl-worker-highlight_bg.wasm", "worker-dist/fl-worker-highlight_bg.original.wasm"]
+args = ["-o", "worker-dist/fl-worker-highlight_bg.wasm", "worker-dist/fl-worker-highlight_bg.original.wasm"]
 dependencies = ["mv-dev-worker-highlight"]
 
 [tasks.opt-dev-worker-markdown]
 command = "wasm-opt"
-args = ["-O3", "-o", "worker-dist/fl-worker-markdown_bg.wasm", "worker-dist/fl-worker-markdown_bg.original.wasm"]
+args = ["-o", "worker-dist/fl-worker-markdown_bg.wasm", "worker-dist/fl-worker-markdown_bg.original.wasm"]
 dependencies = ["mv-dev-worker-markdown"]
 
 [tasks.worker-highlight]

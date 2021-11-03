@@ -81,7 +81,7 @@ jobs:
 
           cd worker-dist/
           mv $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-          wasm-opt -Oz -o $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
+          wasm-opt -o $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
           rm $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
 
           echo "FL_WORKER_HIGHLIGHT_PATH=$FL_WORKER_HIGHLIGHT_NAME.js" >> $GITHUB_ENV
@@ -98,7 +98,7 @@ jobs:
 
           cd worker-dist/
           mv $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
-          wasm-opt -Oz -o $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
+          wasm-opt -o $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
           rm $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
 
           echo "FL_WORKER_MARKDOWN_PATH=$FL_WORKER_MARKDOWN_NAME.js" >> $GITHUB_ENV

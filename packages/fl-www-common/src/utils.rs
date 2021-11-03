@@ -1,10 +1,13 @@
-use std::convert::TryInto;
+use gloo::timers::future::TimeoutFuture;
+use std::convert::{TryFrom, TryInto};
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::Duration;
 
 use once_cell::sync::Lazy;
 // use reqwest::Url;
 
 use crate::prelude::*;
+use wasm_bindgen::prelude::*;
 
 #[derive(PartialEq, Debug, Clone, Eq, Hash)]
 pub struct Id(u64);
@@ -64,4 +67,11 @@ pub fn get_viewport_height() -> u64 {
 
 pub fn is_ssr() -> bool {
     window().location().port().unwrap_or_else(|_| "".into()) == "9742"
+}
+
+pub fn sleep(dur: Duration) -> TimeoutFuture {
+    let millis = u32::try_from(dur.as_millis())
+        .expect_throw("failed to cast the duration into a u32 with Duration::as_millis.");
+
+    TimeoutFuture::new(millis)
 }
