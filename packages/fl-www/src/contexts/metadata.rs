@@ -15,33 +15,15 @@ impl Default for MetadataState {
 }
 
 pub(crate) fn use_metadata() -> Option<Rc<Metadata>> {
-    use_context::<MetadataState>().unwrap().value
-}
+    let error = use_atom::<ErrorState>();
 
-#[function_component(MetaProvider)]
-pub(crate) fn meta_provider(props: &ChildrenProps) -> Html {
-    let children = props.children.clone();
-    let error = use_error_state();
+    match use_query(|| Request::builder().url("/metadata.json").build()).result() {
+        Some(Ok(m)) => Some(m.data()),
+        Some(Err(_)) => {
+            error.set(ErrorKind::Server.into());
 
-    // let base_url = use_base_url();
-
-    // let error_clone = error.clone();
-    let meta: Option<Rc<Metadata>> =
-        match use_query(|| Request::builder().url("/metadata.json").build()).result() {
-            Some(Ok(m)) => Some(m.data()),
-            Some(Err(_)) => {
-                error.set(ErrorKind::Server);
-
-                None
-            }
-            _ => None,
-        };
-
-    let state = MetadataState { value: meta };
-
-    html! {
-        <ContextProvider<MetadataState> context={state}>
-            {children}
-        </ContextProvider<MetadataState>>
+            None
+        }
+        _ => None,
     }
 }

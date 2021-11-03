@@ -56,7 +56,7 @@ fn set_theme_kind(kind: Option<ThemeKind>) {
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ThemeState {
-    inner: UseEqualStateHandle<ThemeKind>,
+    inner: UseStateHandle<ThemeKind>,
 }
 
 impl ThemeState {
@@ -66,7 +66,7 @@ impl ThemeState {
     }
 
     pub fn kind(&self) -> ThemeKind {
-        *self.inner.borrow()
+        *self.inner
     }
 }
 
@@ -154,7 +154,7 @@ static THEME_DETECT_SCRIPT: &str = r#"
 
 #[function_component(ThemeProvider)]
 pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
-    let theme_kind = use_equal_state(get_theme_kind);
+    let theme_kind = use_state_eq(get_theme_kind);
 
     let theme_kind_clone = theme_kind.clone();
     use_event(&window(), "storage", move |_event| {

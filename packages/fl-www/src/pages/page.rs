@@ -16,7 +16,7 @@ pub(crate) struct PageProps {
 #[styled_component(Page)]
 pub(crate) fn page(props: &PageProps) -> Html {
     let lang = use_language();
-    let error = use_error_state();
+    let error = use_atom::<ErrorState>();
 
     let slug = props.slug.clone();
     let req: UseFetchHandle<String, Infallible> = use_query(move || {
@@ -38,7 +38,7 @@ pub(crate) fn page(props: &PageProps) -> Html {
                 }
             }
 
-            error.set(ErrorKind::Server);
+            error.set(ErrorKind::Server.into());
 
             return html! {<Loading />};
         }

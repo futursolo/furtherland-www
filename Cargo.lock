@@ -137,6 +137,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 
 [[package]]
+name = "bounce"
+version = "0.1.0"
+dependencies = [
+ "anymap2",
+ "once_cell",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "yew",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -378,6 +389,7 @@ name = "fl-www"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "bounce",
  "chrono",
  "console_log",
  "fastrand",

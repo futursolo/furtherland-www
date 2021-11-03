@@ -20,7 +20,7 @@ pub(crate) struct WritingProps {
 pub(crate) fn writing(props: &WritingProps) -> Html {
     let lang = use_language();
     let metadata = use_metadata();
-    let error = use_error_state();
+    let error = use_atom::<ErrorState>();
 
     let writing_metadata = metadata.as_ref().and_then(|m| {
         m.writings()
@@ -31,7 +31,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             .cloned()
     });
 
-    let summary = use_equal_state(|| -> Option<String> { None });
+    let summary = use_state_eq(|| -> Option<String> { None });
 
     let summary_clone = summary.clone();
     let worker = use_state(move || {
@@ -99,7 +99,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 }
             }
 
-            error.set(ErrorKind::Server);
+            error.set(ErrorKind::Server.into());
 
             return html! {
                 <>
@@ -131,7 +131,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
     html! {
         <>
             <Title value={writing_metadata.title.clone()} />
-            {if let Some(m) = (*summary.borrow()).clone() {
+            {if let Some(m) = (*summary).clone() {
                 html! {<Meta name="description" content={m} />}
             } else {
                 Html::default()
