@@ -96,10 +96,15 @@ impl CacheState {
         k.hash(&mut h);
         let key = h.finish();
 
-        self.0
+        let result = self
+            .0
             .get(&key)
             .cloned()
-            .and_then(|m| serde_json::from_value(m).unwrap())
+            .and_then(|m| serde_json::from_value(m).unwrap());
+
+        log::debug!("Cached: {}", result.is_some());
+
+        result
     }
 
     pub fn convert_action<K, V>(k: &K, v: V) -> Option<(u64, serde_json::Value)>

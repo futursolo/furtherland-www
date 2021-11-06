@@ -19,23 +19,23 @@ use super::*;
 
 type RequestMap = HashMap<u64, Shared<LocalBoxFuture<'static, InternalResult<BaseResponse>>>>;
 
-macro_rules! log_dbg {
-    () => {
-        ::log::debug!("[{}:{}]", $crate::file!(), $crate::line!())
-    };
-    ($val:expr $(,)?) => {
-        match $val {
-            tmp => {
-                ::log::debug!("[{}:{}] {} = {:#?}",
-                    ::std::file!(), ::std::line!(), ::std::stringify!($val), &tmp);
-                tmp
-            }
-        }
-    };
-    ($($val:expr),+ $(,)?) => {
-        ($($crate::dbg!($val)),+,)
-    };
-}
+// macro_rules! log_dbg {
+//     () => {
+//         ::log::debug!("[{}:{}]", $crate::file!(), $crate::line!())
+//     };
+//     ($val:expr $(,)?) => {
+//         match $val {
+//             tmp => {
+//                 ::log::debug!("[{}:{}] {} = {:#?}",
+//                     ::std::file!(), ::std::line!(), ::std::stringify!($val), &tmp);
+//                 tmp
+//             }
+//         }
+//     };
+//     ($($val:expr),+ $(,)?) => {
+//         ($($crate::dbg!($val)),+,)
+//     };
+// }
 
 #[derive(Debug)]
 pub struct CacheExchange {
@@ -51,7 +51,7 @@ impl Default for CacheExchange {
             let m: &Element = m.as_ref();
 
             if let Some(m) = m
-                .query_selector("#fl-www-state-cache")
+                .query_selector("#yew-query-request-cache")
                 .ok()
                 .and_then(|m| m)
                 .and_then(|m| m.dyn_into::<HtmlScriptElement>().ok())
