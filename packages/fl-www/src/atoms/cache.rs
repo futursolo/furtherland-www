@@ -13,41 +13,35 @@ use crate::prelude::*;
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub struct CacheState(HashMap<u64, serde_json::Value>);
 
-macro_rules! log_dbg {
-    // NOTE: We cannot use `concat!` to make a static string as a format argument
-    // of `eprintln!` because `file!` could contain a `{` or
-    // `$val` expression could be a block (`{ .. }`), in which case the `eprintln!`
-    // will be malformed.
-    () => {
-        ::log::debug!("[{}:{}]", $crate::file!(), $crate::line!())
-    };
-    ($val:expr $(,)?) => {
-        // Use of `match` here is intentional because it affects the lifetimes
-        // of temporaries - https://stackoverflow.com/a/48732525/1063961
-        match $val {
-            tmp => {
-                ::log::debug!("[{}:{}] {} = {:#?}",
-                    ::std::file!(), ::std::line!(), ::std::stringify!($val), &tmp);
-                tmp
-            }
-        }
-    };
-    ($($val:expr),+ $(,)?) => {
-        ($($crate::dbg!($val)),+,)
-    };
-}
+// macro_rules! log_dbg {
+//     () => {
+//         ::log::debug!("[{}:{}]", $crate::file!(), $crate::line!())
+//     };
+//     ($val:expr $(,)?) => {
+//         match $val {
+//             tmp => {
+//                 ::log::debug!("[{}:{}] {} = {:#?}",
+//                     ::std::file!(), ::std::line!(), ::std::stringify!($val), &tmp);
+//                 tmp
+//             }
+//         }
+//     };
+//     ($($val:expr),+ $(,)?) => {
+//         ($($crate::dbg!($val)),+,)
+//     };
+// }
 
 impl Default for CacheState {
     fn default() -> Self {
-        if let Some(m) = log_dbg!(log_dbg!(log_dbg!(document()
+        if let Some(m) = document()
             .query_selector("#fl-www-state-cache")
-            .ok())
-        .and_then(|m| m)
-        .and_then(|m| m.dyn_into::<HtmlScriptElement>().ok()))
-        .and_then(|m| m.text().ok()))
+            .ok()
+            .and_then(|m| m)
+            .and_then(|m| m.dyn_into::<HtmlScriptElement>().ok())
+            .and_then(|m| m.text().ok())
         {
-            if let Ok(m) = log_dbg!(serde_json::from_str::<Self>(&m)) {
-                return log_dbg!(m);
+            if let Ok(m) = serde_json::from_str::<Self>(&m) {
+                return m;
             }
         }
 
