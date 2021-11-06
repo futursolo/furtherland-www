@@ -19,6 +19,24 @@ use super::*;
 
 type RequestMap = HashMap<u64, Shared<LocalBoxFuture<'static, InternalResult<BaseResponse>>>>;
 
+macro_rules! log_dbg {
+    () => {
+        ::log::debug!("[{}:{}]", $crate::file!(), $crate::line!())
+    };
+    ($val:expr $(,)?) => {
+        match $val {
+            tmp => {
+                ::log::debug!("[{}:{}] {} = {:#?}",
+                    ::std::file!(), ::std::line!(), ::std::stringify!($val), &tmp);
+                tmp
+            }
+        }
+    };
+    ($($val:expr),+ $(,)?) => {
+        ($($crate::dbg!($val)),+,)
+    };
+}
+
 #[derive(Debug)]
 pub struct CacheExchange {
     requests: Rc<Mutex<RequestMap>>,
