@@ -62,7 +62,7 @@ impl Default for CacheExchange {
 
                     for (k, v) in m.into_iter() {
                         let v = BaseResponse::from(v.to_owned());
-                        let fur = Box::pin(async move { Ok(v) })
+                        let fur = Box::pin(futures::future::ok(v))
                             as LocalBoxFuture<'static, InternalResult<BaseResponse>>;
 
                         requests.insert(k, fur.shared());
