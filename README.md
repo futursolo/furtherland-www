@@ -7,7 +7,7 @@ Site of futures.moe
 - Yew
 
 **And:**
-- No JavaScript!
+- No JavaScript (almost)!
 
 ## Feature
 - Bilingual (English / Chinese) Switch

@@ -41,11 +41,11 @@ pub(crate) fn use_highlight(
         })
     };
 
-    let worker: UseBridgeHandle<agents::highlight::Worker> = {
+    let worker = {
         let hl_html = hl_html.clone();
         let input = input.clone();
         let cache_state = cache_state.clone();
-        use_bridge(move |m| {
+        use_bridge::<agents::highlight::Worker, _>(move |m| {
             let agents::highlight::Response::Highlighted(m) = m;
 
             let action = CacheState::convert_action::<HighlightInput, Option<HighlightOutput>>(

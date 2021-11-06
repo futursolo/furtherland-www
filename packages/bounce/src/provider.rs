@@ -1,16 +1,20 @@
+use std::any::TypeId;
 use std::cell::RefCell;
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
 use std::rc::{Rc, Weak};
 
 use anymap2::any::CloneAny;
 use anymap2::Map;
-use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 
 use crate::slice::Slice;
 use crate::utils::Id;
 
 pub(crate) type SliceMap = Map<dyn CloneAny>;
-type ListenerVec = Rc<RefCell<Vec<Weak<Callback<BounceRootState>>>>>;
+type ListenerVec = Vec<Weak<Callback<BounceRootState>>>;
+type ListenerMap = Rc<RefCell<HashMap<TypeId, ListenerVec>>>;
 
 #[derive(Properties, Debug, PartialEq)]
 pub struct BounceRootProps {
@@ -26,7 +30,7 @@ pub struct SliceListener {
 pub(crate) struct BounceRootState {
     id: Id,
     slices: Rc<RefCell<SliceMap>>,
-    listeners: ListenerVec,
+    listeners: ListenerMap,
 }
 
 impl BounceRootState {
@@ -34,26 +38,40 @@ impl BounceRootState {
     where
         T: Slice + 'static,
     {
-        let mut atoms = self.slices.borrow_mut();
-        let prev_val = atoms.remove::<Rc<T>>().unwrap_or_default();
-        let next_val = prev_val.clone().reduce(val);
+        let should_notify = {
+            let mut atoms = self.slices.borrow_mut();
+            let prev_val = atoms.remove::<Rc<T>>().unwrap_or_default();
+            let next_val = prev_val.clone().reduce(val);
 
-        let should_notify = prev_val != next_val;
+            let should_notify = prev_val != next_val;
 
-        atoms.insert(next_val);
+            atoms.insert(next_val);
+
+            should_notify
+        };
 
         if should_notify {
-            self.notify_listeners();
+            self.notify_listeners::<T>();
         }
     }
 
-    pub(crate) fn listen<CB>(&self, callback: CB) -> SliceListener
+    pub(crate) fn listen<T, CB>(&self, callback: CB) -> SliceListener
     where
+        T: 'static,
         CB: Fn(BounceRootState) + 'static,
     {
         let cb = Rc::new(Callback::from(callback));
 
-        self.listeners.borrow_mut().push(Rc::downgrade(&cb));
+        let type_id = TypeId::of::<T>();
+
+        let mut listeners = self.listeners.borrow_mut();
+
+        if let Entry::Vacant(e) = listeners.entry(type_id) {
+            e.insert(vec![Rc::downgrade(&cb)]);
+        } else {
+            let listeners = listeners.get_mut(&type_id).unwrap_throw();
+            listeners.push(Rc::downgrade(&cb));
+        };
 
         SliceListener { _listener: cb }
     }
@@ -72,9 +90,17 @@ impl BounceRootState {
         }
     }
 
-    fn notify_listeners_impl(&self) {
+    pub(crate) fn notify_listeners<T>(&self)
+    where
+        T: 'static,
+    {
         let callables = {
             let mut callbacks_ref = self.listeners.borrow_mut();
+
+            let callbacks_ref = match callbacks_ref.get_mut(&TypeId::of::<T>()) {
+                Some(m) => m,
+                None => return,
+            };
 
             // Any gone weak references are removed when called.
             let (callbacks, callbacks_weak) = callbacks_ref.iter().cloned().fold(
@@ -97,13 +123,6 @@ impl BounceRootState {
         for callback in callables {
             callback.emit(self.to_owned())
         }
-    }
-
-    pub(crate) fn notify_listeners(&self) {
-        let self_ = self.to_owned();
-        spawn_local(async move {
-            self_.notify_listeners_impl();
-        });
     }
 }
 

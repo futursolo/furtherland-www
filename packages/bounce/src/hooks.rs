@@ -67,25 +67,51 @@ where
 {
     let root = use_context::<BounceRootState>().expect_throw("No bounce root found.");
 
-    let root_clone = root.clone();
-    let val = use_state(move || -> RefCell<Rc<T>> { root_clone.get::<T>().into() });
+    let val = {
+        let root = root.clone();
+        use_state(move || -> RefCell<Rc<T>> { root.get::<T>().into() })
+    };
 
-    let val_clone = val.clone();
-    let root_clone = root.clone();
-    use_state(move || {
-        root_clone.listen(move |root| {
-            let next_val = root.get::<T>();
-            let prev_val = val_clone.borrow().clone();
+    {
+        let val = val.clone();
+        let root = root.clone();
+        use_state(move || {
+            root.listen::<T, _>(move |root| {
+                let next_val = root.get::<T>();
+                let prev_val = val.borrow().clone();
 
-            if prev_val != next_val {
-                val_clone.set(RefCell::new(next_val));
-            }
-        })
-    });
+                if prev_val != next_val {
+                    val.set(RefCell::new(next_val));
+                }
+            })
+        });
+    }
 
     let val = (*(*val).borrow()).clone();
 
     UseSliceHandle { inner: val, root }
+}
+
+pub fn use_slice_dispatch<T>() -> Rc<dyn Fn(T::Action)>
+where
+    T: Slice + 'static,
+{
+    let root = use_context::<BounceRootState>().expect_throw("No bounce root found.");
+
+    let state = use_state(move || {
+        Rc::new(move |action: T::Action| {
+            root.dispatch_action::<T>(action);
+        })
+    });
+
+    (*state).clone()
+}
+
+pub fn use_slice_value<T>() -> Rc<T>
+where
+    T: Slice + 'static,
+{
+    use_slice::<T>().inner
 }
 
 pub struct UseAtomHandle<T>
@@ -144,4 +170,18 @@ where
     let inner = use_slice::<T>();
 
     UseAtomHandle { inner }
+}
+
+pub fn use_atom_setter<T>() -> Rc<dyn Fn(T)>
+where
+    T: Atom + 'static,
+{
+    use_slice_dispatch::<T>()
+}
+
+pub fn use_atom_value<T>() -> Rc<T>
+where
+    T: Slice + 'static,
+{
+    use_slice_value::<T>()
 }

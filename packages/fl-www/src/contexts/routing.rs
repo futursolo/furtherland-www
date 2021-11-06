@@ -13,13 +13,13 @@ pub(crate) fn routing_listener(props: &ChildrenProps) -> Html {
 
     let route = use_app_route();
 
-    let lang_slice = use_slice::<LanguageState>();
+    let dispatch_lang = use_slice_dispatch::<LanguageState>();
 
     use_effect_with_deps(
         move |_| {
             window().scroll_to_with_scroll_to_options(web_sys::ScrollToOptions::new().top(0.0));
 
-            lang_slice.dispatch(());
+            dispatch_lang(());
             || {}
         },
         route,

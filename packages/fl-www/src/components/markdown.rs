@@ -27,10 +27,10 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
 
     let md_html_clone = md_html.clone();
 
-    let worker: UseBridgeHandle<agents::markdown::Worker> = {
+    let worker = {
         let cache_state = cache_state.clone();
         let input = props.markdown_text.clone();
-        use_bridge(move |m| {
+        use_bridge::<agents::markdown::Worker, _>(move |m| {
             if let agents::markdown::Response::Html(root) = m {
                 let action =
                     CacheState::convert_action::<String, Root>(&input, root.clone()).unwrap_throw();

@@ -96,8 +96,6 @@ impl CacheState {
             .cloned()
             .and_then(|m| serde_json::from_value(m).unwrap());
 
-        log::debug!("Cached: {}", result.is_some());
-
         result
     }
 
