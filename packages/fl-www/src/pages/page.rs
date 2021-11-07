@@ -3,6 +3,7 @@ use std::convert::Infallible;
 use crate::prelude::*;
 use components::{Main, Markdown, SectionTitle};
 
+use bounce::prelude::*;
 use yew_query::{use_query, Request, UseFetchHandle};
 use yew_side_effect::title::Title;
 
@@ -16,7 +17,7 @@ pub(crate) struct PageProps {
 #[styled_component(Page)]
 pub(crate) fn page(props: &PageProps) -> Html {
     let lang = use_language();
-    let error = use_atom::<ErrorState>();
+    let set_error = use_set_bounce_value::<ErrorState>();
 
     let slug = props.slug.clone();
     let req: UseFetchHandle<String, Infallible> = use_query(move || {
@@ -38,7 +39,7 @@ pub(crate) fn page(props: &PageProps) -> Html {
                 }
             }
 
-            error.set(ErrorKind::Server.into());
+            set_error(ErrorKind::Server.into());
 
             return html! {<Loading />};
         }

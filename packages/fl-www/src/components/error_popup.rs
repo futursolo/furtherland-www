@@ -1,10 +1,11 @@
+use bounce::prelude::*;
 use yew_feather::alert_circle::AlertCircle;
 
 use crate::prelude::*;
 
 #[styled_component(ErrorPopup)]
 pub(crate) fn error_popup() -> Html {
-    let error = use_atom::<ErrorState>();
+    let error = use_bounce_value::<ErrorState>();
     use_language();
     let theme = use_theme();
 

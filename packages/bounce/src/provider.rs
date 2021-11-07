@@ -9,10 +9,10 @@ use anymap2::Map;
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 
-use crate::slice::Slice;
+use crate::state::{State, Stateful};
 use crate::utils::Id;
 
-pub(crate) type SliceMap = Map<dyn CloneAny>;
+pub(crate) type StateMap = Map<dyn CloneAny>;
 type ListenerVec = Vec<Weak<Callback<BounceRootState>>>;
 type ListenerMap = Rc<RefCell<HashMap<TypeId, ListenerVec>>>;
 
@@ -29,23 +29,23 @@ pub struct SliceListener {
 #[derive(Clone)]
 pub(crate) struct BounceRootState {
     id: Id,
-    slices: Rc<RefCell<SliceMap>>,
+    states: Rc<RefCell<StateMap>>,
     listeners: ListenerMap,
 }
 
 impl BounceRootState {
-    pub(crate) fn dispatch_action<T>(&self, val: T::Action)
+    pub(crate) fn set_state<T>(&self, val: T::Input)
     where
-        T: Slice + 'static,
+        T: Stateful + 'static,
     {
         let should_notify = {
-            let mut atoms = self.slices.borrow_mut();
-            let prev_val = atoms.remove::<Rc<T>>().unwrap_or_default();
-            let next_val = prev_val.clone().reduce(val);
+            let mut states = self.states.borrow_mut();
 
-            let should_notify = prev_val != next_val;
+            let mut state = states.remove::<T::State>().unwrap_or_default();
 
-            atoms.insert(next_val);
+            let should_notify = state.set(val);
+
+            states.insert(state);
 
             should_notify
         };
@@ -76,16 +76,17 @@ impl BounceRootState {
         SliceListener { _listener: cb }
     }
 
-    pub(crate) fn get<T>(&self) -> Rc<T>
+    pub(crate) fn get_state<T>(&self) -> Rc<T>
     where
-        T: Slice + 'static,
+        T: Stateful + 'static,
     {
-        let mut atoms = self.slices.borrow_mut();
-        if let Some(m) = atoms.get::<Rc<T>>().cloned() {
-            m
+        let mut states = self.states.borrow_mut();
+        if let Some(mut m) = states.get::<T::State>().cloned() {
+            m.get()
         } else {
-            let val = Rc::new(T::default());
-            atoms.insert(val.clone());
+            let mut state = T::State::new();
+            let val = state.get();
+            states.insert(state);
             val
         }
     }
@@ -138,7 +139,7 @@ pub fn bounce_root(props: &BounceRootProps) -> Html {
 
     let root_state = use_state(|| BounceRootState {
         id: Id::new(),
-        slices: Rc::default(),
+        states: Rc::default(),
         listeners: Rc::default(),
     });
 

@@ -15,7 +15,7 @@ pub(crate) struct MarkdownProps {
 
 #[styled_component(Markdown)]
 pub(crate) fn markdown(props: &MarkdownProps) -> Html {
-    let cache_state = use_slice::<CacheState>();
+    let cache_state = use_bounce_state::<CacheState>();
 
     let md_html = {
         let input = props.markdown_text.clone();
@@ -34,7 +34,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
             if let agents::markdown::Response::Html(root) = m {
                 let action =
                     CacheState::convert_action::<String, Root>(&input, root.clone()).unwrap_throw();
-                cache_state.dispatch(action);
+                cache_state.set(action);
                 md_html_clone.set(Some(root.to_html()));
             }
         })

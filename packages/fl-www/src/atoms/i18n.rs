@@ -59,5 +59,5 @@ impl Slice for LanguageState {
 }
 
 pub(crate) fn use_language() -> Language {
-    use_slice::<LanguageState>().lang
+    use_bounce_value::<LanguageState>().lang
 }

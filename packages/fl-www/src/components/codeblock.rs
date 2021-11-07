@@ -5,7 +5,7 @@ use atoms::CacheState;
 use misc::ToHtml;
 use styling::ThemeKind;
 
-use bounce::use_slice;
+use bounce::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeBlockProps {
@@ -19,7 +19,7 @@ pub(crate) fn use_highlight(
     language: Option<String>,
     theme_kind: ThemeKind,
 ) -> Option<Html> {
-    let cache_state = use_slice::<CacheState>();
+    let cache_state = use_bounce_state::<CacheState>();
 
     let input = language.as_ref().cloned().map(|m| HighlightInput {
         content: content.clone(),
@@ -53,7 +53,7 @@ pub(crate) fn use_highlight(
                 m.clone(),
             )
             .unwrap_throw();
-            cache_state.dispatch(action);
+            cache_state.set(action);
 
             if let Some(m) = m.map(|m| m.to_html()) {
                 hl_html.set(Some(m));
