@@ -15,15 +15,13 @@ js-sys = "0.3.55"
 # web-sys
 futures = "0.3.17"
 gloo = { version = "0.4.0", features = ["futures"] }
+gloo-utils = "0.1"
 
 console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
 yew = { git = "https://github.com/yewstack/yew" }
 stylist = { git = "https://github.com/futursolo/stylist-rs", version = "0.10.0", features = ["yew_integration", "yew_use_media_query", "yew_use_style"] }
-
-#syntect = { version = "4.6.0", default-features = false, features = ["parsing", "assets", "dump-load-rs", "regex-fancy"] }
-#bincode = "1.3.3"
 
 serde = "1.0.130"
 serde_json = "1.0.68"

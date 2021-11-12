@@ -25,7 +25,7 @@ console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
 yew-feather = { git = "https://github.com/futursolo/yew-feather", branch = "compiled" }
-yew-router = { path = "../yew-router" }
+yew-router = { git = "https://github.com/yewstack/yew" }
 yew-side-effect = { git = "https://github.com/futursolo/yew-side-effect" }
 yew = { git = "https://github.com/yewstack/yew" }
 yew-agent = { git = "https://github.com/yewstack/yew", package = "yew-agent" }
