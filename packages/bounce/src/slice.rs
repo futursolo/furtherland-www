@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::state::{State, Stateful};
+use crate::state::{BounceRootHandle, State, Stateful};
 use crate::utils::sealed::Sealed;
 
 /// A controlled state that is Copy-on-Write and notifies registered hooks when `prev_value != next_value`.
@@ -41,7 +41,7 @@ impl<T> State<T> for SliceState<T>
 where
     T: Slice + 'static,
 {
-    fn new() -> Self {
+    fn new(_root: BounceRootHandle) -> Self {
         SliceState {
             inner: Rc::default(),
         }
@@ -60,15 +60,6 @@ where
 }
 
 impl<T> Sealed for SliceState<T> where T: Slice + 'static {}
-
-impl<T> Default for SliceState<T>
-where
-    T: Slice + 'static,
-{
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 impl<T> Clone for SliceState<T>
 where

@@ -39,14 +39,17 @@ impl BounceRootState {
         T: Stateful + 'static,
     {
         let should_notify = {
-            let mut states = self.states.borrow_mut();
-
-            let mut state = states.remove::<T::State>().unwrap_or_default();
+            let mut state = {
+                let mut states = self.states.borrow_mut();
+                states
+                    .remove::<T::State>()
+                    .unwrap_or_else(|| T::State::new(self.clone().into()))
+            };
 
             let should_notify = state.set(val);
 
+            let mut states = self.states.borrow_mut();
             states.insert(state);
-
             should_notify
         };
 
@@ -80,12 +83,16 @@ impl BounceRootState {
     where
         T: Stateful + 'static,
     {
-        let mut states = self.states.borrow_mut();
-        if let Some(mut m) = states.get::<T::State>().cloned() {
+        if let Some(mut m) = {
+            let states = self.states.borrow_mut();
+            states.get::<T::State>().cloned()
+        } {
             m.get()
         } else {
-            let mut state = T::State::new();
+            let mut state = T::State::new(self.clone().into());
             let val = state.get();
+
+            let mut states = self.states.borrow_mut();
             states.insert(state);
             val
         }
