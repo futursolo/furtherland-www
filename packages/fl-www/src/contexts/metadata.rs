@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use bounce::prelude::*;
+use bounce::*;
 use yew_query::{use_query, Request};
 
 use crate::prelude::*;
@@ -17,7 +17,7 @@ impl Default for MetadataState {
 }
 
 pub(crate) fn use_metadata() -> Option<Rc<Metadata>> {
-    let set_error = use_set_bounce_value::<ErrorState>();
+    let set_error = use_atom_setter::<ErrorState>();
 
     match use_query(|| Request::builder().url("/metadata.json").build()).result() {
         Some(Ok(m)) => Some(m.data()),

@@ -21,7 +21,7 @@ pub(crate) struct WritingProps {
 pub(crate) fn writing(props: &WritingProps) -> Html {
     let lang = use_language();
     let metadata = use_metadata();
-    let set_error = use_set_bounce_value::<ErrorState>();
+    let set_error = use_atom_setter::<ErrorState>();
 
     let writing_metadata = metadata.as_ref().and_then(|m| {
         m.writings()

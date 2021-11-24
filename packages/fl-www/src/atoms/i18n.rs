@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use bounce::prelude::*;
+use bounce::*;
 
 use crate::prelude::*;
 use crate::utils::Id;
@@ -59,5 +59,5 @@ impl Slice for LanguageState {
 }
 
 pub(crate) fn use_language() -> Language {
-    use_bounce_value::<LanguageState>().lang
+    use_slice_value::<LanguageState>().lang
 }

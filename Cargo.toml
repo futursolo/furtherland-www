@@ -7,7 +7,6 @@ members = [
     "packages/fl-www-common",
     "packages/fl-www-agents",
     "packages/yew-query",
-    "packages/bounce",
 ]
 resolver = "2"
 

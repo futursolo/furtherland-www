@@ -13,7 +13,7 @@ pub(crate) fn routing_listener(props: &ChildrenProps) -> Html {
 
     let route = use_app_route();
 
-    let set_lang = use_set_bounce_value::<LanguageState>();
+    let set_lang = use_slice_dispatch::<LanguageState>();
 
     use_effect_with_deps(
         move |_| {

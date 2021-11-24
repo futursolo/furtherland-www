@@ -144,13 +144,25 @@ checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 [[package]]
 name = "bounce"
 version = "0.1.0"
+source = "git+https://github.com/futursolo/bounce#40cefaa9db95b74f44a09e54813b73b272804902"
 dependencies = [
  "anymap2",
- "fl-www-macros",
+ "bounce-macros",
  "once_cell",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "yew",
+]
+
+[[package]]
+name = "bounce-macros"
+version = "0.1.0"
+source = "git+https://github.com/futursolo/bounce#40cefaa9db95b74f44a09e54813b73b272804902"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
