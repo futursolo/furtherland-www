@@ -17,33 +17,33 @@ wasm-bindgen-futures = "0.4.28"
 js-sys = "0.3.55"
 # web-sys
 wee_alloc = "0.4.5"
-futures = "0.3.17"
-gloo = { version = "0.4.0", features = ["futures"] }
-async-trait = "0.1.51"
+futures = "0.3.19"
+gloo = { version = "0.5.0", features = ["futures"] }
+async-trait = "0.1.52"
 
 console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
 yew-feather = { git = "https://github.com/futursolo/yew-feather", branch = "compiled" }
-yew-router = "0.16"
-yew-side-effect = "0.2"
-yew = "0.19"
-yew-agent = "0.1"
+yew-router = "0.16.0"
+yew-side-effect = "0.2.0"
+yew = "0.19.3"
+yew-agent = "0.1.0"
 stylist = { version = "0.10.0", features = ["yew_integration"] }
 
-i18n-embed = { version = "0.13.0", features = ["fluent-system", "web-sys-requester"] }
-rust-embed = { version = "6.2.0", features = ["debug-embed"] }
-i18n-embed-fl = "0.6.0"
+i18n-embed = { version = "0.13.1", features = ["fluent-system", "web-sys-requester"] }
+rust-embed = { version = "6.3.0", features = ["debug-embed"] }
+i18n-embed-fl = "0.6.1"
 unic-langid = "0.9.0"
 
 chrono = { version = "0.4.19", features = ["wasmbind"] }
 parking_lot = { version = "0.11.2", features = ["wasm-bindgen"] }
 
-once_cell = "1.8.0"
-serde = "1.0.130"
-serde_json = "1.0.68"
+once_cell = "1.9.0"
+serde = "1.0.132"
+serde_json = "1.0.73"
 
-fastrand = "1.5.0"
+fastrand = "1.6.0"
 ahash = "0.7.6"
 
 [dependencies.web-sys]

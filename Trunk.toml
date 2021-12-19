@@ -10,4 +10,4 @@ ignore = [
 ]
 
 [tools]
-wasm_bindgen = "0.2.77"
+wasm_bindgen = "0.2.78"
