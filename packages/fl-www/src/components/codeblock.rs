@@ -1,6 +1,7 @@
+use yew_agent::use_bridge;
+
 use crate::prelude::*;
 use agents::highlight::{HighlightInput, HighlightOutput};
-use agents::prelude::*;
 use atoms::CacheState;
 use misc::ToHtml;
 use styling::ThemeKind;

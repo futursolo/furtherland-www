@@ -5,15 +5,9 @@ use yew_query::{use_query, Request};
 
 use crate::prelude::*;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub(crate) struct MetadataState {
     value: Option<Rc<Metadata>>,
-}
-
-impl Default for MetadataState {
-    fn default() -> Self {
-        Self { value: None }
-    }
 }
 
 pub(crate) fn use_metadata() -> Option<Rc<Metadata>> {

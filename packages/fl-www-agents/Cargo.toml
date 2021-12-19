@@ -21,8 +21,8 @@ console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 console_error_panic_hook = "0.1.7"
 
-yew = { git = "https://github.com/yewstack/yew" }
-yew-agent = { git = "https://github.com/yewstack/yew", package = "yew-agent" }
+yew = "0.19"
+yew-agent = "0.1"
 
 # bincode = "1.0"
 serde = "1.0.130"

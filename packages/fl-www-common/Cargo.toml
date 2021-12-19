@@ -20,8 +20,8 @@ gloo-utils = "0.1"
 console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
-yew = { git = "https://github.com/yewstack/yew" }
-stylist = { git = "https://github.com/futursolo/stylist-rs", version = "0.10.0", features = ["yew_integration", "yew_use_media_query", "yew_use_style"] }
+yew = "0.19"
+stylist = { version = "0.10.0", features = ["yew_integration"] }
 
 serde = "1.0.130"
 serde_json = "1.0.68"

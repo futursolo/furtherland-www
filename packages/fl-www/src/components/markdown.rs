@@ -1,7 +1,8 @@
+use yew_agent::use_bridge;
+
 use bounce::prelude::*;
 
 use crate::prelude::*;
-use agents::prelude::*;
 use atoms::CacheState;
 use fl_www_core::markdown::Root;
 use misc::ToHtml;

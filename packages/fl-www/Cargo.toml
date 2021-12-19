@@ -8,7 +8,7 @@ fl-www-core = { path = "../fl-www-core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 
-bounce = { git = "https://github.com/futursolo/bounce" }
+bounce = "0.1.3"
 
 yew-query = { path = "../yew-query" }
 
@@ -25,11 +25,11 @@ console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
 yew-feather = { git = "https://github.com/futursolo/yew-feather", branch = "compiled" }
-yew-router = { git = "https://github.com/yewstack/yew" }
-yew-side-effect = { git = "https://github.com/futursolo/yew-side-effect" }
-yew = { git = "https://github.com/yewstack/yew" }
-yew-agent = { git = "https://github.com/yewstack/yew", package = "yew-agent" }
-stylist = { git = "https://github.com/futursolo/stylist-rs", version = "0.10.0", features = ["yew_integration"] }
+yew-router = "0.16"
+yew-side-effect = "0.2"
+yew = "0.19"
+yew-agent = "0.1"
+stylist = { version = "0.10.0", features = ["yew_integration"] }
 
 i18n-embed = { version = "0.13.0", features = ["fluent-system", "web-sys-requester"] }
 rust-embed = { version = "6.2.0", features = ["debug-embed"] }

@@ -117,7 +117,7 @@ pub(crate) fn header() -> Html {
 
     use_language();
 
-    let header_ref: NodeRef = use_ref(NodeRef::default).borrow_mut().clone();
+    let header_ref = use_node_ref();
 
     let nav_pos = use_state_eq(|| NavPosition::InPlace);
 
@@ -135,8 +135,10 @@ pub(crate) fn header() -> Html {
                 .flatten()
                 .and_then(|m| m.get_property_value("height").ok())
                 // Get Header height in px.
-                .and_then(|m| m.splitn(2, "px").next().and_then(|m| m.parse::<u32>().ok()))
-            {
+                .and_then(|m| {
+                    Some(m.split_once("px").map_or(&*m, |x| x.0))
+                        .and_then(|m| m.parse::<u32>().ok())
+                }) {
                 Some(header_height) => header_height,
                 None => {
                     nav_pos_clone.set(NavPosition::InPlace);
