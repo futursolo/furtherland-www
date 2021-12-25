@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use gloo::events::EventListener;
 use web_sys::{Event, EventTarget};
 use yew::prelude::*;
@@ -5,16 +7,51 @@ use yew::prelude::*;
 use crate::prelude::*;
 use utils::{get_viewport_height, Id};
 
-pub fn use_event<E, F>(target: &EventTarget, event_type: E, mut callback: F)
+pub fn use_event<E, F>(target: &EventTarget, event_type: E, callback: F)
 where
     E: Into<Cow<'static, str>>,
-    F: FnMut(&Event) + 'static,
+    F: Fn(&Event) + 'static,
 {
-    use_state(move || {
-        EventListener::new(target, event_type, move |e| {
-            callback(e);
-        })
-    });
+    #[derive(Clone)]
+    struct EventDependents {
+        target: EventTarget,
+        event_type: Cow<'static, str>,
+        callback: Rc<dyn Fn(&Event)>,
+    }
+
+    #[allow(clippy::vtable_address_comparisons)]
+    impl PartialEq for EventDependents {
+        fn eq(&self, rhs: &Self) -> bool {
+            self.target == rhs.target
+                && self.event_type == rhs.event_type
+                && Rc::ptr_eq(&self.callback, &rhs.callback)
+        }
+    }
+
+    let deps = EventDependents {
+        target: target.clone(),
+        event_type: event_type.into(),
+        callback: Rc::new(callback) as Rc<dyn Fn(&Event)>,
+    };
+
+    use_effect_with_deps(
+        |deps| {
+            let EventDependents {
+                target,
+                event_type,
+                callback,
+            } = deps.clone();
+
+            let listener = EventListener::new(&target, event_type, move |e| {
+                callback(e);
+            });
+
+            move || {
+                drop(listener);
+            }
+        },
+        deps,
+    );
 }
 
 pub fn use_render_event<E>(target: &EventTarget, event_type: E)

@@ -17,7 +17,6 @@ futures = "0.3.19"
 gloo = { version = "0.5.0", features = ["futures"] }
 gloo-utils = "0.1.1"
 
-console_log = { version = "0.2.0", features = ["color"] }
 log = "0.4.14"
 
 yew = "0.19.3"
