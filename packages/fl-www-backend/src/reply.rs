@@ -11,6 +11,7 @@ use object_id::ObjectId;
 pub(crate) struct ReplyValue {
     id: ObjectId,
     slug: String,
+    approved: bool,
     resident_id: u64,
     content: String,
 }
@@ -42,6 +43,7 @@ pub(crate) async fn post_reply(
     let reply = ReplyValue {
         id,
         slug: slug.to_owned(),
+        approved: resident.status() == messages::ResidencyStatus::Master,
         resident_id: resident.id,
         content: input.content,
     };
@@ -146,17 +148,90 @@ pub(crate) async fn get_reply(
 }
 
 pub(crate) async fn patch_reply(
-    _req: Request,
-    _ctx: RouteContext<RequestContext>,
+    mut req: Request,
+    ctx: RouteContext<RequestContext>,
 ) -> Result<Response> {
-    todo!()
+    let resident = match ctx.data().resident {
+        Some(ref m) => m.clone(),
+        None => return Err(Error::Forbidden),
+    };
+
+    if resident.status() != messages::ResidencyStatus::Master {
+        return Err(Error::Forbidden);
+    }
+
+    let slug = match ctx.param("slug") {
+        Some(m) => m,
+        None => return Err(Error::NotFound),
+    };
+
+    let reply_id = match ctx.param("id") {
+        Some(m) => m,
+        None => return Err(Error::NotFound),
+    };
+
+    let input = req
+        .json::<messages::PatchReplyInput>()
+        .await
+        .map_err(|_e| Error::BadRequest)?;
+
+    let reply_store = ctx.kv("REPLIES")?;
+    let reply_key = format!("{}:{}", slug, reply_id);
+
+    let reply = match reply_store.get(&reply_key).await? {
+        Some(m) => m,
+        None => return Err(Error::NotFound),
+    };
+
+    let mut reply_value = reply.as_json::<ReplyValue>()?;
+
+    if let Some(m) = input.approved {
+        reply_value.approved = m;
+    }
+
+    if let Some(m) = input.content {
+        reply_value.content = m;
+    }
+
+    reply_store.put(&reply_key, &reply_value)?.execute().await?;
+
+    let resp = messages::Response::Success { content: () };
+
+    Ok(Response::from_json(&resp)?)
 }
 
 pub(crate) async fn delete_reply(
     _req: Request,
-    _ctx: RouteContext<RequestContext>,
+    ctx: RouteContext<RequestContext>,
 ) -> Result<Response> {
-    todo!()
+    let resident = match ctx.data().resident {
+        Some(ref m) => m.clone(),
+        None => return Err(Error::Forbidden),
+    };
+
+    if resident.status() != messages::ResidencyStatus::Master {
+        return Err(Error::Forbidden);
+    }
+
+    let slug = match ctx.param("slug") {
+        Some(m) => m,
+        None => return Err(Error::NotFound),
+    };
+
+    let reply_id = match ctx.param("id") {
+        Some(m) => m,
+        None => return Err(Error::NotFound),
+    };
+
+    let reply_store = ctx.kv("REPLIES")?;
+
+    reply_store
+        .delete(&format!("{}:{}", slug, reply_id))
+        .await?;
+
+    let resp = messages::Response::Success { content: () };
+
+    Ok(Response::from_json(&resp)?)
 }
 
 pub(crate) fn register_endpoints(router: Router<'_, RequestContext>) -> Router<'_, RequestContext> {

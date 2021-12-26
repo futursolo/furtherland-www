@@ -9,12 +9,8 @@ use serde::{Deserialize, Serialize};
 use crate::error::{Error, Result};
 
 /// A workaround until bson::oid::ObjectId works under wasm32.
-#[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
-pub struct ObjectId(
-    #[serde(serialize_with = "ObjectId::serialise")]
-    #[serde(deserialize_with = "ObjectId::deserialise")]
-    Vec<u8>,
-);
+#[derive(Debug, Clone, PartialEq, Hash, Eq)]
+pub struct ObjectId(Vec<u8>);
 
 impl Default for ObjectId {
     fn default() -> ObjectId {
@@ -23,26 +19,24 @@ impl Default for ObjectId {
     }
 }
 
-impl ObjectId {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    fn serialise<S>(inner: &[u8], ser: S) -> std::result::Result<S::Ok, S::Error>
+impl Serialize for ObjectId {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        ser.serialize_str(&hex::encode(inner))
+        serializer.serialize_str(&self.to_string())
     }
+}
 
-    fn deserialise<'de, D>(de: D) -> std::result::Result<Vec<u8>, D::Error>
+impl<'de> Deserialize<'de> for ObjectId {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         struct ObjectIdVisitor;
 
         impl<'de> Visitor<'de> for ObjectIdVisitor {
-            type Value = Vec<u8>;
+            type Value = ObjectId;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("an ObjectId")
@@ -52,14 +46,17 @@ impl ObjectId {
             where
                 E: serde::de::Error,
             {
-                value
-                    .parse()
-                    .map_err(|e| E::custom(e))
-                    .map(|m: ObjectId| m.0)
+                value.parse().map_err(|e| E::custom(e))
             }
         }
 
-        de.deserialize_str(ObjectIdVisitor)
+        deserializer.deserialize_str(ObjectIdVisitor)
+    }
+}
+
+impl ObjectId {
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 

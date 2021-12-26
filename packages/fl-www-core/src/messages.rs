@@ -2,7 +2,7 @@ use crate::object_id::ObjectId;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize, Copy)]
+#[derive(Clone, Debug, Serialize, Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ResidencyStatus {
     // Disabled = -1,
     // Pending = 0,
@@ -46,6 +46,14 @@ pub struct Reply {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ReplyInput {
     pub content: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PatchReplyInput {
+    #[serde(default)]
+    pub approved: Option<bool>,
+    #[serde(default)]
+    pub content: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
