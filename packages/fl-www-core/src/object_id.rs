@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 
+/// A workaround until bson::oid::ObjectId works under wasm32.
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub struct ObjectId(
     #[serde(serialize_with = "ObjectId::serialise")]
@@ -38,7 +39,7 @@ impl ObjectId {
     where
         D: Deserializer<'de>,
     {
-        pub struct ObjectIdVisitor;
+        struct ObjectIdVisitor;
 
         impl<'de> Visitor<'de> for ObjectIdVisitor {
             type Value = Vec<u8>;

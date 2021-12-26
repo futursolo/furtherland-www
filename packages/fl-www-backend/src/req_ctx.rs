@@ -1,6 +1,6 @@
-use crate::user::User;
+use crate::resident::Resident;
 
 #[derive(Debug, Clone)]
 pub struct RequestContext {
-    pub user: Option<User>,
+    pub resident: Option<Resident>,
 }

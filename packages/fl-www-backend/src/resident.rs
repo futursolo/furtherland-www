@@ -5,23 +5,23 @@ use worker::{Fetch, Method, Request, RouteContext};
 use crate::error::{Error, Result};
 use crate::prelude::*;
 use crate::RequestContext;
-pub(crate) use messages::User;
+pub(crate) use messages::Resident;
 
 #[async_trait(?Send)]
-pub(crate) trait UserExt {
-    async fn get(ctx: &RouteContext<RequestContext>, id: u64) -> Result<Option<User>>;
-    async fn from_token(token: &str) -> Result<User>;
+pub(crate) trait ResidentExt {
+    async fn get(ctx: &RouteContext<RequestContext>, id: u64) -> Result<Option<Resident>>;
+    async fn from_token(token: &str) -> Result<Resident>;
 }
 
 #[async_trait(?Send)]
-impl UserExt for User {
-    async fn get(ctx: &RouteContext<RequestContext>, id: u64) -> Result<Option<User>> {
-        let user_store = ctx.kv("USERS")?;
+impl ResidentExt for Resident {
+    async fn get(ctx: &RouteContext<RequestContext>, id: u64) -> Result<Option<Resident>> {
+        let resident_store = ctx.kv("RESIDENTS")?;
 
-        let value = user_store.get(&id.to_string()).await?;
+        let value = resident_store.get(&id.to_string()).await?;
 
-        if let Some(m) = value {
-            return Ok(Some(m.as_json::<User>()?));
+        if let Some(m) = value.and_then(|m| m.as_json::<Resident>().ok()) {
+            return Ok(Some(m));
         }
 
         let mut req = Request::new(
@@ -41,21 +41,21 @@ impl UserExt for User {
             return Ok(None);
         }
 
-        let user = match resp.json::<User>().await {
+        let resident = match resp.json::<Resident>().await {
             Ok(m) => m,
             Err(_) => return Err(Error::GitHub),
         };
 
-        user_store
-            .put(&user.id.to_string(), &user)?
+        resident_store
+            .put(&resident.id.to_string(), &resident)?
             .expiration_ttl(24 * 60 * 60)
             .execute()
             .await?;
 
-        Ok(Some(user))
+        Ok(Some(resident))
     }
 
-    async fn from_token(token: &str) -> Result<User> {
+    async fn from_token(token: &str) -> Result<Resident> {
         let mut req = Request::new("https://api.github.com/user", Method::Get)?;
         {
             req.headers_mut()?
@@ -64,7 +64,7 @@ impl UserExt for User {
 
         let mut resp = Fetch::Request(req).send().await?;
 
-        match resp.json::<User>().await {
+        match resp.json::<Resident>().await {
             Ok(m) => Ok(m),
             Err(_) => Err(Error::GitHub),
         }

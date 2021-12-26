@@ -4,16 +4,16 @@ use worker::{
     event, wasm_bindgen, wasm_bindgen_futures, worker_sys, Env, Request, Response, Router,
 };
 
-mod comment;
 mod error;
 mod logging;
 mod prelude;
+mod reply;
 mod req_ctx;
-mod user;
+mod resident;
 
 use error::Error;
 use req_ctx::RequestContext;
-use user::{User, UserExt};
+use resident::{Resident, ResidentExt};
 
 #[event(fetch)]
 pub async fn main(req: Request, env: Env) -> worker::Result<Response> {
@@ -34,18 +34,20 @@ pub async fn main(req: Request, env: Env) -> worker::Result<Response> {
     };
 
     let req_ctx = if let Some(ref m) = token {
-        let user = match User::from_token(m).await {
+        let resident = match Resident::from_token(m).await {
             Ok(m) => m,
             Err(e) => return Ok(e.into_response()),
         };
 
-        RequestContext { user: Some(user) }
+        RequestContext {
+            resident: Some(resident),
+        }
     } else {
-        RequestContext { user: None }
+        RequestContext { resident: None }
     };
 
     let router = Router::with_data(req_ctx);
-    let router = comment::register_endpoints(router);
+    let router = reply::register_endpoints(router);
 
     router
         .or_else_any_method("/*anything", |_, _| Ok(Error::NotFound.into_response()))
