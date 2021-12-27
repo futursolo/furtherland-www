@@ -1,7 +1,7 @@
 use std::fmt;
-use std::iter::repeat_with;
 use std::str::FromStr;
 
+use rand::Rng;
 use serde::de::{Deserializer, Visitor};
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
@@ -14,8 +14,7 @@ pub struct ObjectId(Vec<u8>);
 
 impl Default for ObjectId {
     fn default() -> ObjectId {
-        let rng = fastrand::Rng::new();
-        Self(repeat_with(|| rng.u8(..)).take(12).collect())
+        Self(rand::thread_rng().gen::<[u8; 12]>().into())
     }
 }
 

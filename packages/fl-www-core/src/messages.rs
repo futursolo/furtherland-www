@@ -1,6 +1,9 @@
-use crate::object_id::ObjectId;
+use chrono::{DateTime, Utc};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+
+use crate::object_id::ObjectId;
+use crate::prelude::*;
 
 #[derive(Clone, Debug, Serialize, Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ResidencyStatus {
@@ -39,8 +42,21 @@ pub struct Replies {
 pub struct Reply {
     pub id: ObjectId,
     pub slug: String,
+    pub lang: Language,
     pub resident: Option<Resident>,
     pub content: String,
+
+    #[serde(default)]
+    pub approved: Option<bool>,
+
+    pub created_at: DateTime<Utc>,
+}
+
+impl Reply {
+    /// Returns the key in the storage.
+    pub fn key(&self) -> String {
+        format!("{}:{}:{}", self.lang, self.slug, self.id)
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -57,6 +73,18 @@ pub struct PatchReplyInput {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct AccessTokenInput {
+    pub code: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct AccessToken {
+    pub access_token: String,
+    pub token_type: String,
+    pub scope: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ResponseError {
     pub code: u64,
 }
@@ -66,11 +94,11 @@ pub enum Response<T>
 where
     T: Serialize + DeserializeOwned + 'static,
 {
+    #[serde(rename = "success")]
     Success {
         #[serde(deserialize_with = "T::deserialize")]
         content: T,
     },
-    Failed {
-        error: ResponseError,
-    },
+    #[serde(rename = "failed")]
+    Failed { error: ResponseError },
 }

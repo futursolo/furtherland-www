@@ -48,6 +48,7 @@ pub async fn main(req: Request, env: Env) -> worker::Result<Response> {
 
     let router = Router::with_data(req_ctx);
     let router = reply::register_endpoints(router);
+    let router = resident::register_endpoints(router);
 
     router
         .or_else_any_method("/*anything", |_, _| Ok(Error::NotFound.into_response()))

@@ -5,12 +5,13 @@ use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub(crate) enum Error {
-    #[error("error from Cloudflare Worker.")]
+    #[error("error from Cloudflare Worker.\n{}", .0)]
     Worker(#[from] worker::Error),
+
     #[error("error from GitHub API.")]
     GitHub,
 
-    #[error("error from Cloudflare Worker KV.")]
+    #[error("error from Cloudflare Worker KV.\n{}", .0)]
     Kv(#[from] worker::kv::KvError),
 
     #[error("page not found.")]
@@ -25,6 +26,8 @@ pub(crate) enum Error {
 
 impl Error {
     pub fn into_response(self) -> worker::Response {
+        log::error!("{}", self);
+
         match self {
             Error::Worker(_m) => worker::Response::from_json(&messages::Response::<()>::Failed {
                 error: messages::ResponseError { code: 5001 },

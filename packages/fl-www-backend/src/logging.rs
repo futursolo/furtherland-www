@@ -13,7 +13,7 @@ pub(crate) fn init() {
         #[cfg(debug_assertions)]
         console_log::init_with_level(Level::Debug).expect("Failed to initialise Log!");
         #[cfg(not(debug_assertions))]
-        console_log::init_with_level(Level::Error).expect("Failed to initialise Log!");
+        console_log::init_with_level(Level::Info).expect("Failed to initialise Log!");
     });
 }
 
