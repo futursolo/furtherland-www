@@ -5,7 +5,7 @@ use bounce::*;
 use crate::prelude::*;
 use crate::utils::Id;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Slice)]
 pub(crate) struct LanguageState {
     lang: Language,
     id: Id,
@@ -37,7 +37,7 @@ impl Default for LanguageState {
     }
 }
 
-impl Slice for LanguageState {
+impl Reducible for LanguageState {
     type Action = ();
 
     fn reduce(self: Rc<Self>, _action: Self::Action) -> Rc<Self> {

@@ -1,0 +1,253 @@
+use std::cell::RefCell;
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
+use std::marker::PhantomData;
+use std::rc::Rc;
+
+use async_trait::async_trait;
+use bounce::prelude::*;
+use futures::channel::oneshot;
+use yew::prelude::*;
+
+use crate::status::QueryStatus;
+use crate::utils::Id;
+
+/// A [`Result`](std::result::Result) returned by mutations.
+pub type MutationResult<T> = std::result::Result<Rc<T>, <T as Mutation>::Error>;
+
+/// A trait to be implemented on mutations.
+#[async_trait(?Send)]
+pub trait Mutation: PartialEq {
+    /// The Input type.
+    type Input: 'static;
+    /// The Error type.
+    type Error: 'static + std::error::Error + Clone;
+
+    /// Runs a mutation.
+    async fn run(states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self>;
+}
+
+struct RunMutationInput<T>
+where
+    T: Mutation + 'static,
+{
+    id: Id,
+    input: Rc<T::Input>,
+    sender: RefCell<Option<oneshot::Sender<MutationResult<T>>>>,
+}
+
+#[future_notion(RunMutation)]
+async fn run_mutation<T>(
+    states: &BounceStates,
+    input: Rc<RunMutationInput<T>>,
+) -> Rc<MutationResult<T>>
+where
+    T: Mutation + 'static,
+{
+    let result = T::run(states, input.input.clone()).await;
+
+    if let Some(m) = input.sender.borrow_mut().take() {
+        m.send(result.clone())
+            .map_err(|_| ())
+            .expect("failed to send result.");
+    }
+
+    result.into()
+}
+
+enum MutationStateAction {
+    /// Destroy all states of a hook.
+    Destroy(Id),
+}
+
+#[derive(Slice)]
+struct MutationState<T>
+where
+    T: Mutation + 'static,
+{
+    ctr: u64,
+    mutations: HashMap<Id, Option<(Id, MutationResult<T>)>>,
+}
+
+impl<T> PartialEq for MutationState<T>
+where
+    T: Mutation + 'static,
+{
+    fn eq(&self, rhs: &Self) -> bool {
+        self.ctr == rhs.ctr
+    }
+}
+
+impl<T> Default for MutationState<T>
+where
+    T: Mutation + 'static,
+{
+    fn default() -> Self {
+        Self {
+            ctr: 0,
+            mutations: HashMap::new(),
+        }
+    }
+}
+
+impl<T> Reducible for MutationState<T>
+where
+    T: Mutation + 'static,
+{
+    type Action = MutationStateAction;
+
+    fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+        match action {
+            Self::Action::Destroy(id) => {
+                let mut mutations = self.mutations.clone();
+                mutations.remove(&id);
+
+                Self {
+                    // we don't increase the counter here as there's nothing to update.
+                    ctr: self.ctr,
+                    mutations,
+                }
+                .into()
+            }
+        }
+    }
+}
+
+impl<T> WithNotion<Deferred<RunMutation<T>>> for MutationState<T>
+where
+    T: Mutation + 'static,
+{
+    fn apply(self: Rc<Self>, notion: Rc<Deferred<RunMutation<T>>>) -> Rc<Self> {
+        match *notion {
+            Deferred::Pending { ref input } => {
+                if self.mutations.contains_key(&input.id) {
+                    return self;
+                }
+
+                let mut mutations = self.mutations.clone();
+                mutations.insert(input.id, None);
+
+                Self {
+                    ctr: self.ctr + 1,
+                    mutations,
+                }
+                .into()
+            }
+            Deferred::Complete {
+                ref input,
+                ref output,
+            } => {
+                let mut mutations = self.mutations.clone();
+                match mutations.entry(input.id) {
+                    Entry::Vacant(m) => {
+                        m.insert(Some((input.id, (**output).clone())));
+                    }
+                    Entry::Occupied(mut m) => {
+                        let m = m.get_mut();
+                        match m {
+                            Some(ref n) => {
+                                // only replace if new id is higher.
+                                if n.0 <= input.id {
+                                    *m = Some((input.id, (**output).clone()));
+                                }
+                            }
+                            None => {
+                                *m = Some((input.id, (**output).clone()));
+                            }
+                        }
+                    }
+                }
+
+                Self {
+                    ctr: self.ctr + 1,
+                    mutations,
+                }
+                .into()
+            }
+        }
+    }
+}
+
+/// A handle returned by [`use_mutation_value`].
+pub struct UseMutationValueHandle<T>
+where
+    T: Mutation + 'static,
+{
+    id: Id,
+    inner: UseSliceHandle<MutationState<T>>,
+    run_mutation: Rc<dyn Fn(<RunMutation<T> as FutureNotion>::Input)>,
+    _marker: PhantomData<T>,
+}
+
+impl<T> UseMutationValueHandle<T>
+where
+    T: Mutation + 'static,
+{
+    /// Returns the status of current mutation.
+    pub fn status(&self) -> QueryStatus {
+        match self
+            .inner
+            .mutations
+            .get(&self.id)
+            .map(|m| m.as_ref().map(|m| &m.1))
+        {
+            Some(Some(Ok(_))) => QueryStatus::Ok,
+            Some(Some(Err(_))) => QueryStatus::Err,
+            Some(None) => QueryStatus::Loading,
+            None => QueryStatus::Idle,
+        }
+    }
+
+    /// Returns the result of last finished mutation (if any).
+    pub fn result(&self) -> Option<MutationResult<T>> {
+        self.inner
+            .mutations
+            .get(&self.id)
+            .and_then(|m| m.as_ref().map(|m| m.1.clone()))
+    }
+
+    /// Runs a mutation with input.
+    pub async fn run(&self, input: impl Into<Rc<T::Input>>) -> MutationResult<T> {
+        let id = Id::new();
+        let input = input.into();
+        let (sender, receiver) = oneshot::channel();
+
+        (self.run_mutation)(Rc::new(RunMutationInput {
+            id,
+            input,
+            sender: Some(sender).into(),
+        }));
+
+        receiver.await.unwrap()
+    }
+}
+
+/// A hook to run a mutation and subscribes to its result.
+pub fn use_mutation_value<T>() -> UseMutationValueHandle<T>
+where
+    T: Mutation + 'static,
+{
+    let id = *use_ref(Id::new);
+    let state = use_slice::<MutationState<T>>();
+    let run_mutation = use_future_notion_runner::<RunMutation<T>>();
+
+    {
+        let state = state.clone();
+        use_effect_with_deps(
+            |id| {
+                let id = *id;
+                move || {
+                    state.dispatch(MutationStateAction::Destroy(id));
+                }
+            },
+            id,
+        );
+    }
+
+    UseMutationValueHandle {
+        id,
+        inner: state,
+        run_mutation,
+        _marker: PhantomData,
+    }
+}

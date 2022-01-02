@@ -10,7 +10,7 @@ use web_sys::{Element, HtmlScriptElement};
 
 use crate::prelude::*;
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Slice)]
 pub struct CacheState(HashMap<u64, serde_json::Value>);
 
 // macro_rules! log_dbg {
@@ -112,7 +112,7 @@ impl CacheState {
     }
 }
 
-impl Slice for CacheState {
+impl Reducible for CacheState {
     type Action = (u64, serde_json::Value);
 
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
