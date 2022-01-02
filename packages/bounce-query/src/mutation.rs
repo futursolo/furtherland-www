@@ -133,7 +133,7 @@ where
                 }
                 .into()
             }
-            Deferred::Complete {
+            Deferred::Completed {
                 ref input,
                 ref output,
             } => {
@@ -164,6 +164,7 @@ where
                 }
                 .into()
             }
+            Deferred::Outdated { .. } => self,
         }
     }
 }
@@ -173,8 +174,7 @@ pub struct UseMutationValueHandle<T>
 where
     T: Mutation + 'static,
 {
-    id: Id,
-    inner: UseSliceHandle<MutationState<T>>,
+    state: Rc<MutationSelector<T>>,
     run_mutation: Rc<dyn Fn(<RunMutation<T> as FutureNotion>::Input)>,
     _marker: PhantomData<T>,
 }
@@ -185,12 +185,7 @@ where
 {
     /// Returns the status of current mutation.
     pub fn status(&self) -> QueryStatus {
-        match self
-            .inner
-            .mutations
-            .get(&self.id)
-            .map(|m| m.as_ref().map(|m| &m.1))
-        {
+        match self.state.value {
             Some(Some(Ok(_))) => QueryStatus::Ok,
             Some(Some(Err(_))) => QueryStatus::Err,
             Some(None) => QueryStatus::Loading,
@@ -200,10 +195,7 @@ where
 
     /// Returns the result of last finished mutation (if any).
     pub fn result(&self) -> Option<MutationResult<T>> {
-        self.inner
-            .mutations
-            .get(&self.id)
-            .and_then(|m| m.as_ref().map(|m| m.1.clone()))
+        self.state.value.clone().flatten()
     }
 
     /// Runs a mutation with input.
@@ -222,22 +214,61 @@ where
     }
 }
 
+pub(crate) struct MutationSelector<T>
+where
+    T: Mutation + 'static,
+{
+    id: Option<Id>,
+    value: Option<Option<MutationResult<T>>>,
+}
+
+impl<T> InputSelector for MutationSelector<T>
+where
+    T: Mutation + 'static,
+{
+    type Input = Id;
+    fn select(states: &BounceStates, input: Rc<Id>) -> Rc<Self> {
+        let values = states
+            .get_slice_value::<MutationState<T>>()
+            .mutations
+            .get(&input)
+            .map(|m| m.as_ref().cloned());
+
+        let id = values.clone().flatten().map(|m| m.0);
+
+        Self {
+            id,
+            value: values.map(|m| m.map(|m| m.1)),
+        }
+        .into()
+    }
+}
+
+impl<T> PartialEq for MutationSelector<T>
+where
+    T: Mutation + 'static,
+{
+    fn eq(&self, rhs: &Self) -> bool {
+        self.id == rhs.id
+    }
+}
+
 /// A hook to run a mutation and subscribes to its result.
 pub fn use_mutation_value<T>() -> UseMutationValueHandle<T>
 where
     T: Mutation + 'static,
 {
     let id = *use_ref(Id::new);
-    let state = use_slice::<MutationState<T>>();
+    let dispatch_state = use_slice_dispatch::<MutationState<T>>();
+    let state = use_input_selector_value::<MutationSelector<T>>(id.into());
     let run_mutation = use_future_notion_runner::<RunMutation<T>>();
 
     {
-        let state = state.clone();
         use_effect_with_deps(
             |id| {
                 let id = *id;
                 move || {
-                    state.dispatch(MutationStateAction::Destroy(id));
+                    dispatch_state(MutationStateAction::Destroy(id));
                 }
             },
             id,
@@ -245,8 +276,7 @@ where
     }
 
     UseMutationValueHandle {
-        id,
-        inner: state,
+        state,
         run_mutation,
         _marker: PhantomData,
     }

@@ -153,7 +153,7 @@ checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 [[package]]
 name = "bounce"
 version = "0.2.0"
-source = "git+https://github.com/futursolo/bounce.git#0cb70fff7681ffa73601ca541cc41f5e8e61e851"
+source = "git+https://github.com/futursolo/bounce.git#e40d4119b7e3df228609315346021d1dd2bd59e4"
 dependencies = [
  "anymap2",
  "bounce-macros",
@@ -167,7 +167,7 @@ dependencies = [
 [[package]]
 name = "bounce-macros"
 version = "0.2.0"
-source = "git+https://github.com/futursolo/bounce.git#0cb70fff7681ffa73601ca541cc41f5e8e61e851"
+source = "git+https://github.com/futursolo/bounce.git#e40d4119b7e3df228609315346021d1dd2bd59e4"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
