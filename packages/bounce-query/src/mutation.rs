@@ -21,7 +21,7 @@ pub trait Mutation: PartialEq {
     /// The Input type.
     type Input: 'static;
     /// The Error type.
-    type Error: 'static + std::error::Error + Clone;
+    type Error: 'static + std::error::Error + PartialEq + Clone;
 
     /// Runs a mutation.
     async fn run(states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self>;
@@ -214,6 +214,7 @@ where
     }
 }
 
+#[derive(PartialEq)]
 pub(crate) struct MutationSelector<T>
 where
     T: Mutation + 'static,
@@ -241,15 +242,6 @@ where
             value: values.map(|m| m.map(|m| m.1)),
         }
         .into()
-    }
-}
-
-impl<T> PartialEq for MutationSelector<T>
-where
-    T: Mutation + 'static,
-{
-    fn eq(&self, rhs: &Self) -> bool {
-        self.id == rhs.id
     }
 }
 
