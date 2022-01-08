@@ -47,9 +47,7 @@ where
     let result = T::run(states, input.input.clone()).await;
 
     if let Some(m) = input.sender.borrow_mut().take() {
-        m.send(result.clone())
-            .map_err(|_| ())
-            .expect("failed to send result.");
+        let _result = m.send(result.clone());
     }
 
     result.into()
