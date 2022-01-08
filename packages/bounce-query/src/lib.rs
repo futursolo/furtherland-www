@@ -1,3 +1,5 @@
+#![deny(clippy::all)]
+
 mod mutation;
 mod query;
 mod status;
