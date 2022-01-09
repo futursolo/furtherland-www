@@ -14,8 +14,7 @@ wasm-bindgen-futures = "0.4.28"
 js-sys = "0.3.55"
 # web-sys
 futures = "0.3.19"
-gloo = { version = "0.5.0", features = ["futures"] }
-gloo-utils = "0.1.1"
+gloo = { version = "0.6.0", features = ["futures"] }
 
 log = "0.4.14"
 

@@ -7,7 +7,7 @@ use std::sync::{Arc, Mutex};
 
 // use pulldown_cmark::escape::StrWrite;
 use pulldown_cmark::Event::*;
-use pulldown_cmark::{CodeBlockKind, Event, LinkType, Tag};
+use pulldown_cmark::{CodeBlockKind, Event, HeadingLevel, LinkType, Tag};
 
 use super::types::*;
 
@@ -207,7 +207,17 @@ where
                 };
                 self.current_node = Some(Node::Paragraph(p));
             }
-            Tag::Heading(level) => {
+            Tag::Heading(level, _, _) => {
+                let level = match level {
+                    HeadingLevel::H1 => 1,
+                    HeadingLevel::H2 => 2,
+                    HeadingLevel::H3 => 3,
+
+                    HeadingLevel::H4 => 4,
+                    HeadingLevel::H5 => 5,
+                    HeadingLevel::H6 => 6,
+                };
+
                 self.current_node = Some(Node::Heading(Heading {
                     level,
                     children: Vec::new(),
@@ -374,7 +384,7 @@ where
                 }
                 _ => panic!("Not paragraph?"),
             },
-            Tag::Heading(_level) => match self.current_node.take().unwrap() {
+            Tag::Heading(_level, _, _) => match self.current_node.take().unwrap() {
                 // Verify level is the same?
                 Node::Heading(p) => {
                     if let Some(mut m) = p.parent.clone().lock().unwrap().take() {

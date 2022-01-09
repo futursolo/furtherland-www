@@ -5,7 +5,7 @@ pub use std::borrow::Cow;
 pub use gloo;
 pub use log;
 // pub use reqwest;
-pub use gloo_utils::{document, window};
+pub use gloo::utils::{document, window};
 pub use stylist;
 pub use stylist::YieldStyle;
 pub use wasm_bindgen::JsCast;

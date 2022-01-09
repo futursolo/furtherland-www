@@ -18,7 +18,7 @@ js-sys = "0.3.55"
 # web-sys
 wee_alloc = "0.4.5"
 futures = "0.3.19"
-gloo = { version = "0.5.0", features = ["futures"] }
+gloo = { version = "0.6.0", features = ["futures"] }
 async-trait = "0.1.52"
 
 console_log = { version = "0.2.0", features = ["color"] }
