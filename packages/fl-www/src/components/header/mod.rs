@@ -57,6 +57,7 @@ pub(crate) fn header_background() -> Html {
             ), home_class
         )}>
             <picture>
+                <source srcset="/assets/images/background.avif" type="image/avif" />
                 <source srcset="/assets/images/background.webp" type="image/webp" />
                 <img src="/assets/images/background.jpg" class={css!(r#"
                     height: 100%;
