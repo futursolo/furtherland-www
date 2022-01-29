@@ -1,8 +1,6 @@
 #![deny(clippy::all)]
 
-use worker::{
-    event, wasm_bindgen, wasm_bindgen_futures, worker_sys, Env, Request, Response, Router,
-};
+use worker::{event, Env, Request, Response, Router};
 
 mod error;
 mod logging;
@@ -16,7 +14,7 @@ use req_ctx::RequestContext;
 use resident::{Resident, ResidentExt};
 
 #[event(fetch)]
-pub async fn main(req: Request, env: Env) -> worker::Result<Response> {
+pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> worker::Result<Response> {
     logging::init();
     logging::log_request(&req);
 

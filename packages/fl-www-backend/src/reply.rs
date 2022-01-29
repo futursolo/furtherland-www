@@ -20,7 +20,7 @@ pub(crate) struct ReplyValue {
 }
 
 async fn post_reply(mut req: Request, ctx: RouteContext<RequestContext>) -> Result<Response> {
-    let resident = match ctx.data().resident {
+    let resident = match ctx.data.resident {
         Some(ref m) => m.clone(),
         None => return Err(Error::Forbidden),
     };
@@ -94,12 +94,10 @@ async fn get_replies(_req: Request, ctx: RouteContext<RequestContext>) -> Result
 
     let mut replies = Vec::new();
     for key in reply_list.keys.iter() {
-        let reply = match reply_store.get(&key.name).await? {
+        let reply_value = match reply_store.get(&key.name).json::<ReplyValue>().await? {
             Some(m) => m,
             None => continue,
         };
-
-        let reply_value = reply.as_json::<ReplyValue>()?;
 
         let maybe_resident = Resident::get(&ctx, reply_value.resident_id).await?;
 
@@ -143,15 +141,14 @@ async fn get_reply(_req: Request, ctx: RouteContext<RequestContext>) -> Result<R
         Some(m) => m,
         None => return Err(Error::NotFound),
     };
-    let reply = match reply_store
+    let reply_value = match reply_store
         .get(&format!("{}:{}:{}", lang, slug, reply_id))
+        .json::<ReplyValue>()
         .await?
     {
         Some(m) => m,
         None => return Err(Error::NotFound),
     };
-
-    let reply_value = reply.as_json::<ReplyValue>()?;
 
     let maybe_resident = Resident::get(&ctx, reply_value.resident_id).await?;
 
@@ -174,7 +171,7 @@ async fn get_reply(_req: Request, ctx: RouteContext<RequestContext>) -> Result<R
 ///
 /// Note: This can take time until changes are reflected.
 async fn patch_reply(mut req: Request, ctx: RouteContext<RequestContext>) -> Result<Response> {
-    let resident = match ctx.data().resident {
+    let resident = match ctx.data.resident {
         Some(ref m) => m.clone(),
         None => return Err(Error::Forbidden),
     };
@@ -206,12 +203,10 @@ async fn patch_reply(mut req: Request, ctx: RouteContext<RequestContext>) -> Res
     let reply_store = ctx.kv("REPLIES")?;
     let reply_key = format!("{}:{}:{}", lang, slug, reply_id);
 
-    let reply = match reply_store.get(&reply_key).await? {
+    let mut reply_value = match reply_store.get(&reply_key).json::<ReplyValue>().await? {
         Some(m) => m,
         None => return Err(Error::NotFound),
     };
-
-    let mut reply_value = reply.as_json::<ReplyValue>()?;
 
     if let Some(m) = input.approved {
         reply_value.approved = m;
@@ -229,7 +224,7 @@ async fn patch_reply(mut req: Request, ctx: RouteContext<RequestContext>) -> Res
 }
 
 async fn delete_reply(_req: Request, ctx: RouteContext<RequestContext>) -> Result<Response> {
-    let resident = match ctx.data().resident {
+    let resident = match ctx.data.resident {
         Some(ref m) => m.clone(),
         None => return Err(Error::Forbidden),
     };

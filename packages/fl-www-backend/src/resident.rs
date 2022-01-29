@@ -20,9 +20,11 @@ impl ResidentExt for Resident {
     async fn get(ctx: &RouteContext<RequestContext>, id: u64) -> Result<Option<Resident>> {
         let resident_store = ctx.kv("RESIDENTS")?;
 
-        let value = resident_store.get(&id.to_string()).await?;
-
-        if let Some(m) = value.and_then(|m| m.as_json::<Resident>().ok()) {
+        if let Some(m) = resident_store
+            .get(&id.to_string())
+            .json::<Resident>()
+            .await?
+        {
             return Ok(Some(m));
         }
 
