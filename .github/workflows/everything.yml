@@ -52,7 +52,7 @@ jobs:
       - name: Setup wasm-bindgen
         uses: jetli/wasm-bindgen-action@v0.1.0
         with:
-          version: 'latest'
+          version: '0.2.78'
 
       - name: Setup trunk
         uses: jetli/trunk-action@v0.1.0
