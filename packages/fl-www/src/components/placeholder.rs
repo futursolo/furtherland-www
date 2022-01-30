@@ -17,6 +17,9 @@ pub(crate) struct Props {
     pub width: String,
     #[prop_or(PlaceholderKind::Rect)]
     pub kind: PlaceholderKind,
+
+    #[prop_or(true)]
+    pub set_data_status: bool,
 }
 
 #[styled_component(Placeholder)]
@@ -33,8 +36,10 @@ pub(crate) fn placeholder(props: &Props) -> Html {
         ThemeKind::Dark => "rgb(255, 255, 255, 0.05)",
     };
 
+    let data_status = props.set_data_status.then(|| "loading");
+
     html! {
-        <div data-status="loading" class={css!(
+        <div data-status={data_status} class={css!(
             r#"
                 height: ${height};
                 width: ${width};

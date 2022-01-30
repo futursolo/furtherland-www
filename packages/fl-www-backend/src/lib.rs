@@ -1,5 +1,6 @@
 #![deny(clippy::all)]
 
+use worker::wasm_bindgen::UnwrapThrowExt;
 use worker::{event, Env, Request, Response, Router};
 
 mod error;
@@ -12,6 +13,28 @@ mod resident;
 use error::Error;
 use req_ctx::RequestContext;
 use resident::{Resident, ResidentExt};
+
+fn affix_cors(mut resp: Response) -> Response {
+    let headers = resp.headers_mut();
+
+    headers
+        .set("Access-Control-Allow-Origin", "*")
+        .unwrap_throw();
+    headers
+        .set(
+            "Access-Control-Request-Method",
+            "GET, POST, PATCH, DELETE, OPTIONS",
+        )
+        .unwrap_throw();
+    headers
+        .set(
+            "Access-Control-Request-Headers",
+            "Content-Type, Authorization",
+        )
+        .unwrap_throw();
+
+    resp
+}
 
 #[event(fetch)]
 pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> worker::Result<Response> {
@@ -52,4 +75,5 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> worker::Resu
         .or_else_any_method("/*anything", |_, _| Ok(Error::NotFound.into_response()))
         .run(req, env)
         .await
+        .map(affix_cors)
 }

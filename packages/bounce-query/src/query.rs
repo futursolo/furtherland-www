@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::fmt;
 use std::hash::Hash;
 use std::marker::PhantomData;
 use std::rc::Rc;
@@ -113,7 +114,7 @@ where
     Some(result).into()
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum QueryStateStatus<T>
 where
     T: Query + 'static,
@@ -349,6 +350,17 @@ where
         }));
 
         receiver.await.unwrap()
+    }
+}
+
+impl<T> fmt::Debug for UseQueryValueHandle<T>
+where
+    T: Query + fmt::Debug + 'static,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("UseQueryValueHandle")
+            .field("value", &self.value)
+            .finish()
     }
 }
 

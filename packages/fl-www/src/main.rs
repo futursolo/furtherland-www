@@ -3,6 +3,7 @@
 // #[global_allocator]
 // static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+mod api;
 mod app;
 mod atoms;
 mod common;

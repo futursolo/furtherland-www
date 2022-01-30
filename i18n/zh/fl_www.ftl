@@ -11,3 +11,4 @@ footer-copy = 本站所有文章均採用 CC-BY-SA 4.0 國際 授權。
 comments = 評論
 error-message-server = 無法載入內容。
 error-message-unknown = 發生了未知錯誤。
+no-comments = 暫時還沒有評論...

@@ -13,7 +13,7 @@ pub enum ResidencyStatus {
     Master = 100,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Resident {
     pub id: u64,
     pub login: String,
@@ -31,14 +31,14 @@ impl Resident {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Replies {
     pub replies: Vec<Reply>,
     // None if is last item has been reached.
     pub cursor: Option<String>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Reply {
     pub id: ObjectId,
     pub slug: String,
@@ -84,7 +84,7 @@ pub struct AccessToken {
     pub scope: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct ResponseError {
     pub code: u64,
 }
