@@ -10,7 +10,6 @@ fl-www-agents = { path = "../fl-www-agents" }
 
 bounce = { git = "https://github.com/futursolo/bounce.git" }
 
-bounce-query = { path = "../bounce-query" }
 yew-query = { path = "../yew-query" }
 
 wasm-bindgen = "0.2.78"

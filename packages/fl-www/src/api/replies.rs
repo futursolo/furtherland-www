@@ -3,8 +3,8 @@ use std::rc::Rc;
 use crate::prelude::*;
 
 use async_trait::async_trait;
+use bounce::query::{Query, QueryResult};
 use bounce::BounceStates;
-use bounce_query::{Query, QueryResult};
 use futures::TryFutureExt;
 use thiserror::Error;
 

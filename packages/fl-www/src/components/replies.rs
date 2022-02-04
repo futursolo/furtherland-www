@@ -3,8 +3,8 @@ use crate::prelude::*;
 use crate::utils::is_ssr;
 use components::{Placeholder, PlaceholderKind};
 
+use bounce::query::use_query_value;
 use bounce::*;
-use bounce_query::use_query_value;
 
 #[derive(Properties, PartialEq, Debug)]
 struct ReplyProps {
