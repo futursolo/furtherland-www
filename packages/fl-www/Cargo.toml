@@ -8,7 +8,7 @@ fl-www-core = { path = "../fl-www-core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 
-bounce = { git = "https://github.com/futursolo/bounce.git" }
+bounce = { version = "0.2.0", features = ["query"] }
 
 yew-query = { path = "../yew-query" }
 

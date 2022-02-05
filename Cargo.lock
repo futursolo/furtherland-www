@@ -144,7 +144,8 @@ checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 [[package]]
 name = "bounce"
 version = "0.2.0"
-source = "git+https://github.com/futursolo/bounce.git#62d2c132bb9db9ddaf9744e99761391a9cbc9d3e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4e4a9ccd863f8d2e483a1cf1ba6b1037b6cd6dff542a994c744124dde8b1415f"
 dependencies = [
  "anymap2",
  "async-trait",
@@ -159,7 +160,8 @@ dependencies = [
 [[package]]
 name = "bounce-macros"
 version = "0.2.0"
-source = "git+https://github.com/futursolo/bounce.git#62d2c132bb9db9ddaf9744e99761391a9cbc9d3e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60cec25d9be01287cb4c12b0892d97f3d6027d4522d3e319ece88b8e17095064"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
