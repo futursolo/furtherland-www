@@ -9,7 +9,7 @@ use bounce::prelude::*;
 use yew_side_effect::title::Title;
 
 use super::{Loading, Other};
-use components::{Main, Markdown, Replies, SectionTitle, WritingInfo};
+use components::{Author, AuthoringResident, Main, Markdown, Replies, SectionTitle};
 use yew_query::{use_pausable_query, Request, UseFetchHandle};
 
 #[derive(Properties, Clone, PartialEq)]
@@ -139,7 +139,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             }}
             <Main>
                 <SectionTitle>{&writing_metadata.title}</SectionTitle>
-                <WritingInfo date={writing_metadata.date} />
+                <Author author={AuthoringResident::Default} date={writing_metadata.date} />
                 <Markdown markdown_text={content} />
                 <Replies slug={props.slug.clone()} />
             </Main>

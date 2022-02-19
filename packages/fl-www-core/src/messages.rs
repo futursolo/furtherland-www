@@ -43,6 +43,8 @@ pub struct Reply {
     pub id: ObjectId,
     pub slug: String,
     pub lang: Language,
+
+    // The resident may be None if they have unregistered their GitHub account.
     pub resident: Option<Resident>,
     pub content: String,
 

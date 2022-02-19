@@ -1,7 +1,7 @@
 use crate::api::{RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
 use crate::utils::is_ssr;
-use components::{Placeholder, PlaceholderKind};
+use components::{Author, AuthoringResident, Placeholder, PlaceholderKind};
 
 use bounce::query::use_query_value;
 use bounce::*;
@@ -13,7 +13,32 @@ struct ReplyProps {
 
 #[styled_component(Reply)]
 fn reply(props: &ReplyProps) -> Html {
-    html! {}
+    let resident = AuthoringResident::Other(props.content.resident.clone());
+    let create_date = props.content.created_at.naive_local().date();
+    let create_time = props.content.created_at.naive_local().time();
+
+    html! {
+        <div class={css!(
+            r#"
+                width: 100%;
+            "#
+        )}>
+            <Author
+                author={resident}
+                date={create_date}
+                time={create_time}
+            />
+            <div class={css!(
+                r#"
+                    width: 100%;
+                    padding-top: 20px;
+                    padding-bottom: 20px;
+                "#
+            )}>
+                {props.content.content.clone()}
+            </div>
+        </div>
+    }
 }
 
 #[derive(Properties, PartialEq, Debug)]
@@ -132,7 +157,15 @@ fn replies_content(props: &RepliesProps) -> Html {
         return html! {<NoReplies />};
     }
 
-    html! {"hello?"}
+    let replies = replies
+        .content
+        .replies
+        .iter()
+        // TODO: show all of the contents to mod residents.
+        .filter(|m| m.approved.unwrap_or(false))
+        .map(|m| html! {<Reply content={m.clone()} />});
+
+    html! { <>{for replies}</> }
 }
 
 #[styled_component(Replies)]

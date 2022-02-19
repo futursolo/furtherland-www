@@ -1,3 +1,4 @@
+mod author;
 mod code;
 mod code_span;
 mod codeblock;
@@ -14,8 +15,8 @@ mod placeholder;
 mod redirect;
 mod replies;
 mod title;
-mod writing_info;
 
+pub(crate) use author::{Author, AuthoringResident};
 pub(crate) use code::Code;
 pub(crate) use code_span::CodeSpan;
 pub(crate) use codeblock::CodeBlock;
@@ -32,4 +33,3 @@ pub(crate) use placeholder::{Placeholder, PlaceholderKind};
 pub(crate) use redirect::Redirect;
 pub(crate) use replies::Replies;
 pub(crate) use title::SectionTitle;
-pub(crate) use writing_info::WritingInfo;
