@@ -13,3 +13,5 @@ error-message-server = 無法載入內容。
 error-message-unknown = 發生了未知錯誤。
 no-comments = 暫時還沒有評論...
 removed-resident = 已刪除的用戶
+new-comment = 撰寫新評論
+signin-github = 使用 GitHub 登入

@@ -1,4 +1,4 @@
-use crate::api::{RepliesQuery, RepliesQueryInput};
+use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
 use crate::utils::is_ssr;
 use components::{Author, AuthoringResident, Placeholder, PlaceholderKind};
@@ -95,7 +95,7 @@ fn replies_loading() -> Html {
             <div class={css!("
                 margin-bottom: 10px;
                 width: 100%;
-                height: 200px;
+                height: 100px;
             ")}>
                 <Placeholder height="1rem" width="100%" set_data_status={false} />
             </div>
@@ -168,6 +168,36 @@ fn replies_content(props: &RepliesProps) -> Html {
     html! { <>{for replies}</> }
 }
 
+#[styled_component(NewReply)]
+pub(crate) fn new_reply() -> Html {
+    let current_resident = use_query_value::<CurrentResidentQuery>(().into());
+    let set_error = use_atom_setter::<ErrorState>();
+
+    let comment_area = match current_resident.result() {
+        None => html! {<RepliesLoading />},
+        Some(Ok(m)) => match &m.content {
+            Some(ref m) => todo!(),
+            None => html! {
+                <div class={css!("width: 100%;")}>
+                    <div>{fl!("signin-github")}</div>
+                </div>
+            },
+        },
+        Some(Err(_e)) => {
+            set_error(ErrorKind::Server.into());
+
+            html! {<RepliesLoading />}
+        }
+    };
+
+    html! {
+        <div class={css!("width: 100%;")}>
+            <h2 class={css!("width: 100%;")}>{fl!("new-comment")}</h2>
+            {comment_area}
+        </div>
+    }
+}
+
 #[styled_component(Replies)]
 pub(crate) fn replies(props: &RepliesProps) -> Html {
     use_language();
@@ -206,6 +236,7 @@ pub(crate) fn replies(props: &RepliesProps) -> Html {
         "#)}>
             <h1 class={css!("width: 100%;")}>{fl!("comments")}</h1>
             {content}
+            <NewReply />
         </div>
     }
 }

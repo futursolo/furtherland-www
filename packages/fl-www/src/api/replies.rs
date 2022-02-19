@@ -6,9 +6,9 @@ use async_trait::async_trait;
 use bounce::query::{Query, QueryResult};
 use bounce::BounceStates;
 use futures::TryFutureExt;
-use thiserror::Error;
 
-use messages::{Replies, Response, ResponseError};
+use super::QueryError;
+use messages::{Replies, Response};
 
 use super::BASE_URL;
 
@@ -19,15 +19,6 @@ use super::BASE_URL;
 
 //     async fn query(states: &BounceStates, input: Rc<Self::Input>) -> QueryResult<Self>;
 // }
-
-#[derive(Debug, Error, PartialEq, Clone)]
-pub enum RepliesQueryError {
-    #[error("failed to communicate with server")]
-    Server(ResponseError),
-
-    #[error("unknown server error")]
-    ServerOther,
-}
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct RepliesQueryInput {
@@ -43,7 +34,7 @@ pub struct RepliesQuery {
 #[async_trait(?Send)]
 impl Query for RepliesQuery {
     type Input = RepliesQueryInput;
-    type Error = RepliesQueryError;
+    type Error = QueryError;
 
     async fn query(_states: &BounceStates, input: Rc<Self::Input>) -> QueryResult<Self> {
         let resp = reqwest::get(
@@ -56,12 +47,12 @@ impl Query for RepliesQuery {
                 .unwrap_throw(),
         )
         .and_then(|m| m.json::<Response<Replies>>())
-        .map_err(|_e| RepliesQueryError::ServerOther)
+        .map_err(|_e| QueryError::ServerOther)
         .await?;
 
         match resp {
             Response::Success { content } => Ok(RepliesQuery { content }.into()),
-            Response::Failed { error } => Err(RepliesQueryError::Server(error)),
+            Response::Failed { error } => Err(QueryError::Server(error)),
         }
     }
 }
