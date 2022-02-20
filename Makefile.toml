@@ -65,3 +65,4 @@ args = ["serve", "--open", "index.html"]
 
 [tasks.serve-local-frontend.env]
 FL_WWW_BACKEND_PREFIX = "http://localhost:9740/"
+FL_WWW_GITHUB_CLIENT_ID = "72f7c210f18ee7928a30"

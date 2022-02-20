@@ -5,6 +5,8 @@ use components::{Author, AuthoringResident, Placeholder, PlaceholderKind};
 
 use bounce::query::use_query_value;
 use bounce::*;
+use serde::{Deserialize, Serialize};
+use yew_feather::github::Github;
 
 #[derive(Properties, PartialEq, Debug)]
 struct ReplyProps {
@@ -165,7 +167,13 @@ fn replies_content(props: &RepliesProps) -> Html {
         .filter(|m| m.approved.unwrap_or(false))
         .map(|m| html! {<Reply content={m.clone()} />});
 
-    html! { <>{for replies}</> }
+    html! { <div class={css!("width: 100%;")}>{for replies}</div> }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct OAuthQuery {
+    client_id: &'static str,
+    redirect_uri: String,
 }
 
 #[styled_component(NewReply)]
@@ -173,13 +181,70 @@ pub(crate) fn new_reply() -> Html {
     let current_resident = use_query_value::<CurrentResidentQuery>(().into());
     let set_error = use_atom_setter::<ErrorState>();
 
+    let navigate_to_github = Callback::from(|_| {
+        let queries = OAuthQuery {
+            client_id: option_env!("FL_WWW_GITHUB_CLIENT_ID").unwrap_throw(),
+            redirect_uri: format!(
+                "http://localhost:9741/residents/github/continue?next={}",
+                window().location().href().unwrap_throw()
+            ),
+        };
+
+        let next_url = format!(
+            "https://github.com/login/oauth/authorize?{}",
+            serde_urlencoded::ser::to_string(queries).unwrap_throw(),
+        );
+
+        window().location().set_href(&next_url).unwrap_throw();
+    });
+
     let comment_area = match current_resident.result() {
         None => html! {<RepliesLoading />},
         Some(Ok(m)) => match &m.content {
             Some(ref m) => todo!(),
             None => html! {
-                <div class={css!("width: 100%;")}>
-                    <div>{fl!("signin-github")}</div>
+                <div class={css!(
+                    r#"
+                        width: 100%;
+                        height: 100px;
+
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        flex-direction: row;
+                    "#
+                )}>
+                    <div
+                        class={css!(
+                            r#"
+                                background-color: rgb(36, 40, 46);
+                                border-radius: 3px;
+                                height: 40px;
+                                padding-left: 20px;
+                                padding-right: 20px;
+
+                                display: inline-flex;
+                                justify-content: center;
+                                align-items: center;
+                                flex-direction: row;
+
+                                color: white;
+                                font-weight: bold;
+                                cursor: pointer;
+
+                                transition: 0.2s background-color;
+
+                                :hover {
+                                    background-color: rgb(78, 82, 87);
+                                }
+                            "#
+                        )}
+                        onclick={navigate_to_github}
+                    >
+                        <Github size={15} />
+                        <div class={css!("width: 5px;")} />
+                        {fl!("signin-github")}
+                    </div>
                 </div>
             },
         },
