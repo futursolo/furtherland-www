@@ -4,8 +4,9 @@ use crate::prelude::*;
 use atoms::TokenState;
 
 use async_trait::async_trait;
-use bounce::query::{Query, QueryResult};
+use bounce::query::{Mutation, MutationResult, Query, QueryResult};
 use bounce::BounceStates;
+use futures::future::TryFutureExt;
 
 use messages::{Resident, Response};
 
@@ -29,30 +30,60 @@ impl Query for CurrentResidentQuery {
     type Input = ();
     type Error = QueryError;
 
-    async fn query(states: &BounceStates, input: Rc<Self::Input>) -> QueryResult<Self> {
+    async fn query(states: &BounceStates, _input: Rc<Self::Input>) -> QueryResult<Self> {
+        let client = reqwest::Client::new();
+
         let token = match states.get_atom_value::<TokenState>().inner.as_ref() {
-            Some(m) => m,
+            Some(m) => m.clone(),
             None => return Ok(CurrentResidentQuery { content: None }.into()),
         };
 
-        todo!()
+        let resp = client
+            .get(BASE_URL.join("/residents/myself").unwrap_throw())
+            .header("Authorization", format!("Bearer {}", token))
+            .send()
+            .and_then(|m| m.json::<Response<Resident>>())
+            .map_err(|_e| QueryError::ServerOther)
+            .await?;
 
-        // let resp = reqwest::get(
-        //     BASE_URL
-        //         .join(&format!(
-        //             "/replies/{lang}/{slug}/",
-        //             lang = input.lang,
-        //             slug = input.slug
-        //         ))
-        //         .unwrap_throw(),
-        // )
-        // .and_then(|m| m.json::<Response<Replies>>())
-        // .map_err(|_e| ResidentQueryError::ServerOther)
-        // .await?;
+        match resp {
+            Response::Success { content } => Ok(CurrentResidentQuery {
+                content: Some(content),
+            }
+            .into()),
+            Response::Failed { error } => Err(QueryError::Server(error)),
+        }
+    }
+}
 
-        // match resp {
-        //     Response::Success { content } => Ok(RepliesQuery { content }.into()),
-        //     Response::Failed { error } => Err(ResidentQueryError::Server(error)),
-        // }
+#[derive(Debug, PartialEq)]
+pub struct ExchangeTokenMutation {
+    pub content: messages::AccessToken,
+}
+
+#[async_trait(?Send)]
+impl Mutation for ExchangeTokenMutation {
+    type Input = messages::AccessTokenInput;
+    type Error = QueryError;
+
+    async fn run(_states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self> {
+        let client = reqwest::Client::new();
+
+        let resp = client
+            .post(
+                BASE_URL
+                    .join("/residents/_oauth_access_token")
+                    .unwrap_throw(),
+            )
+            .json(&input)
+            .send()
+            .and_then(|m| m.json::<Response<messages::AccessToken>>())
+            .await
+            .map_err(|_e| QueryError::ServerOther)?;
+
+        match resp {
+            Response::Success { content } => Ok(Self { content }.into()),
+            Response::Failed { error } => Err(QueryError::Server(error)),
+        }
     }
 }

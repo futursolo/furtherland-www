@@ -17,7 +17,7 @@ static BASE_URL: Lazy<Url> = Lazy::new(|| {
 });
 
 pub use replies::{RepliesQuery, RepliesQueryInput};
-pub use residents::CurrentResidentQuery;
+pub use residents::{CurrentResidentQuery, ExchangeTokenMutation};
 
 #[derive(Debug, Error, PartialEq, Clone)]
 pub enum QueryError {

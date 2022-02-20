@@ -124,10 +124,30 @@ async fn exchange_token(mut req: Request, ctx: RouteContext<RequestContext>) -> 
     Ok(Response::from_json(&resp)?)
 }
 
+async fn get_myself(_req: Request, ctx: RouteContext<RequestContext>) -> Result<Response> {
+    let resident = match ctx.data.resident {
+        Some(ref m) => m.clone(),
+        None => return Err(Error::Forbidden),
+    };
+
+    let resp = messages::Response::Success { content: resident };
+
+    Ok(Response::from_json(&resp)?)
+}
+
 pub(crate) fn register_endpoints(router: Router<'_, RequestContext>) -> Router<'_, RequestContext> {
-    router.post_async("/residents/_oauth_access_token", |m, n| async move {
-        Ok(exchange_token(m, n)
-            .await
-            .unwrap_or_else(|e| e.into_response()))
-    })
+    router
+        .post_async("/residents/_oauth_access_token", |m, n| async move {
+            Ok(exchange_token(m, n)
+                .await
+                .unwrap_or_else(|e| e.into_response()))
+        })
+        .options_async("/residents/_oauth_access_token", |m, n| async move {
+            Ok(crate::options_cors(m, n)
+                .await
+                .unwrap_or_else(|e| e.into_response()))
+        })
+        .get_async("/residents/myself", |m, n| async move {
+            Ok(get_myself(m, n).await.unwrap_or_else(|e| e.into_response()))
+        })
 }

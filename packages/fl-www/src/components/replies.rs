@@ -201,7 +201,7 @@ pub(crate) fn new_reply() -> Html {
     let comment_area = match current_resident.result() {
         None => html! {<RepliesLoading />},
         Some(Ok(m)) => match &m.content {
-            Some(ref m) => todo!(),
+            Some(ref _m) => todo!(),
             None => html! {
                 <div class={css!(
                     r#"

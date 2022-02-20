@@ -7,6 +7,7 @@ mod home;
 mod loading;
 mod other;
 mod page;
+mod residents;
 mod writing;
 
 use home::Home;
@@ -34,6 +35,8 @@ pub(crate) enum AppRoute {
     PageNotFound { lang: Language },
     #[at("/:lang/")]
     Home { lang: Language },
+    #[at("/residents/github/continue")]
+    ResidentGitHubContinue,
     #[at("/loading")]
     Loading,
     #[at("/")]
@@ -57,6 +60,10 @@ impl AppRoute {
                 html! {<Loading />}
             }
 
+            Self::ResidentGitHubContinue => {
+                html! { <residents::github::OauthContinue /> }
+            }
+
             Self::Other | Self::PageNotFound { .. } => {
                 html! {<Other />}
             }
@@ -72,6 +79,7 @@ impl AppRoute {
 
             Self::HomeRedirect => Self::HomeRedirect,
             Self::Other => Self::Other,
+            Self::ResidentGitHubContinue => Self::ResidentGitHubContinue,
 
             Self::PageNotFound { .. } => Self::PageNotFound { lang },
             Self::Writing { slug, .. } => Self::Writing { slug, lang },
@@ -86,7 +94,7 @@ impl AppRoute {
             Self::Writing { lang, .. } => Some(*lang),
             Self::Page { lang, .. } => Some(*lang),
 
-            Self::HomeRedirect | Self::Other | Self::Loading => None,
+            Self::HomeRedirect | Self::Other | Self::Loading | Self::ResidentGitHubContinue => None,
         }
     }
 }

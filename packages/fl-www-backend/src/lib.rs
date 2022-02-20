@@ -22,18 +22,25 @@ fn affix_cors(mut resp: Response) -> Response {
         .unwrap_throw();
     headers
         .set(
-            "Access-Control-Request-Method",
+            "Access-Control-Allow-Methods",
             "GET, POST, PATCH, DELETE, OPTIONS",
         )
         .unwrap_throw();
     headers
         .set(
-            "Access-Control-Request-Headers",
+            "Access-Control-Allow-Headers",
             "Content-Type, Authorization",
         )
         .unwrap_throw();
 
     resp
+}
+
+pub(crate) async fn options_cors(
+    _req: Request,
+    _ctx: worker::RouteContext<RequestContext>,
+) -> crate::error::Result<Response> {
+    Ok(Response::empty()?.with_status(204))
 }
 
 #[event(fetch)]
