@@ -176,6 +176,20 @@ struct OAuthQuery {
     redirect_uri: String,
 }
 
+#[derive(Properties, PartialEq, Clone)]
+struct NewReplyAreaProps {
+    resident: messages::Resident,
+}
+
+#[styled_component(NewReplyArea)]
+fn new_reply_area(props: &NewReplyAreaProps) -> Html {
+    let NewReplyAreaProps { resident } = props.clone();
+
+    html! {
+        <Author author={AuthoringResident::Other(Some(resident))} />
+    }
+}
+
 #[styled_component(NewReply)]
 pub(crate) fn new_reply() -> Html {
     let current_resident = use_query_value::<CurrentResidentQuery>(().into());
@@ -201,7 +215,7 @@ pub(crate) fn new_reply() -> Html {
     let comment_area = match current_resident.result() {
         None => html! {<RepliesLoading />},
         Some(Ok(m)) => match &m.content {
-            Some(ref _m) => todo!(),
+            Some(ref m) => html! {<NewReplyArea resident={m.clone()} />},
             None => html! {
                 <div class={css!(
                     r#"

@@ -150,4 +150,9 @@ pub(crate) fn register_endpoints(router: Router<'_, RequestContext>) -> Router<'
         .get_async("/residents/myself", |m, n| async move {
             Ok(get_myself(m, n).await.unwrap_or_else(|e| e.into_response()))
         })
+        .options_async("/residents/myself", |m, n| async move {
+            Ok(crate::options_cors(m, n)
+                .await
+                .unwrap_or_else(|e| e.into_response()))
+        })
 }

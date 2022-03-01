@@ -17,7 +17,8 @@ pub(crate) enum AuthoringResident {
 // Both Date time Optional time are local to browser if possible.
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct AuthorProps {
-    pub date: NaiveDate,
+    #[prop_or_default]
+    pub date: Option<NaiveDate>,
     #[prop_or_default]
     pub time: Option<NaiveTime>,
 
@@ -26,7 +27,7 @@ pub(crate) struct AuthorProps {
 
 #[styled_component(Author)]
 pub(crate) fn author(props: &AuthorProps) -> Html {
-    let date_str = props.date.format("%Y-%m-%d");
+    let date_str = props.date.as_ref().map(|m| m.format("%Y-%m-%d"));
     // notice the leading space for time.
     let time_str = props
         .time
@@ -48,6 +49,22 @@ pub(crate) fn author(props: &AuthorProps) -> Html {
         }
         AuthoringResident::Other(None) => (fl!("removed-resident"), MP_AVATAR_URL.clone()),
     };
+
+    let datetime_display = date_str
+        .as_ref()
+        .map(|m| {
+            html! {
+                <div class={css!(
+                    r#"
+                font-size: ${font_size};
+                color: ${colour};
+            "#,
+                    font_size = &theme.font_size.secondary,
+                    colour = css_var!(theme.colour.text.secondary),
+                )}>{m}{time_str}</div>
+            }
+        })
+        .unwrap_or_default();
 
     html! {
         <div class={css!(
@@ -91,14 +108,7 @@ pub(crate) fn author(props: &AuthorProps) -> Html {
                     font_size = &theme.font_size.default,
                     colour = css_var!(theme.colour.text.primary),
                 )}>{resident_name}</div>
-                <div class={css!(
-                    r#"
-                        font-size: ${font_size};
-                        color: ${colour};
-                    "#,
-                    font_size = &theme.font_size.secondary,
-                    colour = css_var!(theme.colour.text.secondary),
-                )}>{date_str}{time_str}</div>
+                {datetime_display}
             </div>
         </div>
     }

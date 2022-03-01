@@ -40,7 +40,7 @@ impl Query for CurrentResidentQuery {
 
         let resp = client
             .get(BASE_URL.join("/residents/myself").unwrap_throw())
-            .header("Authorization", format!("Bearer {}", token))
+            .bearer_auth(token)
             .send()
             .and_then(|m| m.json::<Response<Resident>>())
             .map_err(|_e| QueryError::ServerOther)
