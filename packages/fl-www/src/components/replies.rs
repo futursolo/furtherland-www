@@ -1,11 +1,12 @@
 use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
 use crate::utils::is_ssr;
-use components::{Author, AuthoringResident, Placeholder, PlaceholderKind};
+use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
 
 use bounce::query::use_query_value;
 use bounce::*;
 use serde::{Deserialize, Serialize};
+use web_sys::HtmlTextAreaElement;
 use yew_feather::github::Github;
 
 #[derive(Properties, PartialEq, Debug)]
@@ -185,8 +186,34 @@ struct NewReplyAreaProps {
 fn new_reply_area(props: &NewReplyAreaProps) -> Html {
     let NewReplyAreaProps { resident } = props.clone();
 
+    let reply_value = use_state_eq(|| "".to_string());
+
+    let on_reply_input = {
+        let reply_value = reply_value.clone();
+
+        Callback::from(move |e: InputEvent| {
+            let target = e.target_unchecked_into::<HtmlTextAreaElement>();
+
+            reply_value.set(target.value());
+        })
+    };
+
     html! {
-        <Author author={AuthoringResident::Other(Some(resident))} />
+        <div
+            class={css!(r#"
+                width: 100%;
+            "#)}
+        >
+            <Author author={AuthoringResident::Other(Some(resident))} />
+            <Textarea
+                value={(*reply_value).clone()}
+                oninput={on_reply_input}
+                class={classes!(css!(r#"
+                    width: 100%;
+                    height: 200px;
+                "#))}
+            />
+        </div>
     }
 }
 

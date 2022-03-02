@@ -14,6 +14,7 @@ mod markdown;
 mod placeholder;
 mod redirect;
 mod replies;
+mod textarea;
 mod title;
 
 pub(crate) use author::{Author, AuthoringResident};
@@ -32,4 +33,5 @@ pub(crate) use markdown::Markdown;
 pub(crate) use placeholder::{Placeholder, PlaceholderKind};
 pub(crate) use redirect::Redirect;
 pub(crate) use replies::Replies;
+pub(crate) use textarea::Textarea;
 pub(crate) use title::SectionTitle;
