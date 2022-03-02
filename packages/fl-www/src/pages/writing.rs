@@ -121,7 +121,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
             }
 
             m.data()
-                .split_once("\n")
+                .split_once('\n')
                 .map(|m| m.1)
                 .unwrap_or("")
                 .trim()
