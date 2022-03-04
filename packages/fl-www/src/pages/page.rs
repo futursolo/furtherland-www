@@ -3,9 +3,9 @@ use std::convert::Infallible;
 use crate::prelude::*;
 use components::{Main, Markdown, SectionTitle};
 
+use bounce::helmet::Helmet;
 use bounce::prelude::*;
 use yew_query::{use_query, Request, UseFetchHandle};
-use yew_side_effect::title::Title;
 
 use super::{Loading, Other};
 
@@ -69,7 +69,9 @@ pub(crate) fn page(props: &PageProps) -> Html {
 
     html! {
         <>
-            <Title value={title.clone()} />
+            <Helmet>
+                <title>{title.clone()}</title>
+            </Helmet>
             <Main>
                 <SectionTitle>{&title}</SectionTitle>
                 <Markdown markdown_text={content} />

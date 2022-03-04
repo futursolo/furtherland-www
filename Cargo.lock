@@ -144,24 +144,24 @@ checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 [[package]]
 name = "bounce"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e4a9ccd863f8d2e483a1cf1ba6b1037b6cd6dff542a994c744124dde8b1415f"
+source = "git+https://github.com/futursolo/bounce#09e19a02d03c4447246e100b4cbda5004cd3c895"
 dependencies = [
  "anymap2",
  "async-trait",
  "bounce-macros",
  "futures",
+ "gloo 0.6.0",
  "once_cell",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "web-sys",
  "yew",
 ]
 
 [[package]]
 name = "bounce-macros"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60cec25d9be01287cb4c12b0892d97f3d6027d4522d3e319ece88b8e17095064"
+source = "git+https://github.com/futursolo/bounce#09e19a02d03c4447246e100b4cbda5004cd3c895"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -488,7 +488,6 @@ dependencies = [
  "yew-feather",
  "yew-query",
  "yew-router",
- "yew-side-effect",
 ]
 
 [[package]]
@@ -2766,15 +2765,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "yew-side-effect"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c91b0d20a9c5f9536e95fe39d41067506559ca16f00e02748aa9f297208a4bc9"
-dependencies = [
- "gloo-utils",
- "once_cell",
- "yew",
 ]

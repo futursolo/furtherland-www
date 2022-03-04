@@ -8,7 +8,7 @@ fl-www-core = { path = "../fl-www-core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 
-bounce = { version = "0.2.0", features = ["query"] }
+bounce = { git = "https://github.com/futursolo/bounce", features = ["query", "helmet"] }
 
 yew-query = { path = "../yew-query" }
 
@@ -26,7 +26,6 @@ log = "0.4.14"
 
 yew-feather = { git = "https://github.com/futursolo/yew-feather", branch = "compiled" }
 yew-router = "0.16.0"
-yew-side-effect = "0.2.0"
 yew = "0.19.3"
 yew-agent = "0.1.0"
 stylist = { version = "0.10.0", features = ["yew_integration"] }

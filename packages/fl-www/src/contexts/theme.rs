@@ -4,11 +4,10 @@ use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 use gloo::storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
 
-use super::Script;
 use crate::prelude::*;
+use bounce::helmet::Helmet;
 use hooks::use_event;
 use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
-// use utils::is_ssr;
 
 static STORAGE_KEY: &str = "fl_theme";
 
@@ -188,7 +187,11 @@ pub(crate) fn theme_provider(props: &ChildrenProps) -> Html {
     html! {
         <ContextProvider<ThemeState> context={state}>
             <GlobalStyle />
-            <Script content={THEME_DETECT_SCRIPT.to_string()} type_="text/javascript" />
+            <Helmet>
+                <script type_="text/javascript">
+                    {THEME_DETECT_SCRIPT}
+                </script>
+            </Helmet>
             {children}
         </ContextProvider<ThemeState>>
     }

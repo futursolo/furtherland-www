@@ -1,7 +1,7 @@
 use yew_router::prelude::*;
 
-use crate::contexts::MetaLink;
 use crate::prelude::*;
+use bounce::helmet::Helmet;
 
 mod home;
 mod loading;
@@ -110,7 +110,9 @@ pub(crate) fn app_router() -> Html {
 
     html! {
         <>
-            <MetaLink rel="alternate" href={feed_url} type_="application/atom+xml" />
+            <Helmet>
+                <link rel="alternate" href={feed_url} type_="application/atom+xml" />
+            </Helmet>
             <Switch<AppRoute>
                  render={Switch::render(AppRoute::render_route)}
              />

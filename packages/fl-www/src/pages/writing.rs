@@ -1,12 +1,11 @@
 use std::cell::RefCell;
 use std::convert::Infallible;
 
-use crate::contexts::Meta;
 use crate::prelude::*;
 use yew_agent::Bridged;
 
+use bounce::helmet::Helmet;
 use bounce::prelude::*;
-use yew_side_effect::title::Title;
 
 use super::{Loading, Other};
 use components::{Author, AuthoringResident, Main, Markdown, Replies, SectionTitle};
@@ -88,7 +87,9 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
         None => {
             return html! {
                 <>
-                    <Title value={writing_metadata.title} />
+                    <Helmet>
+                        <title>{&writing_metadata.title}</title>
+                    </Helmet>
                     <Loading />
                 </>
             }
@@ -104,7 +105,9 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
 
             return html! {
                 <>
-                    <Title value={writing_metadata.title} />
+                    <Helmet>
+                        <title>{&writing_metadata.title}</title>
+                    </Helmet>
                     <Loading />
                 </>
             };
@@ -131,9 +134,15 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
 
     html! {
         <>
-            <Title value={writing_metadata.title.clone()} />
+            <Helmet>
+                <title>{&writing_metadata.title}</title>
+            </Helmet>
             {if let Some(m) = (*summary).clone() {
-                html! {<Meta name="description" content={m} />}
+                html! {
+                    <Helmet>
+                        <meta name="description" content={m} />
+                    </Helmet>
+                }
             } else {
                 Html::default()
             }}

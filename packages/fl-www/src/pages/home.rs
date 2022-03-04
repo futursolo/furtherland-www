@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use yew_side_effect::title::Title;
+use bounce::helmet::Helmet;
 
 use super::Loading;
 use components::{Author, AuthoringResident, Link, Main, SectionTitle};
@@ -14,7 +14,9 @@ pub(crate) fn home() -> Html {
         None => {
             return html! {
                 <>
-                    <Title value={fl!("home")} />
+                    <Helmet>
+                        <title>{fl!("home")}</title>
+                    </Helmet>
                     <Loading />
                 </>
             }
@@ -39,7 +41,9 @@ pub(crate) fn home() -> Html {
 
     html! {
         <>
-            <Title value={fl!("home")} />
+            <Helmet>
+                <title>{fl!("home")}</title>
+            </Helmet>
             <Main>
                 {writings}
             </Main>
