@@ -11,10 +11,10 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 fl-www-core = { path = "../fl-www-core" }
 
-worker = "0.0.8"
+worker = "0.0.9"
 
-serde_json = "1.0.74"
-serde = "1.0.133"
+serde_json = "1.0.79"
+serde = "1.0.136"
 
 chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
 
