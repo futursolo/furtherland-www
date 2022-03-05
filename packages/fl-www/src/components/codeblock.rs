@@ -110,6 +110,7 @@ pub(crate) fn code_block(props: &CodeBlockProps) -> Html {
                 padding: 20px;
                 box-sizing: border-box;
                 border-radius: 3px;
+                transition: 0.3s background-color;
 
                 overflow-x: auto;
             "#,

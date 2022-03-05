@@ -1,6 +1,7 @@
 use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
 use crate::utils::is_ssr;
+use atoms::TokenState;
 use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
 
 use bounce::query::use_query_value;
@@ -184,7 +185,12 @@ struct NewReplyAreaProps {
 
 #[styled_component(NewReplyArea)]
 fn new_reply_area(props: &NewReplyAreaProps) -> Html {
+    use_language();
+
+    let set_token_state = use_atom_setter::<TokenState>();
+
     let NewReplyAreaProps { resident } = props.clone();
+    let theme = use_theme();
 
     let reply_value = use_state_eq(|| "".to_string());
 
@@ -195,6 +201,12 @@ fn new_reply_area(props: &NewReplyAreaProps) -> Html {
             let target = e.target_unchecked_into::<HtmlTextAreaElement>();
 
             reply_value.set(target.value());
+        })
+    };
+
+    let signout = {
+        Callback::from(move |_| {
+            set_token_state(TokenState { inner: None });
         })
     };
 
@@ -213,6 +225,117 @@ fn new_reply_area(props: &NewReplyAreaProps) -> Html {
                     height: 200px;
                 "#))}
             />
+            <div class={css!(
+                r#"
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    align-items: center;
+                    padding-top: 15px;
+
+                    @media ${sm_down} {
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: flex-end;
+                    }
+                "#,
+                sm_down = theme.breakpoint.sm.down(),
+            )}>
+                <div
+                    class={css!(
+                        r#"
+                            padding-right: 15px;
+
+                            color: ${sec_colour};
+
+
+                            @media ${sm_down} {
+                                padding-right: 0;
+                                padding-bottom: 15px;
+                            }
+                        "#,
+                        sm_down = theme.breakpoint.sm.down(),
+                        sec_colour = theme.colour.text.secondary,
+                    )}
+                >
+                    {fl!("comment-supports-markdown")}
+                </div>
+                <div
+                    class={css!(
+                        r#"
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: flex-end;
+                        "#
+                    )}
+                >
+                    <div
+                        onclick={signout}
+                        class={css!(
+                            r#"
+                                background-color: ${bg_colour};
+                                height: 40px;
+                                text-align: center;
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: space-around;
+                                align-items: center;
+                                border-radius: 80px;
+                                padding-left: 20px;
+                                padding-right: 20px;
+                                font-size: 1rem;
+                                font-weight: bold;
+                                color: ${colour};
+                                pointer: default;
+
+                                transition: 0.2s background-color;
+
+                                :hover {
+                                    background-color: ${bg_hover_colour};
+                                }
+                            "#,
+                            colour = css_var!(theme.colour.text.primary),
+                            bg_colour = css_var!(theme.colour.secondary),
+                            bg_hover_colour = css_var!(theme.colour.secondary_hover),
+                        )}
+                    >
+                        {fl!("signout")}
+                    </div>
+                    <div class={css!(r#"width: 15px;"#)} />
+                    <div
+                        class={css!(
+                            r#"
+                                background-color: ${bg_colour};
+                                height: 40px;
+                                text-align: center;
+                                display: flex;
+                                flex-direction: row;
+                                justify-content: space-around;
+                                align-items: center;
+                                border-radius: 80px;
+                                padding-left: 20px;
+                                padding-right: 20px;
+                                font-size: 1rem;
+                                font-weight: bold;
+                                color: white;
+                                pointer: default;
+
+                                transition: 0.2s background-color;
+
+                                :hover {
+                                    background-color: ${bg_hover_colour};
+                                }
+                            "#,
+                            bg_colour = css_var!(theme.colour.primary),
+                            bg_hover_colour = css_var!(theme.colour.primary_hover),
+                        )}
+                    >
+                        {fl!("comment")}
+                    </div>
+                </div>
+            </div>
         </div>
     }
 }
@@ -259,7 +382,7 @@ pub(crate) fn new_reply() -> Html {
                         class={css!(
                             r#"
                                 background-color: rgb(36, 40, 46);
-                                border-radius: 3px;
+                                border-radius: 80px;
                                 height: 40px;
                                 padding-left: 20px;
                                 padding-right: 20px;
@@ -272,6 +395,7 @@ pub(crate) fn new_reply() -> Html {
                                 color: white;
                                 font-weight: bold;
                                 cursor: pointer;
+                                font-size: 1rem;
 
                                 transition: 0.2s background-color;
 

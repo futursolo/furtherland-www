@@ -47,6 +47,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
                 background-color: ${bg_color};
                 overflow-x: hidden;
                 overflow-y: hidden;
+                transition: 0.3s background-color;
 
                 -webkit-mask-image: -webkit-radial-gradient(center, white, black);
             "#,
@@ -85,6 +86,8 @@ pub(crate) fn placeholder(props: &Props) -> Html {
                     background-image: linear-gradient(to right, rgba(255, 255, 255, 0), ${wave_colour}, rgba(255, 255, 255, 0));
                     width: 100px;
                     height: 100%;
+
+                    transition: 0.3s background-image;
                 "#, wave_colour = wave_colour)} />
             </div>
         </div>

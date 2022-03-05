@@ -8,9 +8,7 @@ pub(crate) fn use_app_route() -> AppRoute {
 }
 
 #[function_component(RoutingListener)]
-pub(crate) fn routing_listener(props: &ChildrenProps) -> Html {
-    let children = props.children.clone();
-
+pub(crate) fn routing_listener() -> Html {
     let route = use_app_route();
 
     let set_lang = use_slice_dispatch::<LanguageState>();
@@ -25,5 +23,5 @@ pub(crate) fn routing_listener(props: &ChildrenProps) -> Html {
         route,
     );
 
-    html! {<>{children}</>}
+    Html::default()
 }

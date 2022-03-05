@@ -42,15 +42,14 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
         <BounceRoot>
             <HelmetBridge />
             <BrowserRouter>
-                <RoutingListener>
-                    <ThemeProvider>
-                        <WorkerProvider>
-                            <ClientProvider>
-                                {children}
-                            </ClientProvider>
-                        </WorkerProvider>
-                    </ThemeProvider>
-                </RoutingListener>
+                <RoutingListener />
+                <ThemeProvider>
+                    <WorkerProvider>
+                        <ClientProvider>
+                            {children}
+                        </ClientProvider>
+                    </WorkerProvider>
+                </ThemeProvider>
             </BrowserRouter>
         </BounceRoot>
     }

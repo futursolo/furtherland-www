@@ -120,6 +120,9 @@ pub struct Colours {
     pub primary: Colour,
     pub primary_hover: Colour,
 
+    pub secondary: Colour,
+    pub secondary_hover: Colour,
+
     pub invalid: Colour,
 
     #[css_vars(nested)]
@@ -154,6 +157,9 @@ impl Theme {
                 primary: Colour::from_rgb(92, 184, 230),
                 primary_hover: Colour::from_rgb(125, 198, 235),
 
+                secondary: Colour::from_rgb(244, 245, 249),
+                secondary_hover: Colour::from_rgb(221, 224, 238),
+
                 invalid: Colour::from_rgb(238, 82, 26),
 
                 background: Backgrounds {
@@ -187,6 +193,9 @@ impl Theme {
             colour: Colours {
                 primary: Colour::from_rgb(92, 184, 230),
                 primary_hover: Colour::from_rgb(125, 198, 235),
+
+                secondary: Colour::from_rgb(50, 50, 50),
+                secondary_hover: Colour::from_rgb(75, 75, 75),
 
                 invalid: Colour::from_rgb(238, 82, 26),
 

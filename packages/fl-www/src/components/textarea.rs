@@ -35,6 +35,7 @@ pub fn textarea(props: &TextareaProps) -> HtmlResult {
                         border-radius: 8px;
                         padding: 15px;
                         box-sizing: border-box;
+                        transition: 0.3s background-color;
                     "#,
                     bg_colour=css_var!(theme.colour.background.component),
                 )
@@ -56,6 +57,7 @@ pub fn textarea(props: &TextareaProps) -> HtmlResult {
                         outline: 0;
                         font-size: 1rem;
                         resize: none;
+                        transition: 0.3s background-color, 0.3s color;
                     "#,
                     bg_colour=css_var!(theme.colour.background.component),
                     colour=css_var!(theme.colour.text.primary),
