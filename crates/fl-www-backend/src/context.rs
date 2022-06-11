@@ -12,8 +12,6 @@ use crate::resident::{Resident, ResidentExt};
 
 #[derive(Debug, Clone)]
 pub struct ServerContext {
-    pub github_token: String,
-
     pub github_client_id: String,
     pub github_client_secret: String,
 
@@ -26,7 +24,6 @@ impl ServerContext {
         let github_token = env::var("GITHUB_TOKEN").expect("no github token set");
 
         Self {
-            github_token: github_token.clone(),
             github_client_id: env::var("GITHUB_CLIENT_ID").expect("no github token set"),
             github_client_secret: env::var("GITHUB_CLIENT_SECRET").expect("no github token set"),
             http: Client::builder()

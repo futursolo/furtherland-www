@@ -8,6 +8,8 @@ pub struct Model {
     login: String,
     name: String,
     avatar_url: String,
+
+    last_updated: DateTimeUtc,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
