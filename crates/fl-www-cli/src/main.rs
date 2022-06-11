@@ -48,6 +48,9 @@ async fn serve_backend(args: cli::ServeArgs) -> anyhow::Result<()> {
 async fn main() -> anyhow::Result<()> {
     logging::init();
 
+    // Ignore .env if fails to load.
+    let _ = dotenv::dotenv();
+
     let args = cli::Args::parse();
 
     match args.cmd {

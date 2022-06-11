@@ -1,7 +1,10 @@
 #![deny(clippy::all)]
 
+mod context;
 mod db;
+mod error;
 mod prelude;
+mod resident;
 mod web;
 
 pub use web::WebServer;

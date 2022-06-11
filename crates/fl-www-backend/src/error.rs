@@ -29,11 +29,7 @@ pub(crate) enum HttpError {
 impl Reject for HttpError {}
 
 impl HttpError {
-    pub fn other() -> Self {
-        Self::Other
-    }
-
-    pub fn to_reply(&self) -> impl Reply {
+    pub fn to_reply(&self) -> impl Reply + Send + 'static {
         use messages::{Response, ResponseError};
 
         match self {
@@ -74,12 +70,18 @@ impl HttpError {
         }
     }
 
-    pub async fn handle_rejection(err: Rejection) -> std::result::Result<impl Reply, Infallible> {
+    pub async fn handle_rejection(
+        err: Rejection,
+    ) -> std::result::Result<impl Reply + Send + 'static, Infallible> {
         if let Some(m) = err.find::<Self>() {
             return Ok(m.to_reply());
         }
 
-        Ok(Self::other().to_reply())
+        if err.is_not_found() {
+            return Ok(Self::NotFound.to_reply());
+        }
+
+        Ok(Self::Other.to_reply())
     }
 }
 
