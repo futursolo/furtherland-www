@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 static STORAGE_KEY: &str = "fl_resident_token";
 
 #[derive(Atom, PartialEq, Serialize, Deserialize)]
-#[observed]
+#[bounce(observed)]
 pub(crate) struct TokenState {
     pub inner: Option<String>,
 }

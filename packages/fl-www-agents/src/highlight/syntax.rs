@@ -45,7 +45,10 @@ impl HighlightOutput {
         let mut fragments = Vec::new();
 
         for line in LinesWithEndings::from(&input.content) {
-            for frag in h.highlight(line, &SYNTAX_SET) {
+            for frag in h
+                .highlight_line(line, &SYNTAX_SET)
+                .expect("failed tob highlight syntax")
+            {
                 let colour = Colour::from_rgb(
                     frag.0.foreground.r,
                     frag.0.foreground.g,
