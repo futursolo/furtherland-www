@@ -1,7 +1,8 @@
-use crate::prelude::*;
 use once_cell::sync::Lazy;
 use styling::ThemeKind;
 use utils::Id;
+
+use crate::prelude::*;
 
 static KEYFRAME_ID: Lazy<Id> = Lazy::new(Id::new);
 

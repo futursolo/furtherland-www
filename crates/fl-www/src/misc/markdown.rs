@@ -1,11 +1,11 @@
 // Based on pulldown_cmark's HtmlWriter.
 
-use crate::prelude::*;
 use components::{Code, CodeBlock as CompCodeBlock, Hyperlink, SectionTitle};
 use fl_www_core::markdown::*;
 use yew::prelude::Html;
 
 use super::ToHtml;
+use crate::prelude::*;
 
 impl ToHtml for Root {
     fn to_html(&self) -> Html {

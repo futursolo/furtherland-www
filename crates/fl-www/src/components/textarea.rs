@@ -1,6 +1,7 @@
-use crate::prelude::*;
 use yew::events::InputEvent;
 use yew::virtual_dom::AttrValue;
+
+use crate::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct TextareaProps {

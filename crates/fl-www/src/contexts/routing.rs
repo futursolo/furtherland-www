@@ -1,7 +1,7 @@
+use bounce::prelude::*;
+
 use crate::atoms::LanguageState;
 use crate::prelude::*;
-
-use bounce::prelude::*;
 
 pub(crate) fn use_app_route() -> AppRoute {
     use_route::<AppRoute>().unwrap_or_default()

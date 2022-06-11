@@ -1,14 +1,14 @@
-use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
-use crate::prelude::*;
-use crate::utils::is_ssr;
 use atoms::TokenState;
-use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
-
 use bounce::query::use_query_value;
 use bounce::*;
+use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
 use serde::{Deserialize, Serialize};
 use web_sys::HtmlTextAreaElement;
 use yew_feather::github::Github;
+
+use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
+use crate::prelude::*;
+use crate::utils::is_ssr;
 
 #[derive(Properties, PartialEq, Debug)]
 struct ReplyProps {

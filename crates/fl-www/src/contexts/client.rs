@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
-use crate::prelude::*;
-
 use yew_query::ClientProvider as BaseClientProvider;
+
+use crate::prelude::*;
 
 /// A Provider to hold an instance of worker for the lifetime of the webpage.
 #[function_component(ClientProvider)]

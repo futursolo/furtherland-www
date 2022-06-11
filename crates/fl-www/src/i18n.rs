@@ -1,8 +1,5 @@
-use i18n_embed::LanguageLoader;
-use i18n_embed::{
-    fluent::{fluent_language_loader, FluentLanguageLoader},
-    WebLanguageRequester,
-};
+use i18n_embed::fluent::{fluent_language_loader, FluentLanguageLoader};
+use i18n_embed::{LanguageLoader, WebLanguageRequester};
 use once_cell::sync::Lazy;
 use rust_embed::RustEmbed;
 use unic_langid::LanguageIdentifier;

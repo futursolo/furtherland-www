@@ -1,7 +1,7 @@
-use crate::prelude::*;
 use once_cell::sync::Lazy;
-
 use styling::{Colour, ThemeKind};
+
+use crate::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, CssVariables)]
 pub struct FontSizes {
@@ -149,7 +149,8 @@ impl Theme {
     pub fn light() -> &'static Self {
         static LIGHT_THEME: Lazy<Theme> = Lazy::new(|| Theme {
             font_family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', \
-                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"
+                          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', \
+                          sans-serif"
                 .to_string(),
             font_size: FontSizes::default(),
 
@@ -186,7 +187,8 @@ impl Theme {
     pub fn dark() -> &'static Self {
         static DARK_THEME: Lazy<Theme> = Lazy::new(|| Theme {
             font_family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', \
-                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"
+                          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', \
+                          sans-serif"
                 .to_string(),
             font_size: FontSizes::default(),
 

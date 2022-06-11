@@ -1,21 +1,19 @@
-use ahash::AHasher;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 
-use futures::future::FutureExt;
-use futures::future::Shared;
+use ahash::AHasher;
+use futures::future::{FutureExt, Shared};
 use futures::lock::Mutex;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{window, Element, HtmlScriptElement};
 
+use super::*;
 use crate::client::Client;
 use crate::error::InternalResult;
 use crate::request::{Method, Request};
 use crate::response::{BaseResponse, SerdeResponse};
-
-use super::*;
 
 type RequestMap = HashMap<u64, Shared<LocalBoxFuture<'static, InternalResult<BaseResponse>>>>;
 

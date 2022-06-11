@@ -1,6 +1,7 @@
+use std::str::FromStr;
+
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
-use std::str::FromStr;
 use typed_builder::TypedBuilder;
 
 use crate::prelude::*;

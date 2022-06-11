@@ -1,5 +1,6 @@
 pub(crate) fn get_rand_str() -> String {
-    use rand::{distributions::Alphanumeric, thread_rng, Rng};
+    use rand::distributions::Alphanumeric;
+    use rand::{thread_rng, Rng};
 
     let mut rng = thread_rng();
 

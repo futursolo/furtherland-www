@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
+use styling::{Colour, ThemeKind};
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
 use crate::types::Msg;
-use styling::{Colour, ThemeKind};
 
 mod syntax;
 
@@ -40,10 +40,10 @@ pub struct Worker {
 }
 
 impl Agent for Worker {
-    type Reach = Public<Self>;
-    type Message = Msg<Response>;
     type Input = Request;
+    type Message = Msg<Response>;
     type Output = Response;
+    type Reach = Public<Self>;
 
     fn create(link: AgentLink<Self>) -> Self {
         Self { link }

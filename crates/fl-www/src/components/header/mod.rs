@@ -12,8 +12,7 @@ use home_content::HomeContent;
 use hooks::{use_event, use_viewport_height};
 use item::Item;
 use lang_toggle::LangToggle;
-use styling::Colour;
-use styling::{use_media_query, use_style};
+use styling::{use_media_query, use_style, Colour};
 use theme_toggle::ThemeToggle;
 use utils::get_scroll_y;
 

@@ -1,15 +1,14 @@
 use std::cell::RefCell;
 use std::convert::Infallible;
 
-use crate::prelude::*;
-use yew_agent::Bridged;
-
 use bounce::helmet::Helmet;
 use bounce::prelude::*;
+use components::{Author, AuthoringResident, Main, Markdown, Replies, SectionTitle};
+use yew_agent::Bridged;
+use yew_query::{use_pausable_query, Request, UseFetchHandle};
 
 use super::{Loading, Other};
-use components::{Author, AuthoringResident, Main, Markdown, Replies, SectionTitle};
-use yew_query::{use_pausable_query, Request, UseFetchHandle};
+use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct WritingProps {

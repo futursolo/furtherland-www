@@ -1,8 +1,8 @@
-use crate::prelude::*;
 use agents::highlight::HighlightOutput;
 use components::CodeSpan;
 
 use super::ToHtml;
+use crate::prelude::*;
 
 impl ToHtml for HighlightOutput {
     fn to_html(&self) -> Html {

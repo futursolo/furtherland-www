@@ -115,44 +115,41 @@ pub struct HyperLink {
 }
 
 //#[derive(Debug)]
-//enum TableState {
-//Head,
-//Body,
+// enum TableState {
+// Head,
+// Body,
 //}
 
 // <table>...</table>
-//struct Table {
-//children: Vec<Node>,
-//parent: Arc<Mutex<Option<Node>>>,
+// struct Table {
+// children: Vec<Node>,
+// parent: Arc<Mutex<Option<Node>>>,
 
-//table_state: TableState,
-//table_alignments: Vec<Alignment>,
-//table_cell_index: usize,
+// table_state: TableState,
+// table_alignments: Vec<Alignment>,
+// table_cell_index: usize,
 //}
 
-//impl Default for Table {
-//fn default() -> Self {
-//Self {
-//children: Vec::new(),
-//parent: Arc::new(Mutex::new(None)),
+// impl Default for Table {
+// fn default() -> Self {
+// Self {
+// children: Vec::new(),
+// parent: Arc::new(Mutex::new(None)),
 
-//table_state: TableState::Head,
-//table_alignments: Vec::new(),
-//table_cell_index: 0,
-//}
-//}
+// table_state: TableState::Head,
+// table_alignments: Vec::new(),
+// table_cell_index: 0,
 //}
 
-//impl fmt::Debug for Table {
-//fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//f.debug_struct("Table")
+// impl fmt::Debug for Table {
+// fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+// f.debug_struct("Table")
 //.field("children", &self.children)
 //.field("parent", &self.parent)
 //.field("table_state", &"TableState")
 //.field("table_alignments", &self.table_alignments)
 //.field("table_cell_index", &self.table_cell_index)
 //.finish()
-//}
 //}
 
 // <input type="checkbox" disabled>

@@ -1,8 +1,8 @@
+use components::Link;
+use styling::Colour;
 use yew_feather::globe::Globe;
 
 use crate::prelude::*;
-use components::Link;
-use styling::Colour;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct LangToggleProps {

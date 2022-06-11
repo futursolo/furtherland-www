@@ -1,9 +1,8 @@
 use chrono::{Datelike, Local};
-
-use crate::prelude::*;
-
 use components::FlexSpace;
 use hooks::use_render_event;
+
+use crate::prelude::*;
 
 #[styled_component(Footer)]
 pub(crate) fn footer() -> Html {

@@ -1,16 +1,14 @@
 use std::rc::Rc;
 
-use crate::prelude::*;
-use atoms::TokenState;
-
 use async_trait::async_trait;
+use atoms::TokenState;
 use bounce::query::{Mutation, MutationResult, Query, QueryResult};
 use bounce::BounceStates;
 use futures::future::TryFutureExt;
-
 use messages::{Resident, Response};
 
 use super::{QueryError, BASE_URL};
+use crate::prelude::*;
 
 // #[async_trait(?Send)]
 // pub trait Query: PartialEq {
@@ -27,8 +25,8 @@ pub struct CurrentResidentQuery {
 
 #[async_trait(?Send)]
 impl Query for CurrentResidentQuery {
-    type Input = ();
     type Error = QueryError;
+    type Input = ();
 
     async fn query(states: &BounceStates, _input: Rc<Self::Input>) -> QueryResult<Self> {
         let client = reqwest::Client::new();
@@ -63,8 +61,8 @@ pub struct ExchangeTokenMutation {
 
 #[async_trait(?Send)]
 impl Mutation for ExchangeTokenMutation {
-    type Input = messages::AccessTokenInput;
     type Error = QueryError;
+    type Input = messages::AccessTokenInput;
 
     async fn run(_states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self> {
         let client = reqwest::Client::new();

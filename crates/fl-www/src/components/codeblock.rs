@@ -1,12 +1,11 @@
+use agents::highlight::{HighlightInput, HighlightOutput};
+use atoms::CacheState;
+use bounce::*;
+use misc::ToHtml;
+use styling::ThemeKind;
 use yew_agent::use_bridge;
 
 use crate::prelude::*;
-use agents::highlight::{HighlightInput, HighlightOutput};
-use atoms::CacheState;
-use misc::ToHtml;
-use styling::ThemeKind;
-
-use bounce::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeBlockProps {

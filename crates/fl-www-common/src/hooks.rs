@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
 use gloo::events::EventListener;
+use utils::{get_viewport_height, Id};
 use web_sys::{Event, EventTarget};
 use yew::prelude::*;
 
 use crate::prelude::*;
-use utils::{get_viewport_height, Id};
 
 pub fn use_event<E, F>(target: &EventTarget, event_type: E, callback: F)
 where

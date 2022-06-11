@@ -1,16 +1,16 @@
 // use futures::future::Future;
 use std::path::Path;
-use unicode_segmentation::UnicodeSegmentation;
 
 use async_trait::async_trait;
 use chrono::NaiveDate;
+use fl_www_core::markdown::HtmlCreator;
+pub(crate) use metadata::*;
 use pulldown_cmark::Parser;
 use tokio::fs::{read_dir, File};
 use tokio::io::AsyncReadExt;
+use unicode_segmentation::UnicodeSegmentation;
 
 use crate::prelude::*;
-use fl_www_core::markdown::HtmlCreator;
-pub(crate) use metadata::*;
 
 #[async_trait]
 pub(crate) trait MetadataExt: Sized {

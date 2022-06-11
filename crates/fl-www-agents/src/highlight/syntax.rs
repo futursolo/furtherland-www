@@ -6,20 +6,20 @@
 
 use gloo::timers::future::TimeoutFuture;
 use once_cell::sync::Lazy;
+use styling::{Colour, ThemeKind};
 use syntect::easy::HighlightLines;
 use syntect::highlighting::ThemeSet;
 use syntect::parsing::SyntaxSet;
 use syntect::util::LinesWithEndings;
 
-use crate::prelude::*;
-use styling::{Colour, ThemeKind};
-
 use super::{HighlightInput, HighlightOutput};
+use crate::prelude::*;
 
 static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(SyntaxSet::load_defaults_newlines);
 static THEME_SET: Lazy<ThemeSet> = Lazy::new(ThemeSet::load_defaults);
 
-// static CACHE: Lazy<Arc<Mutex<HashMap<HighlightInput, HighlightOutput>>>> = Lazy::new(Arc::default);
+// static CACHE: Lazy<Arc<Mutex<HashMap<HighlightInput, HighlightOutput>>>> =
+// Lazy::new(Arc::default);
 
 impl HighlightOutput {
     // This method is incredibly slow in debug mode.

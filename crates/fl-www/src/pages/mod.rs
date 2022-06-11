@@ -1,7 +1,7 @@
+use bounce::helmet::Helmet;
 use yew_router::prelude::*;
 
 use crate::prelude::*;
-use bounce::helmet::Helmet;
 
 mod home;
 mod loading;
@@ -10,13 +10,12 @@ mod page;
 mod residents;
 mod writing;
 
+use components::Redirect;
 use home::Home;
 use loading::Loading;
 use other::Other;
 use page::Page;
 use writing::Writing;
-
-use components::Redirect;
 
 #[function_component(HomeRedirect)]
 fn home_redirect() -> Html {

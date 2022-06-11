@@ -1,8 +1,8 @@
+use styling::use_media_query;
 use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
 use yew_feather::chevron_down::ChevronDown;
 
 use crate::prelude::*;
-use styling::use_media_query;
 
 #[styled_component(HomeContent)]
 pub(crate) fn home_content() -> Html {

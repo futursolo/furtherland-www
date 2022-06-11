@@ -1,5 +1,6 @@
-use crate::prelude::*;
 use styling::Colour;
+
+use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct CodeSpanProps {

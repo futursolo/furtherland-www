@@ -1,8 +1,7 @@
-use crate::prelude::*;
-
 use bounce::helmet::Helmet;
-
 use components::{Main, SectionTitle};
+
+use crate::prelude::*;
 
 #[function_component(Other)]
 pub(crate) fn other() -> Html {

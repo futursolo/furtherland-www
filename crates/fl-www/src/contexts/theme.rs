@@ -1,13 +1,13 @@
 use std::ops::Deref;
 
+use bounce::helmet::Helmet;
 use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 use gloo::storage::{LocalStorage, Storage};
+use hooks::use_event;
 use serde::{Deserialize, Serialize};
+use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
 
 use crate::prelude::*;
-use bounce::helmet::Helmet;
-use hooks::use_event;
-use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
 
 static STORAGE_KEY: &str = "fl_theme";
 

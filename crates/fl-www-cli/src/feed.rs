@@ -5,11 +5,10 @@ use atom_syndication::{
     EntryBuilder, Feed as Channel, FeedBuilder as ChannelBuilder, GeneratorBuilder, LinkBuilder,
     Text,
 };
-use chrono::FixedOffset;
-use chrono::{DateTime, NaiveDate, NaiveDateTime, NaiveTime};
+use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, NaiveTime};
+use metadata::Metadata;
 
 use crate::prelude::*;
-use metadata::Metadata;
 
 #[derive(Debug)]
 pub struct Feed {

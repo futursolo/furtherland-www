@@ -87,9 +87,9 @@ impl Node {
 }
 
 //#[derive(Debug)]
-//enum TableState {
-//Head,
-//Body,
+// enum TableState {
+// Head,
+// Body,
 //}
 
 #[derive(Debug)]
@@ -175,13 +175,13 @@ where
 
                 FootnoteReference(_name) => {
                     panic!("Not implemented!");
-                    //let len = self.numbers.len() + 1;
-                    //self.write("<sup class=\"footnote-reference\"><a href=\"#")?;
-                    //escape_html(&mut self.writer, &name)?;
-                    //self.write("\">")?;
-                    //let number = *self.numbers.entry(name).or_insert(len);
-                    //write!(&mut self.writer, "{}", number)?;
-                    //self.write("</a></sup>")?;
+                    // let len = self.numbers.len() + 1;
+                    // self.write("<sup class=\"footnote-reference\"><a href=\"#")?;
+                    // escape_html(&mut self.writer, &name)?;
+                    // self.write("\">")?;
+                    // let number = *self.numbers.entry(name).or_insert(len);
+                    // write!(&mut self.writer, "{}", number)?;
+                    // self.write("</a></sup>")?;
                 }
                 TaskListMarker(checked) => {
                     let t = Node::Checkbox(Checkbox { checked });
@@ -556,33 +556,32 @@ where
     }
 
     // run raw text, consuming end tag
-    //fn raw_text(&mut self) -> io::Result<()> {
-    //let mut nest = 0;
-    //while let Some(event) = self.iter.next() {
-    //match event {
-    //Start(_) => nest += 1,
-    //End(_) => {
-    //if nest == 0 {
-    //break;
+    // fn raw_text(&mut self) -> io::Result<()> {
+    // let mut nest = 0;
+    // while let Some(event) = self.iter.next() {
+    // match event {
+    // Start(_) => nest += 1,
+    // End(_) => {
+    // if nest == 0 {
+    // break;
     //}
-    //nest -= 1;
+    // nest -= 1;
     //}
-    //Html(text) | Code(text) | Text(text) => {
-    //escape_html(&mut self.writer, &text)?;
-    //self.end_newline = text.ends_with('\n');
+    // Html(text) | Code(text) | Text(text) => {
+    // escape_html(&mut self.writer, &text)?;
+    // self.end_newline = text.ends_with('\n');
     //}
-    //SoftBreak | HardBreak | Rule => {
-    //self.write(" ")?;
+    // SoftBreak | HardBreak | Rule => {
+    // self.write(" ")?;
     //}
-    //FootnoteReference(name) => {
-    //let len = self.numbers.len() + 1;
-    //let number = *self.numbers.entry(name).or_insert(len);
-    //write!(&mut self.writer, "[{}]", number)?;
+    // FootnoteReference(name) => {
+    // let len = self.numbers.len() + 1;
+    // let number = *self.numbers.entry(name).or_insert(len);
+    // write!(&mut self.writer, "[{}]", number)?;
     //}
-    //TaskListMarker(true) => self.write("[x]")?,
-    //TaskListMarker(false) => self.write("[ ]")?,
+    // TaskListMarker(true) => self.write("[x]")?,
+    // TaskListMarker(false) => self.write("[ ]")?,
     //}
-    //}
-    //Ok(())
+    // Ok(())
     //}
 }

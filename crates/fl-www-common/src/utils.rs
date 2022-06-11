@@ -1,13 +1,13 @@
-use gloo::timers::future::TimeoutFuture;
 use std::convert::{TryFrom, TryInto};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Duration;
 
+use gloo::timers::future::TimeoutFuture;
 use once_cell::sync::Lazy;
-// use reqwest::Url;
-
-use crate::prelude::*;
 use wasm_bindgen::prelude::*;
+
+// use reqwest::Url;
+use crate::prelude::*;
 
 #[derive(PartialEq, Debug, Clone, Eq, Hash)]
 pub struct Id(u64);

@@ -1,8 +1,8 @@
-use crate::pages::AppRouter;
-use crate::prelude::*;
-
 // use crate::contexts::MetaLink;
 use components::{ErrorPopup, Footer, Header, Layout};
+
+use crate::pages::AppRouter;
+use crate::prelude::*;
 
 #[function_component(App)]
 pub(crate) fn app() -> Html {

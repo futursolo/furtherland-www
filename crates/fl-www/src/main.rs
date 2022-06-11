@@ -14,10 +14,9 @@ mod misc;
 mod pages;
 mod prelude;
 
-use prelude::*;
-
 use app::App;
 use contexts::Providers;
+use prelude::*;
 
 #[function_component(Root)]
 pub fn root() -> Html {

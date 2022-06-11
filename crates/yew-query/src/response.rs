@@ -1,9 +1,9 @@
-use js_sys::JSON;
 use std::rc::Rc;
 use std::str::FromStr;
-use wasm_bindgen::prelude::*;
 
+use js_sys::JSON;
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
 use web_sys::Headers;
 
 use crate::error::{Error, Result};

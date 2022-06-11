@@ -1,8 +1,8 @@
+use styling::ThemeKind;
 use yew_feather::moon::Moon;
 use yew_feather::sun::Sun;
 
 use crate::prelude::*;
-use styling::ThemeKind;
 
 #[styled_component(ThemeToggle)]
 pub(crate) fn theme_toggle() -> Html {

@@ -1,11 +1,12 @@
 use std::convert::Infallible;
-use thiserror::Error;
 
-use crate::prelude::*;
+use thiserror::Error;
 use warp::http::StatusCode;
 use warp::reject::Reject;
 use warp::reply::{self, Reply};
 use warp::Rejection;
+
+use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub(crate) enum HttpError {

@@ -4,12 +4,11 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::window;
 
+use super::*;
 use crate::client::Client;
 use crate::error::InternalError;
 use crate::request::Request;
 use crate::response::BaseResponse;
-
-use super::*;
 
 #[derive(Debug, Default)]
 pub struct FetchExchange;

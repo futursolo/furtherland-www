@@ -1,10 +1,10 @@
 use std::rc::Rc;
 
-use crate::prelude::*;
-
 use bounce::helmet::HelmetBridge as BaseHelmetBridge;
 use bounce::BounceRoot;
 use yew_router::prelude::BrowserRouter;
+
+use crate::prelude::*;
 
 mod client;
 mod metadata;

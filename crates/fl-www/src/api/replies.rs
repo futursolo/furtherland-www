@@ -1,16 +1,13 @@
 use std::rc::Rc;
 
-use crate::prelude::*;
-
 use async_trait::async_trait;
 use bounce::query::{Query, QueryResult};
 use bounce::BounceStates;
 use futures::TryFutureExt;
-
-use super::QueryError;
 use messages::{Replies, Response};
 
-use super::BASE_URL;
+use super::{QueryError, BASE_URL};
+use crate::prelude::*;
 
 // #[async_trait(?Send)]
 // pub trait Query: PartialEq {
@@ -33,8 +30,8 @@ pub struct RepliesQuery {
 
 #[async_trait(?Send)]
 impl Query for RepliesQuery {
-    type Input = RepliesQueryInput;
     type Error = QueryError;
+    type Input = RepliesQueryInput;
 
     async fn query(_states: &BounceStates, input: Rc<Self::Input>) -> QueryResult<Self> {
         let resp = reqwest::get(

@@ -1,5 +1,6 @@
-use crate::prelude::*;
 use components::{Main, Placeholder, PlaceholderKind};
+
+use crate::prelude::*;
 
 #[styled_component(Loading)]
 pub(crate) fn loading() -> Html {

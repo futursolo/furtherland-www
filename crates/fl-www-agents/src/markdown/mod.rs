@@ -1,11 +1,10 @@
+use fl_www_core::markdown::{HtmlCreator, Root};
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 use crate::prelude::*;
 use crate::types::Msg;
-
-use fl_www_core::markdown::{HtmlCreator, Root};
 
 pub async fn markdown(input: Request) -> Response {
     use pulldown_cmark::Parser;
@@ -50,10 +49,10 @@ pub struct Worker {
 }
 
 impl Agent for Worker {
-    type Reach = Public<Self>;
-    type Message = Msg<Response>;
     type Input = Request;
+    type Message = Msg<Response>;
     type Output = Response;
+    type Reach = Public<Self>;
 
     fn create(link: AgentLink<Self>) -> Self {
         Self { link }

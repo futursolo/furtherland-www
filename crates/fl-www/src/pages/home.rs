@@ -1,9 +1,8 @@
-use crate::prelude::*;
-
 use bounce::helmet::Helmet;
+use components::{Author, AuthoringResident, Link, Main, SectionTitle};
 
 use super::Loading;
-use components::{Author, AuthoringResident, Link, Main, SectionTitle};
+use crate::prelude::*;
 
 #[function_component(Home)]
 pub(crate) fn home() -> Html {

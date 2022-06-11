@@ -1,5 +1,6 @@
-use crate::prelude::*;
 use styling::{use_style, Colour};
+
+use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct ItemProps {

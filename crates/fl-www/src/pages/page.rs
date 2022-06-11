@@ -1,13 +1,12 @@
 use std::convert::Infallible;
 
-use crate::prelude::*;
-use components::{Main, Markdown, SectionTitle};
-
 use bounce::helmet::Helmet;
 use bounce::prelude::*;
+use components::{Main, Markdown, SectionTitle};
 use yew_query::{use_query, Request, UseFetchHandle};
 
 use super::{Loading, Other};
+use crate::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
 pub(crate) struct PageProps {

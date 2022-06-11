@@ -1,10 +1,9 @@
-use crate::prelude::*;
-
+use messages::ResponseError;
 use once_cell::sync::Lazy;
 use reqwest::Url;
 use thiserror::Error;
 
-use messages::ResponseError;
+use crate::prelude::*;
 
 mod replies;
 mod residents;

@@ -1,6 +1,8 @@
 use std::rc::Rc;
 use std::str::FromStr;
 
+use futures::lock::Mutex;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
 use crate::client::Client;
@@ -8,9 +10,6 @@ use crate::error::Error;
 use crate::handle::UseFetchHandle;
 use crate::provider::ClientState;
 use crate::request::Request;
-use futures::lock::Mutex;
-
-use wasm_bindgen_futures::spawn_local;
 
 pub fn use_client() -> Option<Rc<Client>> {
     use_context::<ClientState>().map(|m| m.inner)

@@ -1,9 +1,9 @@
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use web_sys::window;
 
 use crate::client::Client;
 use crate::error::{InternalError, InternalResult};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum Method {

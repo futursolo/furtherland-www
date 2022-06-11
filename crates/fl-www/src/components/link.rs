@@ -1,5 +1,6 @@
-use crate::prelude::*;
 use styling::{use_style, Colour};
+
+use crate::prelude::*;
 
 type AppLink = yew_router::prelude::Link<AppRoute>;
 

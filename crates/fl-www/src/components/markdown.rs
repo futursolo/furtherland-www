@@ -1,13 +1,11 @@
-use yew_agent::use_bridge;
-
-use bounce::prelude::*;
-
-use crate::prelude::*;
 use atoms::CacheState;
+use bounce::prelude::*;
 use fl_www_core::markdown::Root;
 use misc::ToHtml;
+use yew_agent::use_bridge;
 
 use super::Placeholder;
+use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct MarkdownProps {
