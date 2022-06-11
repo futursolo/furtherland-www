@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../fl-www-core", features = ["backend"] }
 
 # Data Serialisation / Deserialisation
 serde_json = "1.0.79"
@@ -18,16 +18,21 @@ chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
 # Logging
 log = "0.4.14"
 
-# Async I/O / HTTP
+# Async I/O
 async-trait = "0.1.52"
 tokio-stream = { version = "0.1.9", features = ["net"] }
 tokio = { version = "1.19.2", features = ["full"] }
-warp = { version = "0.3.2" }
 futures = "0.3.21"
+
+# HTTP
+warp = { version = "0.3.2" }
 octocrab = { version = "0.16.0", default-features = false, features = ["rustls"] }
 reqwest = { version = "0.11.10", features = ["json", "trust-dns", "rustls-tls", "gzip", "brotli", "deflate"], default-features = false }
 
-# Error Handling / Ergonomics
+# ORM
+sea-orm = { version = "0.8.0", features = ["sqlx-sqlite", "sqlx-postgres", "runtime-tokio-rustls"] }
+
+# Error Handling / Boilerplate
 thiserror = "1.0.30"
 typed-builder = "0.10.0"
 anyhow = "1.0.57"

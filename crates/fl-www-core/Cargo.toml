@@ -3,6 +3,7 @@ name = "fl-www-core"
 version = "0.1.0"
 edition = "2021"
 
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -20,3 +21,8 @@ pulldown-cmark = { version = "0.9.1", default-features = false }
 hex = "0.4.3"
 getrandom = { version = "0.2.6", features = ["js"] }
 rand = "0.8.5"
+
+sea-orm = { version = "0.8.0", optional = true }
+
+[features]
+backend = ["dep:sea-orm"]

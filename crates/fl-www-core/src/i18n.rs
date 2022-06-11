@@ -5,9 +5,19 @@ use serde::{Deserialize, Serialize};
 
 use crate::prelude::*;
 
+#[cfg_attr(
+    feature = "backend",
+    derive(sea_orm::EnumIter, sea_orm::DeriveActiveEnum)
+)]
+#[cfg_attr(
+    feature = "backend",
+    sea_orm(rs_type = "String", db_type = "String(Some(12))")
+)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Serialize, Deserialize, Hash)]
 pub enum Language {
+    #[cfg_attr(feature = "backend", sea_orm(string_value = "zh"))]
     Chinese,
+    #[cfg_attr(feature = "backend", sea_orm(string_value = "en"))]
     English,
 }
 
