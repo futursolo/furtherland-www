@@ -1,13 +1,13 @@
 [workspace]
 members = [
-    "packages/fl-www",
-    "packages/fl-www-cli",
-    "packages/fl-www-core",
-    "packages/fl-www-macros",
-    "packages/fl-www-common",
-    "packages/fl-www-agents",
-    # "packages/fl-www-backend",
-    "packages/yew-query",
+    "crates/fl-www",
+    "crates/fl-www-cli",
+    "crates/fl-www-core",
+    "crates/fl-www-macros",
+    "crates/fl-www-common",
+    "crates/fl-www-agents",
+    "crates/fl-www-backend",
+    "crates/yew-query",
 ]
 resolver = "2"
 

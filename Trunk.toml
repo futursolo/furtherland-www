@@ -4,7 +4,7 @@ open = true
 
 [watch]
 ignore = [
-    "packages/fl-www/target/",
-    "packages/fl-www-macros/target/",
-    "packages/fl-www-common/target/",
+    "crates/fl-www/target/",
+    "crates/fl-www-macros/target/",
+    "crates/fl-www-common/target/",
 ]

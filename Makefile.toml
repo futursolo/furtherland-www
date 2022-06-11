@@ -1,8 +1,7 @@
 [tasks.run-local-backend]
-cwd = "packages/fl-www-backend"
 workspace = false
-command = "wrangler"
-args = ["dev", "--verbose", "--env=staging"]
+command = "cargo"
+args = ["run", "--bin", "fl-www-cli", "serve"]
 
 [tasks.serve-local-frontend]
 workspace = false

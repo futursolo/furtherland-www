@@ -1,3 +1,4 @@
+use std::convert::TryInto;
 use std::fmt;
 use std::str::FromStr;
 
@@ -10,11 +11,11 @@ use crate::error::{Error, Result};
 
 /// A workaround until bson::oid::ObjectId works under wasm32.
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
-pub struct ObjectId(Vec<u8>);
+pub struct ObjectId([u8; 12]);
 
 impl Default for ObjectId {
     fn default() -> ObjectId {
-        Self(rand::thread_rng().gen::<[u8; 12]>().into())
+        Self(rand::thread_rng().gen::<[u8; 12]>())
     }
 }
 
@@ -68,14 +69,10 @@ impl FromStr for ObjectId {
             reason: "failed to decode hex string.".to_owned(),
         })?;
 
-        if seq.len() != 12 {
-            return Err(Error::ParseStr {
-                target_kind: "ObjectId".to_owned(),
-                reason: "length mismatch.".to_owned(),
-            });
-        }
-
-        Ok(Self(seq))
+        Ok(Self(seq.try_into().map_err(|_e| Error::ParseStr {
+            target_kind: "ObjectId".to_owned(),
+            reason: "length mismatch.".to_owned(),
+        })?))
     }
 }
 

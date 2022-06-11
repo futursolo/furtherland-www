@@ -57,10 +57,6 @@ jobs:
       - name: Build Website
         run: trunk --config Trunk.build.toml build --release index.release.html
 
-      - name: Copy workers
-        run: |
-          cp worker-dist/* dist/
-
       - name: Build Metadata
         uses: actions-rs/cargo@v1
         with:
