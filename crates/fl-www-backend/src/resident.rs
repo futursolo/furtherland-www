@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 pub(crate) use messages::Resident;
+use octocrab::Octocrab;
 use reqwest::StatusCode;
 
 use crate::context::ServerContext;
@@ -9,7 +10,7 @@ use crate::prelude::*;
 #[async_trait]
 pub(crate) trait ResidentExt {
     async fn get(ctx: &ServerContext, id: u64) -> HttpResult<Option<Resident>>;
-    async fn from_token(ctx: &ServerContext, token: &str) -> HttpResult<Resident>;
+    async fn from_token(ctx: &ServerContext, token: &str) -> HttpResult<(Resident, Octocrab)>;
 }
 
 #[async_trait]
@@ -37,19 +38,17 @@ impl ResidentExt for Resident {
         Ok(Some(resident))
     }
 
-    async fn from_token(ctx: &ServerContext, token: &str) -> HttpResult<Resident> {
-        let resp = ctx
-            .http()
-            .get("https://api.github.com/user")
-            .header("authorization", format!("Bearer {}", token))
-            .header("accept", "application/vnd.github.v3+json")
-            .send()
+    async fn from_token(_ctx: &ServerContext, token: &str) -> HttpResult<(Resident, Octocrab)> {
+        let github = Octocrab::builder()
+            .personal_token(token.to_owned())
+            .build()
+            .expect("failed to create github client");
+
+        let resident = github
+            .get::<_, _, ()>("https://api.github.com/user", None)
             .await
             .map_err(|_| HttpError::GitHub)?;
 
-        match resp.json::<Resident>().await {
-            Ok(m) => Ok(m),
-            Err(_) => Err(HttpError::GitHub),
-        }
+        Ok((resident, github))
     }
 }
