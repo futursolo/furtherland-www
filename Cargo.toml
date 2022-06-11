@@ -1,13 +1,20 @@
 [workspace]
 members = [
-    "crates/fl-www",
-    "crates/fl-www-cli",
+    # Platform Agnostic Crates / Procedural Macros
     "crates/fl-www-core",
     "crates/fl-www-macros",
+
+    # Client-side Crates
+    "crates/fl-www",
     "crates/fl-www-common",
     "crates/fl-www-agents",
-    "crates/fl-www-backend",
     "crates/yew-query",
+
+    # Server-side Crates
+    "crates/fl-www-cli",
+    "crates/fl-www-backend",
+    "crates/fl-www-migrations",
+    "crates/fl-www-entities",
 ]
 resolver = "2"
 

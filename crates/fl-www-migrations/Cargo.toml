@@ -1,0 +1,17 @@
+[package]
+name = "fl-www-migrations"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "fl_www_migrations"
+path = "src/lib.rs"
+
+[dependencies]
+fl-www-entities = { path = "../fl-www-entities" }
+tokio = { version = "1.19.2", features = ["full"] }
+
+[dependencies.sea-orm-migration]
+version = "^0.8.0"
+features = ["runtime-tokio-rustls", "sqlx-sqlite", "sqlx-postgres"]
