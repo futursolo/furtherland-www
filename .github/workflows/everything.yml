@@ -49,59 +49,10 @@ jobs:
         with:
           command: build
 
-      - name: Setup wasm-bindgen
-        uses: jetli/wasm-bindgen-action@v0.1.0
-        with:
-          version: '0.2.80'
-
       - name: Setup trunk
         uses: jetli/trunk-action@v0.1.0
         with:
           version: 'latest'
-
-      - name: Setup wasm-opt
-        run: |
-          WASM_OPT_VER=101
-
-          cd /tmp
-
-          curl -O -L https://github.com/WebAssembly/binaryen/releases/download/version_101/binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
-          tar zxvf binaryen-version_$WASM_OPT_VER-x86_64-linux.tar.gz
-          echo "PATH=$PATH:$(pwd)/binaryen-version_$WASM_OPT_VER/bin" >> $GITHUB_ENV
-
-      - name: Build fl-worker-highlight
-        run: |
-          cargo build --target wasm32-unknown-unknown --bin fl-worker-highlight --release
-
-          HASH=$(sha256sum target/wasm32-unknown-unknown/release/fl-worker-highlight.wasm)
-          HASH=${HASH:0:12}
-          FL_WORKER_HIGHLIGHT_NAME=fl-worker-highlight-$HASH
-
-          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name $FL_WORKER_HIGHLIGHT_NAME target/wasm32-unknown-unknown/release/fl-worker-highlight.wasm
-
-          cd worker-dist/
-          mv $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-          wasm-opt -o $FL_WORKER_HIGHLIGHT_NAME"_bg.wasm" $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-          rm $FL_WORKER_HIGHLIGHT_NAME"_bg.original.wasm"
-
-          echo "FL_WORKER_HIGHLIGHT_PATH=$FL_WORKER_HIGHLIGHT_NAME.js" >> $GITHUB_ENV
-
-      - name: Build fl-worker-markdown
-        run: |
-          cargo build --target wasm32-unknown-unknown --bin fl-worker-markdown --release
-
-          HASH=$(sha256sum target/wasm32-unknown-unknown/release/fl-worker-markdown.wasm)
-          HASH=${HASH:0:12}
-          FL_WORKER_MARKDOWN_NAME=fl-worker-markdown-$HASH
-
-          wasm-bindgen --target no-modules --no-typescript --out-dir worker-dist/ --out-name $FL_WORKER_MARKDOWN_NAME target/wasm32-unknown-unknown/release/fl-worker-markdown.wasm
-
-          cd worker-dist/
-          mv $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
-          wasm-opt -o $FL_WORKER_MARKDOWN_NAME"_bg.wasm" $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
-          rm $FL_WORKER_MARKDOWN_NAME"_bg.original.wasm"
-
-          echo "FL_WORKER_MARKDOWN_PATH=$FL_WORKER_MARKDOWN_NAME.js" >> $GITHUB_ENV
 
       - name: Build Website
         run: trunk --config Trunk.build.toml build --release index.release.html
