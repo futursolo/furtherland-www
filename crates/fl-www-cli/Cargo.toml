@@ -7,19 +7,29 @@ edition = "2021"
 
 [dependencies]
 fl-www-core = { path = "../fl-www-core" }
+fl-www-backend = { path = "../fl-www-backend" }
 
+# Logging
+log = "0.4"
+env_logger = "0.9.0"
+
+# Async I/O
 async-trait = "0.1.56"
 tokio = { version = "1.19.2", features = ["full"] }
 futures = "0.3.21"
 
-structopt = "0.3.26"
+# Command Line
 anyhow = "1.0.57"
+clap = { version = "3.1.18", features = ["derive"] }
 
+# Date
 chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
 
+# Data Serialisation / Deserialisation
 serde_json = "1.0.81"
 serde = "1.0.137"
 
+# Content Generation
 pulldown-cmark = { version = "0.9.1", default-features = false }
 unicode-segmentation = "1.9.0"
 atom_syndication = "0.11.0"

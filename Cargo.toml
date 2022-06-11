@@ -6,7 +6,7 @@ members = [
     "crates/fl-www-macros",
     "crates/fl-www-common",
     "crates/fl-www-agents",
-    # "crates/fl-www-backend",
+    "crates/fl-www-backend",
     "crates/yew-query",
 ]
 resolver = "2"

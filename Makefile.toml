@@ -1,7 +1,7 @@
 [tasks.run-local-backend]
 workspace = false
 command = "cargo"
-args = ["run", "--bin", "fl-www-cli", "serve"]
+args = ["run", "--bin", "fl-www-cli", "serve", "--addr=localhost:9740"]
 
 [tasks.serve-local-frontend]
 workspace = false
