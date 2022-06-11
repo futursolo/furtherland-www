@@ -33,7 +33,9 @@ impl WebServer {
             .map(|| warp::reply::html("Hello World!"))
             .or(resident::endpoints(ctx.clone()));
 
-        let routes = routes
+        let routes = // maximum request limit: 10MB
+            warp::body::content_length_limit(10 * 1024 * 1024)
+            .and(routes)
             // Cross-Origin Resource Sharing
             .with(
                 warp::cors()

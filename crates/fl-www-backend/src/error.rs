@@ -16,6 +16,12 @@ pub(crate) enum HttpError {
     #[error("page not found.")]
     NotFound,
 
+    #[error("request too large")]
+    RequestTooLarge,
+
+    #[error("method not allowed")]
+    MethodNotAllowed,
+
     #[error("forbidden: you do not have permission to perform the action.")]
     Forbidden,
 
@@ -47,6 +53,20 @@ impl HttpError {
                 StatusCode::INTERNAL_SERVER_ERROR,
             ),
 
+            Self::RequestTooLarge => reply::with_status(
+                reply::json(&Response::<()>::Failed {
+                    error: ResponseError { code: 413 },
+                }),
+                StatusCode::PAYLOAD_TOO_LARGE,
+            ),
+
+            Self::MethodNotAllowed => reply::with_status(
+                reply::json(&Response::<()>::Failed {
+                    error: ResponseError { code: 405 },
+                }),
+                StatusCode::METHOD_NOT_ALLOWED,
+            ),
+
             Self::NotFound => reply::with_status(
                 reply::json(&Response::<()>::Failed {
                     error: ResponseError { code: 404 },
@@ -75,6 +95,26 @@ impl HttpError {
     ) -> std::result::Result<impl Reply + Send + 'static, Infallible> {
         if let Some(m) = err.find::<Self>() {
             return Ok(m.to_reply());
+        }
+
+        if err
+            .find::<warp::filters::body::BodyDeserializeError>()
+            .is_some()
+            || err.find::<warp::reject::MissingHeader>().is_some()
+            || err.find::<warp::reject::InvalidHeader>().is_some()
+            || err.find::<warp::reject::UnsupportedMediaType>().is_some()
+            || err.find::<warp::reject::MissingCookie>().is_some()
+            || err.find::<warp::reject::InvalidQuery>().is_some()
+        {
+            return Ok(Self::BadRequest.to_reply());
+        }
+
+        if err.find::<warp::reject::MethodNotAllowed>().is_some() {
+            return Ok(Self::MethodNotAllowed.to_reply());
+        }
+
+        if err.find::<warp::reject::PayloadTooLarge>().is_some() {
+            return Ok(Self::RequestTooLarge.to_reply());
         }
 
         if err.is_not_found() {

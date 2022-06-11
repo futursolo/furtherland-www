@@ -45,12 +45,12 @@ impl ServerContext {
         &self.http
     }
 
-    pub fn github(&self) -> &Octocrab {
+    pub fn server_github(&self) -> &Octocrab {
         &self.github
     }
 
-    pub fn server_github(&self) -> &Octocrab {
-        &self.github
+    pub fn github(&self) -> &Octocrab {
+        self.server_github()
     }
 }
 
@@ -102,17 +102,12 @@ impl RequestContext {
                         .ok_or_else(|| Rejection::from(HttpError::Forbidden))
                 }) {
                     Some(Ok(m)) => {
-                        let (resident, github) = Resident::from_token(&ctx, &m).await?;
+                        let (resident, github) = Resident::from_token(&m).await?;
 
                         Ok(RequestContext {
                             srv_ctx: ctx.clone(),
                             resident: Some(resident),
-                            resident_github: Some(
-                                Octocrab::builder()
-                                    .personal_token(m)
-                                    .build()
-                                    .expect("failed to create github client"),
-                            ),
+                            resident_github: Some(github),
                         })
                     }
                     Some(Err(e)) => Err(e),
