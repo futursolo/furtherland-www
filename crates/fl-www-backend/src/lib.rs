@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 
 mod context;
-mod db;
+pub mod db;
 mod error;
 mod prelude;
 mod resident;

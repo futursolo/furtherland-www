@@ -412,7 +412,8 @@ checksum = "cfa8873f51c92e232f9bac4065cddef41b714152812bfc5f7672ba16d6ef8cd9"
 [[package]]
 name = "bounce"
 version = "0.3.0"
-source = "git+https://github.com/futursolo/bounce#45e609abbe2279a96fcf9ffe49dc6d521c9bfcb2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "154785137f4eb3bb5daa02ea2da1e598b07efb17de90f938375b52eddf9a9972"
 dependencies = [
  "anymap2",
  "async-trait",
@@ -429,7 +430,8 @@ dependencies = [
 [[package]]
 name = "bounce-macros"
 version = "0.3.0"
-source = "git+https://github.com/futursolo/bounce#45e609abbe2279a96fcf9ffe49dc6d521c9bfcb2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dd4900b7f1b58fde1970182fa3aef49e2cbc252175b06e19455a5e5d7e38547"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -1075,10 +1077,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fl-www-entities"
-version = "0.1.0"
-
-[[package]]
 name = "fl-www-macros"
 version = "0.1.0"
 dependencies = [
@@ -1096,7 +1094,8 @@ dependencies = [
 name = "fl-www-migrations"
 version = "0.1.0"
 dependencies = [
- "fl-www-entities",
+ "fl-www-backend",
+ "fl-www-core",
  "sea-orm-migration",
  "tokio",
 ]

@@ -14,3 +14,5 @@ dist/
 meta-dist/
 
 .env
+
+test.db*

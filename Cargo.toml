@@ -14,7 +14,6 @@ members = [
     "crates/fl-www-cli",
     "crates/fl-www-backend",
     "crates/fl-www-migrations",
-    "crates/fl-www-entities",
 ]
 resolver = "2"
 

@@ -6,6 +6,10 @@ publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "landctl"
+path = "src/main.rs"
+
 [dependencies]
 fl-www-core = { path = "../fl-www-core" }
 fl-www-backend = { path = "../fl-www-backend" }

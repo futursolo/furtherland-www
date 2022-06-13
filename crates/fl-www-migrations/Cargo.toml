@@ -9,7 +9,8 @@ name = "fl_www_migrations"
 path = "src/lib.rs"
 
 [dependencies]
-fl-www-entities = { path = "../fl-www-entities" }
+fl-www-backend = { path = "../fl-www-backend" }
+fl-www-core = { path = "../fl-www-core" }
 tokio = { version = "1.19.2", features = ["full"] }
 
 [dependencies.sea-orm-migration]

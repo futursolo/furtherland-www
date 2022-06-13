@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use clap::{Args as CmdArgs, Parser, Subcommand};
 
 #[derive(Debug, Clone, Parser)]
-#[clap(author, about)]
+#[clap(author, about = "Furtherland Command Line Utility", name = "landctl")]
 pub(crate) struct Args {
     #[clap(subcommand)]
     pub cmd: Commands,

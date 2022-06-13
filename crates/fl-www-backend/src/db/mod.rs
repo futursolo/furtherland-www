@@ -1,2 +1,2 @@
-mod replies;
-mod residents;
+pub mod replies;
+pub mod residents;
