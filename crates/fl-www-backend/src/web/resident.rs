@@ -5,9 +5,11 @@ use serde::{Deserialize, Serialize};
 use warp::filters::BoxedFilter;
 use warp::{Filter, Reply};
 
+use super::filter::FilterExt;
 use crate::context::{RequestContext, ServerContext};
 use crate::error::{HttpError, HttpResult};
 use crate::prelude::*;
+use crate::resident::{Resident, ResidentExt};
 
 async fn exchange_token(
     ctx: RequestContext,
@@ -45,9 +47,20 @@ async fn exchange_token(
 }
 
 async fn get_myself(ctx: RequestContext) -> HttpResult<impl Reply> {
-    let resident = match ctx.resident {
-        Some(ref m) => m.clone(),
+    let resident = match ctx.resident().cloned() {
+        Some(m) => m,
         None => return Err(HttpError::Forbidden),
+    };
+
+    let resp = messages::Response::Success { content: resident };
+
+    Ok(warp::reply::json(&resp))
+}
+
+async fn get_resident(github_id: u64, ctx: RequestContext) -> HttpResult<impl Reply> {
+    let resident = match Resident::get(&ctx, github_id).await? {
+        Some(ref m) => m.clone(),
+        None => return Err(HttpError::NotFound),
     };
 
     let resp = messages::Response::Success { content: resident };
@@ -61,13 +74,22 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::post())
         .and(warp::filters::body::json::<messages::AccessTokenInput>())
-        .and_then(|m, i| exchange_token(m, i).map_err(warp::reject::custom));
+        .then(exchange_token)
+        .terminated();
+
+    let get_resident = warp::path!("residents" / u64)
+        .and(warp::path::end())
+        .and(RequestContext::filter(ctx.clone()))
+        .and(warp::get())
+        .then(get_resident)
+        .terminated();
 
     let get_myself = warp::path!("residents" / "myself")
         .and(warp::path::end())
         .and(RequestContext::filter(ctx))
         .and(warp::get())
-        .and_then(|m| get_myself(m).map_err(warp::reject::custom));
+        .then(get_myself)
+        .terminated();
 
-    post_access_token.or(get_myself).boxed()
+    post_access_token.or(get_myself).or(get_resident).boxed()
 }

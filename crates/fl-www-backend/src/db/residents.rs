@@ -4,12 +4,16 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "residents")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    id: u64,
-    login: String,
-    name: String,
-    avatar_url: String,
+    pub id: i64,
 
-    last_updated: DateTimeUtc,
+    #[sea_orm(unique, indexed)]
+    pub github_id: i64,
+
+    pub login: String,
+    pub name: String,
+    pub avatar_url: String,
+
+    pub last_updated: DateTimeUtc,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -7,6 +7,7 @@ use tokio_stream::wrappers::TcpListenerStream;
 use typed_builder::TypedBuilder;
 use warp::Filter;
 
+mod filter;
 mod resident;
 
 use crate::context::ServerContext;
@@ -19,7 +20,7 @@ pub struct WebServer {
 
 impl WebServer {
     pub async fn run(self) -> anyhow::Result<()> {
-        let ctx = Arc::from(ServerContext::from_env());
+        let ctx = Arc::from(ServerContext::from_env().await?);
 
         let s = net::lookup_host(&self.address)
             .await
@@ -33,9 +34,15 @@ impl WebServer {
             .map(|| warp::reply::html("Hello World!"))
             .or(resident::endpoints(ctx.clone()));
 
+        let content_limit = warp::filters::method::get()
+            .or(warp::filters::method::head())
+            .or(warp::filters::method::options())
+            .or(warp::body::content_length_limit(10 * 1024 * 1024))
+            .map(|_| ())
+            .untuple_one();
+
         let routes = // maximum request limit: 10MB
-            warp::body::content_length_limit(10 * 1024 * 1024)
-            .and(routes)
+            content_limit.and(routes)
             // Cross-Origin Resource Sharing
             .with(
                 warp::cors()
@@ -45,6 +52,7 @@ impl WebServer {
                     .expose_header("content-type")
                     .build(),
             )
+            .with(warp::log("fl_www_backend::web"))
             // Error Handling
             .recover(HttpError::handle_rejection);
 

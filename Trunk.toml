@@ -1,10 +1,3 @@
 [serve]
 port = 9741
 open = true
-
-[watch]
-ignore = [
-    "crates/fl-www/target/",
-    "crates/fl-www-macros/target/",
-    "crates/fl-www-common/target/",
-]

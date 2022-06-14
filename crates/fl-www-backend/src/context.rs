@@ -3,8 +3,10 @@ use std::ops::Deref;
 use std::sync::Arc;
 use std::time::Duration;
 
+use anyhow::Context;
 use octocrab::Octocrab;
 use reqwest::Client;
+use sea_orm::{Database, DatabaseConnection};
 use warp::{Filter, Rejection};
 
 use crate::error::HttpError;
@@ -15,27 +17,39 @@ pub struct ServerContext {
     pub github_client_id: String,
     pub github_client_secret: String,
 
+    db: DatabaseConnection,
+
     http: Client,
     github: Octocrab,
 }
 
 impl ServerContext {
-    pub fn from_env() -> Self {
-        let github_token = env::var("GITHUB_TOKEN").expect("no github token set");
+    pub async fn from_env() -> anyhow::Result<Self> {
+        let github_token = env::var("GITHUB_TOKEN").context("no github token set")?;
 
-        Self {
-            github_client_id: env::var("GITHUB_CLIENT_ID").expect("no github token set"),
-            github_client_secret: env::var("GITHUB_CLIENT_SECRET").expect("no github token set"),
+        Ok(Self {
+            github_client_id: env::var("GITHUB_CLIENT_ID").context("no github token set")?,
+            github_client_secret: env::var("GITHUB_CLIENT_SECRET")
+                .context("no github token set")?,
+
+            db: Database::connect(env::var("DATABASE_URL").context("no database url provided")?)
+                .await
+                .context("failed to connect to database")?,
+
             http: Client::builder()
                 .user_agent(format!("fl-www-backend/{}", env!("CARGO_PKG_VERSION")))
                 .timeout(Duration::from_secs(30))
                 .build()
-                .expect("failed to create http client"),
+                .context("failed to create http client")?,
             github: Octocrab::builder()
                 .personal_token(github_token)
                 .build()
-                .expect("failed to create github client"),
-        }
+                .context("failed to create github client")?,
+        })
+    }
+
+    pub fn db(&self) -> &DatabaseConnection {
+        &self.db
     }
 
     pub fn http(&self) -> &Client {
@@ -54,8 +68,8 @@ impl ServerContext {
 #[derive(Debug, Clone)]
 pub struct RequestContext {
     srv_ctx: Arc<ServerContext>,
-    pub resident: Option<Resident>,
-    pub resident_github: Option<Octocrab>,
+    resident: Option<Resident>,
+    resident_github: Option<Octocrab>,
 }
 
 impl Deref for RequestContext {
@@ -74,6 +88,10 @@ impl RequestContext {
     pub fn github(&self) -> &Octocrab {
         self.resident_github()
             .unwrap_or_else(|| self.srv_ctx.github())
+    }
+
+    pub fn resident(&self) -> Option<&Resident> {
+        self.resident.as_ref()
     }
 
     pub fn filter(
@@ -99,7 +117,7 @@ impl RequestContext {
                         .ok_or_else(|| Rejection::from(HttpError::Forbidden))
                 }) {
                     Some(Ok(m)) => {
-                        let (resident, github) = Resident::from_token(&m).await?;
+                        let (resident, github) = Resident::from_token(&ctx, &m).await?;
 
                         Ok(RequestContext {
                             srv_ctx: ctx.clone(),

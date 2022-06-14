@@ -55,7 +55,7 @@ jobs:
           version: 'latest'
 
       - name: Build Website
-        run: trunk --config Trunk.build.toml build --release index.release.html
+        run: trunk build --release index.release.html
 
       - name: Build Metadata
         uses: actions-rs/cargo@v1

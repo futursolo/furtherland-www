@@ -16,6 +16,9 @@ pub(crate) enum HttpError {
     #[error("page not found.")]
     NotFound,
 
+    #[error("database error.")]
+    Database(#[from] sea_orm::DbErr),
+
     #[error("request too large")]
     RequestTooLarge,
 
@@ -36,6 +39,8 @@ impl Reject for HttpError {}
 
 impl HttpError {
     pub fn to_reply(&self) -> impl Reply + Send + 'static {
+        log::warn!("error occurred: {:?}", self);
+
         use messages::{Response, ResponseError};
 
         match self {
@@ -49,6 +54,13 @@ impl HttpError {
             Self::GitHub => reply::with_status(
                 reply::json(&Response::<()>::Failed {
                     error: ResponseError { code: 5002 },
+                }),
+                StatusCode::INTERNAL_SERVER_ERROR,
+            ),
+
+            Self::Database(_) => reply::with_status(
+                reply::json(&Response::<()>::Failed {
+                    error: ResponseError { code: 5005 },
                 }),
                 StatusCode::INTERNAL_SERVER_ERROR,
             ),
@@ -93,6 +105,8 @@ impl HttpError {
     pub async fn handle_rejection(
         err: Rejection,
     ) -> std::result::Result<impl Reply + Send + 'static, Infallible> {
+        log::warn!("request rejected: {:?}", err);
+
         if let Some(m) = err.find::<Self>() {
             return Ok(m.to_reply());
         }
@@ -105,6 +119,7 @@ impl HttpError {
             || err.find::<warp::reject::UnsupportedMediaType>().is_some()
             || err.find::<warp::reject::MissingCookie>().is_some()
             || err.find::<warp::reject::InvalidQuery>().is_some()
+            || err.find::<warp::reject::LengthRequired>().is_some()
         {
             return Ok(Self::BadRequest.to_reply());
         }
