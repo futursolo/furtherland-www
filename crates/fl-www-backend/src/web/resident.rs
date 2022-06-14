@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use warp::filters::BoxedFilter;
 use warp::{Filter, Reply};
 
-use super::filter::FilterExt;
+use super::exts::FilterExt;
 use crate::context::{RequestContext, ServerContext};
 use crate::error::{HttpError, HttpResult};
 use crate::prelude::*;

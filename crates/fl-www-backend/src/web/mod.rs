@@ -7,7 +7,7 @@ use tokio_stream::wrappers::TcpListenerStream;
 use typed_builder::TypedBuilder;
 use warp::Filter;
 
-mod filter;
+mod exts;
 mod resident;
 
 use crate::context::ServerContext;
