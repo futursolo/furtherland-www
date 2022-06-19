@@ -11,12 +11,37 @@ use crate::prelude::*;
 
 #[async_trait]
 pub(crate) trait ResidentExt {
+    type Entity: EntityTrait;
+
     async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Resident>>;
     async fn from_token(ctx: &ServerContext, token: &str) -> HttpResult<(Resident, Octocrab)>;
+    async fn to_entity(
+        &self,
+        ctx: &RequestContext,
+    ) -> HttpResult<<Self::Entity as EntityTrait>::Model>;
 }
 
 #[async_trait]
 impl ResidentExt for Resident {
+    type Entity = model::Entity;
+
+    async fn to_entity(
+        &self,
+        ctx: &RequestContext,
+    ) -> HttpResult<<Self::Entity as EntityTrait>::Model> {
+        let ent = model::Entity::find()
+            .filter(model::Column::GithubId.eq(self.id))
+            .one(ctx.db())
+            .await?;
+
+        ent.ok_or_else(|| {
+            HttpError::DataIntegrity(format!(
+                "Cannot find corresponding entity for resident: {}",
+                self.id
+            ))
+        })
+    }
+
     async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Resident>> {
         let resident_row = model::Entity::find()
             .filter(model::Column::GithubId.eq(id))

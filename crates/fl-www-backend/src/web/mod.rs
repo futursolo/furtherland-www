@@ -5,13 +5,16 @@ use futures::stream::{self, StreamExt, TryStreamExt};
 use tokio::net::{self, TcpListener};
 use tokio_stream::wrappers::TcpListenerStream;
 use typed_builder::TypedBuilder;
-use warp::Filter;
+use warp::{Filter, Rejection, Reply};
 
 mod exts;
-mod resident;
+mod replies;
+mod residents;
+
+use exts::FilterExt;
 
 use crate::context::ServerContext;
-use crate::error::HttpError;
+use crate::error::{HttpError, HttpResult};
 
 #[derive(Debug, PartialEq, TypedBuilder)]
 pub struct WebServer {
@@ -32,7 +35,8 @@ impl WebServer {
 
         let routes = warp::path::end()
             .map(|| warp::reply::html("Hello World!"))
-            .or(resident::endpoints(ctx.clone()));
+            .or(residents::endpoints(ctx.clone()))
+            .or(replies::endpoints(ctx));
 
         let content_limit = warp::filters::method::get()
             .or(warp::filters::method::head())
@@ -41,20 +45,23 @@ impl WebServer {
             .map(|_| ())
             .untuple_one();
 
+        let cors = warp::cors()
+            .allow_any_origin()
+            .allow_header("content-type")
+            .allow_header("authorization")
+            .expose_header("content-type")
+            .build();
+
         let routes = // maximum request limit: 10MB
             content_limit.and(routes)
             // Cross-Origin Resource Sharing
-            .with(
-                warp::cors()
-                    .allow_any_origin()
-                    .allow_header("content-type")
-                    .allow_header("authorization")
-                    .expose_header("content-type")
-                    .build(),
-            )
-            .with(warp::log("fl_www_backend::web"))
+            .with(cors)
             // Error Handling
-            .recover(HttpError::handle_rejection);
+            .map(|m| HttpResult::Ok(Reply::into_response(m)))
+            .recover(|err| async move { HttpError::recover_to_error(err).await.map_err(Rejection::from) })
+            .unify()
+            .terminated()
+            .with(warp::log("fl_www_backend::web"));
 
         warp::serve(routes).run_incoming(s).await;
 

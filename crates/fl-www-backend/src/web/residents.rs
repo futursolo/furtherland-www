@@ -7,6 +7,7 @@ use warp::{Filter, Reply};
 
 use super::exts::FilterExt;
 use crate::context::{RequestContext, ServerContext};
+use crate::encoding::Encoding;
 use crate::error::{HttpError, HttpResult};
 use crate::prelude::*;
 use crate::resident::{Resident, ResidentExt};
@@ -43,7 +44,7 @@ async fn exchange_token(
         content: access_token,
     };
 
-    Ok(warp::reply::json(&resp))
+    Ok(ctx.reply(&resp))
 }
 
 async fn get_myself(ctx: RequestContext) -> HttpResult<impl Reply> {
@@ -54,7 +55,7 @@ async fn get_myself(ctx: RequestContext) -> HttpResult<impl Reply> {
 
     let resp = messages::Response::Success { content: resident };
 
-    Ok(warp::reply::json(&resp))
+    Ok(ctx.reply(&resp))
 }
 
 async fn get_resident(github_id: u64, ctx: RequestContext) -> HttpResult<impl Reply> {
@@ -65,7 +66,7 @@ async fn get_resident(github_id: u64, ctx: RequestContext) -> HttpResult<impl Re
 
     let resp = messages::Response::Success { content: resident };
 
-    Ok(warp::reply::json(&resp))
+    Ok(ctx.reply(&resp))
 }
 
 pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
@@ -73,7 +74,7 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .and(warp::path::end())
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::post())
-        .and(warp::filters::body::json::<messages::AccessTokenInput>())
+        .and(Encoding::request_body_filter::<messages::AccessTokenInput>())
         .then(exchange_token)
         .terminated();
 

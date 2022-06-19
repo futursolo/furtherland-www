@@ -7,8 +7,11 @@ use anyhow::Context;
 use octocrab::Octocrab;
 use reqwest::Client;
 use sea_orm::{Database, DatabaseConnection};
+use serde::Serialize;
+use warp::reply::Response;
 use warp::{Filter, Rejection};
 
+use crate::encoding::Encoding;
 use crate::error::HttpError;
 use crate::resident::{Resident, ResidentExt};
 
@@ -70,6 +73,8 @@ pub struct RequestContext {
     srv_ctx: Arc<ServerContext>,
     resident: Option<Resident>,
     resident_github: Option<Octocrab>,
+
+    reply_encoding: Encoding,
 }
 
 impl Deref for RequestContext {
@@ -94,46 +99,57 @@ impl RequestContext {
         self.resident.as_ref()
     }
 
+    pub fn reply<R>(&self, b: &R) -> Response
+    where
+        R: Serialize,
+    {
+        self.reply_encoding.reply(b)
+    }
+
     pub fn filter(
         ctx: Arc<ServerContext>,
     ) -> impl Filter<Extract = (RequestContext,), Error = Rejection> + Send + Sync + Clone + 'static
     {
-        warp::header::optional::<String>("authorization").and_then(move |token: Option<String>| {
-            let ctx = ctx.clone();
+        Encoding::accept_filter()
+            .and(warp::header::optional::<String>("authorization"))
+            .and_then(move |reply_encoding: Encoding, token: Option<String>| {
+                let ctx = ctx.clone();
 
-            async move {
-                match token.map(|m| {
-                    m.trim()
-                        .to_lowercase()
-                        .starts_with("bearer ")
-                        .then(|| {
-                            m.trim()
-                                .chars()
-                                .skip(7)
-                                .collect::<String>()
-                                .trim()
-                                .to_owned()
-                        })
-                        .ok_or_else(|| Rejection::from(HttpError::Forbidden))
-                }) {
-                    Some(Ok(m)) => {
-                        let (resident, github) = Resident::from_token(&ctx, &m).await?;
+                async move {
+                    match token.map(|m| {
+                        m.trim()
+                            .to_lowercase()
+                            .starts_with("bearer ")
+                            .then(|| {
+                                m.trim()
+                                    .chars()
+                                    .skip(7)
+                                    .collect::<String>()
+                                    .trim()
+                                    .to_owned()
+                            })
+                            .ok_or_else(|| Rejection::from(HttpError::Forbidden))
+                    }) {
+                        Some(Ok(m)) => {
+                            let (resident, github) = Resident::from_token(&ctx, &m).await?;
 
-                        Ok(RequestContext {
+                            Ok(RequestContext {
+                                srv_ctx: ctx.clone(),
+                                resident: Some(resident),
+                                resident_github: Some(github),
+                                reply_encoding,
+                            })
+                        }
+                        Some(Err(e)) => Err(e),
+
+                        None => Ok(RequestContext {
                             srv_ctx: ctx.clone(),
-                            resident: Some(resident),
-                            resident_github: Some(github),
-                        })
+                            resident: None,
+                            resident_github: None,
+                            reply_encoding,
+                        }),
                     }
-                    Some(Err(e)) => Err(e),
-
-                    None => Ok(RequestContext {
-                        srv_ctx: ctx.clone(),
-                        resident: None,
-                        resident_github: None,
-                    }),
                 }
-            }
-        })
+            })
     }
 }

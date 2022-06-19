@@ -3,18 +3,22 @@ use std::convert::Infallible;
 use thiserror::Error;
 use warp::http::StatusCode;
 use warp::reject::Reject;
-use warp::reply::{self, Reply};
+use warp::reply::{self, Reply, Response};
 use warp::Rejection;
 
+use crate::encoding::Encoding;
 use crate::prelude::*;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Clone)]
 pub(crate) enum HttpError {
     #[error("error from GitHub API.")]
     GitHub,
 
     #[error("page not found.")]
     NotFound,
+
+    #[error("data integrity error, due to {}.", .0)]
+    DataIntegrity(String),
 
     #[error("database error.")]
     Database(#[from] sea_orm::DbErr),
@@ -31,6 +35,9 @@ pub(crate) enum HttpError {
     #[error("bad request: your request is not valid.")]
     BadRequest,
 
+    #[error("bad request: the request content type is not supported or missing.")]
+    UnsupportedMedia,
+
     #[error("unknown error")]
     Other,
 }
@@ -38,77 +45,91 @@ pub(crate) enum HttpError {
 impl Reject for HttpError {}
 
 impl HttpError {
-    pub fn to_reply(&self) -> impl Reply + Send + 'static {
+    pub fn to_reply(&self, encoding: Encoding) -> impl Reply + Send + 'static {
         log::warn!("error occurred: {:?}", self);
 
         use messages::{Response, ResponseError};
 
         match self {
             Self::Other => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 5004 },
                 }),
                 StatusCode::INTERNAL_SERVER_ERROR,
             ),
 
             Self::GitHub => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 5002 },
                 }),
                 StatusCode::INTERNAL_SERVER_ERROR,
             ),
 
+            Self::DataIntegrity(_) => reply::with_status(
+                encoding.reply(&Response::<()>::Failed {
+                    error: ResponseError { code: 5006 },
+                }),
+                StatusCode::INTERNAL_SERVER_ERROR,
+            ),
+
             Self::Database(_) => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 5005 },
                 }),
                 StatusCode::INTERNAL_SERVER_ERROR,
             ),
 
             Self::RequestTooLarge => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 413 },
                 }),
                 StatusCode::PAYLOAD_TOO_LARGE,
             ),
 
             Self::MethodNotAllowed => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 405 },
                 }),
                 StatusCode::METHOD_NOT_ALLOWED,
             ),
 
             Self::NotFound => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 404 },
                 }),
                 StatusCode::NOT_FOUND,
             ),
 
             Self::Forbidden => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 403 },
                 }),
                 StatusCode::FORBIDDEN,
             ),
 
             Self::BadRequest => reply::with_status(
-                reply::json(&Response::<()>::Failed {
+                encoding.reply(&Response::<()>::Failed {
                     error: ResponseError { code: 400 },
                 }),
                 StatusCode::BAD_REQUEST,
             ),
+
+            Self::UnsupportedMedia => reply::with_status(
+                encoding.reply(&Response::<()>::Failed {
+                    error: ResponseError { code: 415 },
+                }),
+                StatusCode::UNSUPPORTED_MEDIA_TYPE,
+            ),
         }
     }
 
-    pub async fn handle_rejection(
+    pub async fn recover_to_error(
         err: Rejection,
-    ) -> std::result::Result<impl Reply + Send + 'static, Infallible> {
+    ) -> std::result::Result<HttpResult<Response>, Infallible> {
         log::warn!("request rejected: {:?}", err);
 
         if let Some(m) = err.find::<Self>() {
-            return Ok(m.to_reply());
+            return Ok(Err(m.clone()));
         }
 
         if err
@@ -121,22 +142,22 @@ impl HttpError {
             || err.find::<warp::reject::InvalidQuery>().is_some()
             || err.find::<warp::reject::LengthRequired>().is_some()
         {
-            return Ok(Self::BadRequest.to_reply());
+            return Ok(Err(Self::BadRequest));
         }
 
         if err.find::<warp::reject::MethodNotAllowed>().is_some() {
-            return Ok(Self::MethodNotAllowed.to_reply());
+            return Ok(Err(Self::MethodNotAllowed));
         }
 
         if err.find::<warp::reject::PayloadTooLarge>().is_some() {
-            return Ok(Self::RequestTooLarge.to_reply());
+            return Ok(Err(Self::RequestTooLarge));
         }
 
         if err.is_not_found() {
-            return Ok(Self::NotFound.to_reply());
+            return Ok(Err(Self::NotFound));
         }
 
-        Ok(Self::Other.to_reply())
+        Ok(Err(Self::Other))
     }
 }
 
