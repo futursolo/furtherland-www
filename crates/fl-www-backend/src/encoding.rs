@@ -17,6 +17,9 @@ impl Encoding {
     pub fn accept_filter() -> BoxedFilter<(Self,)> {
         warp::filters::header::optional::<String>("accept")
             .map(|m: Option<String>| {
+                // Prefers json, but returns bincode when the application has indicated that they
+                // accept bincode.
+
                 let m = match m {
                     Some(m) => m,
                     None => return Self::Json,

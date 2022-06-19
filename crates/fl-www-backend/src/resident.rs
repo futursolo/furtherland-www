@@ -13,7 +13,9 @@ use crate::prelude::*;
 pub(crate) trait ResidentExt {
     type Entity: EntityTrait;
 
-    async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Resident>>;
+    async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Self>>
+    where
+        Self: Sized;
     async fn from_token(ctx: &ServerContext, token: &str) -> HttpResult<(Resident, Octocrab)>;
     async fn to_entity(
         &self,
@@ -42,7 +44,10 @@ impl ResidentExt for Resident {
         })
     }
 
-    async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Resident>> {
+    async fn get(ctx: &RequestContext, id: u64) -> HttpResult<Option<Self>>
+    where
+        Self: Sized,
+    {
         let resident_row = model::Entity::find()
             .filter(model::Column::GithubId.eq(id))
             .one(ctx.db())

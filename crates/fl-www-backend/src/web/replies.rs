@@ -1,14 +1,17 @@
 use std::sync::Arc;
 
+use messages::ReplyInput;
 use object_id::ObjectId;
 use warp::filters::BoxedFilter;
 use warp::{Filter, Reply};
 
 use super::exts::FilterExt;
 use crate::context::{RequestContext, ServerContext};
+use crate::encoding::Encoding;
 // use crate::db::residents as model;
 use crate::error::{HttpError, HttpResult};
 use crate::prelude::*;
+use crate::reply::ReplyExt;
 use crate::resident::ResidentExt;
 
 async fn get_replies(
@@ -33,11 +36,13 @@ async fn post_reply(
     _slug: String,
     _id: ObjectId,
     ctx: RequestContext,
+    input: ReplyInput,
 ) -> HttpResult<impl Reply> {
-    let resident = ctx.resident().ok_or(HttpError::Forbidden)?;
-    let _resident_ent = resident.to_entity(&ctx).await?;
+    let reply = messages::Reply::create_reply(&ctx, &input).await?;
 
-    Ok(warp::reply::html("not implemented"))
+    let resp = messages::Response::Success { content: reply };
+
+    Ok(ctx.reply(&resp))
 }
 
 async fn patch_reply(
@@ -77,6 +82,7 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .and(warp::path::end())
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::post())
+        .and(Encoding::request_body_filter::<ReplyInput>())
         .then(post_reply)
         .terminated();
 
