@@ -64,6 +64,8 @@ impl Reply {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ReplyInput {
     pub content: String,
+    pub slug: String,
+    pub lang: Language,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

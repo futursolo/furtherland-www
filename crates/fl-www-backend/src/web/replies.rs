@@ -9,10 +9,9 @@ use super::exts::FilterExt;
 use crate::context::{RequestContext, ServerContext};
 use crate::encoding::Encoding;
 // use crate::db::residents as model;
-use crate::error::{HttpError, HttpResult};
+use crate::error::HttpResult;
 use crate::prelude::*;
 use crate::reply::ReplyExt;
-use crate::resident::ResidentExt;
 
 async fn get_replies(
     _lang: Language,
@@ -25,19 +24,17 @@ async fn get_replies(
 async fn get_reply(
     _lang: Language,
     _slug: String,
-    _id: ObjectId,
-    _ctx: RequestContext,
+    id: ObjectId,
+    ctx: RequestContext,
 ) -> HttpResult<impl Reply> {
-    Ok(warp::reply::html("not implemented"))
+    let reply = messages::Reply::get(&ctx, id).await?;
+
+    let resp = messages::Response::Success { content: reply };
+
+    Ok(ctx.reply(&resp))
 }
 
-async fn post_reply(
-    _lang: Language,
-    _slug: String,
-    _id: ObjectId,
-    ctx: RequestContext,
-    input: ReplyInput,
-) -> HttpResult<impl Reply> {
+async fn post_reply(ctx: RequestContext, input: ReplyInput) -> HttpResult<impl Reply> {
     let reply = messages::Reply::create_reply(&ctx, &input).await?;
 
     let resp = messages::Response::Success { content: reply };
@@ -71,19 +68,19 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .then(get_replies)
         .terminated();
 
-    let get_reply = warp::path!("replies" / Language / String / ObjectId)
-        .and(warp::path::end())
-        .and(RequestContext::filter(ctx.clone()))
-        .and(warp::get())
-        .then(get_reply)
-        .terminated();
-
-    let post_reply = warp::path!("replies" / Language / String / ObjectId)
+    let post_reply = warp::path!("replies")
         .and(warp::path::end())
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::post())
         .and(Encoding::request_body_filter::<ReplyInput>())
         .then(post_reply)
+        .terminated();
+
+    let get_reply = warp::path!("replies" / Language / String / ObjectId)
+        .and(warp::path::end())
+        .and(RequestContext::filter(ctx.clone()))
+        .and(warp::get())
+        .then(get_reply)
         .terminated();
 
     let patch_reply = warp::path!("replies" / Language / String / ObjectId)
@@ -101,8 +98,8 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .terminated();
 
     get_replies
-        .or(get_reply)
         .or(post_reply)
+        .or(get_reply)
         .or(patch_reply)
         .or(delete_reply)
         .boxed()
