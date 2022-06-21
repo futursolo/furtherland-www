@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use chrono::Utc;
 use messages::{Reply, ReplyInput, ResidencyStatus};
 use object_id::ObjectId;
-use sea_orm::entity::{ActiveModelTrait, EntityTrait, ModelTrait, Related};
+use sea_orm::entity::{ActiveModelTrait, EntityTrait, ModelTrait};
 use sea_orm::Set;
 
 use crate::context::RequestContext;

@@ -14,5 +14,5 @@ fl-www-core = { path = "../fl-www-core" }
 tokio = { version = "1.19.2", features = ["full"] }
 
 [dependencies.sea-orm-migration]
-version = "^0.8.0"
+version = "0.8.3"
 features = ["runtime-tokio-rustls", "sqlx-sqlite", "sqlx-postgres"]

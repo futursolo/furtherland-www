@@ -10,9 +10,9 @@ publish = false
 fl-www-common = { path = "../fl-www-common" }
 fl-www-core = { path = "../fl-www-core" }
 
-wasm-bindgen = "0.2.80"
-wasm-bindgen-futures = "0.4.30"
-js-sys = "0.3.57"
+wasm-bindgen = "0.2.81"
+wasm-bindgen-futures = "0.4.31"
+js-sys = "0.3.58"
 # web-sys
 # wee_alloc = "0.4.5"
 futures = "0.3.21"
