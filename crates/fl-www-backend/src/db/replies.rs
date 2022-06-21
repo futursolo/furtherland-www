@@ -6,15 +6,15 @@ use crate::prelude::*;
 #[sea_orm(table_name = "replies")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    id: String,
+    pub id: String,
     #[sea_orm(indexed)]
-    slug: String,
-    approved: bool,
+    pub slug: String,
+    pub approved: bool,
     #[sea_orm(indexed)]
-    resident_id: i64,
-    content: String,
-    lang: Language,
-    created_at: DateTimeUtc,
+    pub resident_id: i64,
+    pub content: String,
+    pub lang: Language,
+    pub created_at: DateTimeUtc,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

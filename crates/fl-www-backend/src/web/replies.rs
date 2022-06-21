@@ -21,12 +21,7 @@ async fn get_replies(
     Ok(warp::reply::html("not implemented"))
 }
 
-async fn get_reply(
-    _lang: Language,
-    _slug: String,
-    id: ObjectId,
-    ctx: RequestContext,
-) -> HttpResult<impl Reply> {
+async fn get_reply(id: ObjectId, ctx: RequestContext) -> HttpResult<impl Reply> {
     let reply = messages::Reply::get(&ctx, id).await?;
 
     let resp = messages::Response::Success { content: reply };
@@ -76,7 +71,7 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .then(post_reply)
         .terminated();
 
-    let get_reply = warp::path!("replies" / Language / String / ObjectId)
+    let get_reply = warp::path!("replies" / ObjectId)
         .and(warp::path::end())
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::get())
