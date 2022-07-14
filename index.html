@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Furtherland</title>
-    <link data-trunk rel="copy-dir" href="assets" />
-    <link data-trunk rel="copy-dir" href="writings" />
-    <link data-trunk rel="copy-dir" href="pages" />
-    <link data-trunk rel="copy-file" href="meta-dist/metadata.json" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=scrollIntoView"></script>
 
-    <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml" data-bin="fl-worker-highlight" />
-    <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml" data-bin="fl-worker-markdown" />
-    <link data-trunk rel="rust" data-wasm-opt="z" href="crates/fl-www/Cargo.toml" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <title>Furtherland</title>
+  <link data-trunk rel="copy-dir" href="assets" />
+  <link data-trunk rel="copy-dir" href="writings" />
+  <link data-trunk rel="copy-dir" href="pages" />
+  <link data-trunk rel="copy-file" href="meta-dist/metadata.json" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=scrollIntoView"></script>
+
+  <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml"
+    data-bin="fl-agent-highlight" />
+  <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml"
+    data-bin="fl-agent-markdown" />
+  <link data-trunk rel="rust" data-wasm-opt="z" href="crates/fl-www/Cargo.toml" />
+</head>
+
 </html>
