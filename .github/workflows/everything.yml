@@ -11,7 +11,7 @@ jobs:
       CARGO_TERM_COLOR: always
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
