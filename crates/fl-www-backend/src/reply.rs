@@ -1,9 +1,11 @@
 use async_trait::async_trait;
 use chrono::Utc;
+use futures::stream::{BoxStream, StreamExt};
+use futures::{stream, TryStreamExt};
 use messages::{PatchReplyInput, Reply, ReplyInput, ResidencyStatus};
 use object_id::ObjectId;
 use sea_orm::entity::{ActiveModelTrait, ActiveValue, EntityTrait, ModelTrait};
-use sea_orm::Set;
+use sea_orm::{ColumnTrait, QueryFilter, QueryOrder, Set};
 
 use crate::context::RequestContext;
 use crate::db;
@@ -19,13 +21,18 @@ pub(crate) trait ReplyExt {
     async fn create(ctx: &RequestContext, input: &ReplyInput) -> HttpResult<Self>
     where
         Self: Sized;
-
     async fn get(ctx: &RequestContext, id: ObjectId) -> HttpResult<Self>
     where
         Self: Sized;
-
     async fn delete(ctx: &RequestContext, id: ObjectId) -> HttpResult<()>;
     async fn patch(ctx: &RequestContext, id: ObjectId, input: &PatchReplyInput) -> HttpResult<()>;
+    fn stream<'a>(
+        ctx: &'a RequestContext,
+        lang: Language,
+        slug: &'a str,
+    ) -> BoxStream<'a, HttpResult<Self>>
+    where
+        Self: Sized;
 }
 
 #[async_trait]
@@ -165,5 +172,69 @@ impl ReplyExt for Reply {
         .await?;
 
         Ok(())
+    }
+
+    fn stream<'a>(
+        ctx: &'a RequestContext,
+        lang: Language,
+        slug: &'a str,
+    ) -> BoxStream<'a, HttpResult<Self>>
+    where
+        Self: Sized,
+    {
+        stream::once(async move {
+            let s = model::Entity::find()
+                .filter(model::Column::Slug.eq(slug))
+                .filter(model::Column::Lang.eq(lang))
+                .order_by_asc(model::Column::Id)
+                // .skip(50) This is for cursor, reserved when someday there are more than 50
+                // replies on a single article.
+                .stream(ctx.db())
+                .await?
+                .map_err(HttpError::from)
+                .and_then(move |reply_ent| async move {
+                    let resident_ent = reply_ent
+                        .find_related(db::residents::Entity)
+                        .one(ctx.db())
+                        .await?;
+
+                    let resident = match resident_ent {
+                        Some(m) => {
+                            Resident::get(
+                                ctx,
+                                m.github_id.try_into().map_err(|_| {
+                                    HttpError::DataIntegrity(format!(
+                                        "`{}` cannot be converted to u64",
+                                        m.github_id
+                                    ))
+                                })?,
+                            )
+                            .await?
+                        }
+                        None => None,
+                    };
+
+                    Ok(Self {
+                        id: reply_ent.id.parse().map_err(|_| {
+                            HttpError::DataIntegrity(format!(
+                                "`{}` is not a valid ObjectId.",
+                                reply_ent.id
+                            ))
+                        })?,
+                        slug: reply_ent.slug,
+                        lang: reply_ent.lang,
+                        approved: Some(reply_ent.approved),
+                        resident,
+                        content: reply_ent.content,
+                        created_at: reply_ent.created_at,
+                    })
+                })
+                .take(50)
+                .boxed();
+
+            HttpResult::Ok(s)
+        })
+        .try_flatten()
+        .boxed()
     }
 }

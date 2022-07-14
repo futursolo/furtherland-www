@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use fl_www_core::messages::PatchReplyInput;
+use futures::TryStreamExt;
 use messages::ReplyInput;
 use object_id::ObjectId;
 use warp::filters::BoxedFilter;
@@ -14,12 +15,15 @@ use crate::error::HttpResult;
 use crate::prelude::*;
 use crate::reply::ReplyExt;
 
-async fn get_replies(
-    _lang: Language,
-    _slug: String,
-    _ctx: RequestContext,
-) -> HttpResult<impl Reply> {
-    Ok(warp::reply::html("not implemented"))
+async fn get_replies(lang: Language, slug: String, ctx: RequestContext) -> HttpResult<impl Reply> {
+    let replies = messages::Reply::stream(&ctx, lang, &slug);
+    let replies = messages::Replies {
+        replies: replies.try_collect().await?,
+    };
+
+    let resp = messages::Response::Success { content: replies };
+
+    Ok(ctx.reply(&resp))
 }
 
 async fn get_reply(id: ObjectId, ctx: RequestContext) -> HttpResult<impl Reply> {

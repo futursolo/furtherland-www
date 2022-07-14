@@ -34,8 +34,6 @@ impl Resident {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Replies {
     pub replies: Vec<Reply>,
-    // None if is last item has been reached.
-    pub cursor: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
