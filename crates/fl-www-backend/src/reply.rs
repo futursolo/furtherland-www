@@ -16,20 +16,22 @@ use crate::resident::{Resident, ResidentExt};
 pub(crate) trait ReplyExt {
     type Entity: EntityTrait;
 
-    async fn create_reply(ctx: &RequestContext, input: &ReplyInput) -> HttpResult<Self>
+    async fn create(ctx: &RequestContext, input: &ReplyInput) -> HttpResult<Self>
     where
         Self: Sized;
 
     async fn get(ctx: &RequestContext, id: ObjectId) -> HttpResult<Self>
     where
         Self: Sized;
+
+    async fn delete(ctx: &RequestContext, id: ObjectId) -> HttpResult<()>;
 }
 
 #[async_trait]
 impl ReplyExt for Reply {
     type Entity = model::Entity;
 
-    async fn create_reply(ctx: &RequestContext, input: &ReplyInput) -> HttpResult<Self>
+    async fn create(ctx: &RequestContext, input: &ReplyInput) -> HttpResult<Self>
     where
         Self: Sized,
     {
@@ -111,5 +113,24 @@ impl ReplyExt for Reply {
             content: reply_ent.content,
             created_at: reply_ent.created_at,
         })
+    }
+
+    async fn delete(ctx: &RequestContext, id: ObjectId) -> HttpResult<()> {
+        let resident = ctx.resident().cloned().ok_or(HttpError::Forbidden)?;
+        if resident.status() != ResidencyStatus::Master {
+            return Err(HttpError::Forbidden);
+        }
+
+        let reply_ent = match model::Entity::find_by_id(id.to_string())
+            .one(ctx.db())
+            .await?
+        {
+            Some(m) => m,
+            None => return Err(HttpError::NotFound),
+        };
+
+        reply_ent.delete(ctx.db()).await?;
+
+        Ok(())
     }
 }

@@ -30,7 +30,7 @@ async fn get_reply(id: ObjectId, ctx: RequestContext) -> HttpResult<impl Reply> 
 }
 
 async fn post_reply(ctx: RequestContext, input: ReplyInput) -> HttpResult<impl Reply> {
-    let reply = messages::Reply::create_reply(&ctx, &input).await?;
+    let reply = messages::Reply::create(&ctx, &input).await?;
 
     let resp = messages::Response::Success { content: reply };
 
@@ -49,10 +49,14 @@ async fn patch_reply(
 async fn delete_reply(
     _lang: Language,
     _slug: String,
-    _id: ObjectId,
-    _ctx: RequestContext,
+    id: ObjectId,
+    ctx: RequestContext,
 ) -> HttpResult<impl Reply> {
-    Ok(warp::reply::html("not implemented"))
+    messages::Reply::delete(&ctx, id).await?;
+
+    let resp = messages::Response::Success { content: () };
+
+    Ok(ctx.reply(&resp))
 }
 
 pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
