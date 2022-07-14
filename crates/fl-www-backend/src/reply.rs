@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use chrono::Utc;
-use messages::{Reply, ReplyInput, ResidencyStatus};
+use messages::{PatchReplyInput, Reply, ReplyInput, ResidencyStatus};
 use object_id::ObjectId;
-use sea_orm::entity::{ActiveModelTrait, EntityTrait, ModelTrait};
+use sea_orm::entity::{ActiveModelTrait, ActiveValue, EntityTrait, ModelTrait};
 use sea_orm::Set;
 
 use crate::context::RequestContext;
@@ -25,6 +25,7 @@ pub(crate) trait ReplyExt {
         Self: Sized;
 
     async fn delete(ctx: &RequestContext, id: ObjectId) -> HttpResult<()>;
+    async fn patch(ctx: &RequestContext, id: ObjectId, input: &PatchReplyInput) -> HttpResult<()>;
 }
 
 #[async_trait]
@@ -130,6 +131,38 @@ impl ReplyExt for Reply {
         };
 
         reply_ent.delete(ctx.db()).await?;
+
+        Ok(())
+    }
+
+    async fn patch(ctx: &RequestContext, id: ObjectId, input: &PatchReplyInput) -> HttpResult<()> {
+        let resident = ctx.resident().cloned().ok_or(HttpError::Forbidden)?;
+        if resident.status() != ResidencyStatus::Master {
+            return Err(HttpError::Forbidden);
+        }
+
+        let reply_ent = match model::Entity::find_by_id(id.to_string())
+            .one(ctx.db())
+            .await?
+        {
+            Some(m) => m,
+            None => return Err(HttpError::NotFound),
+        };
+
+        model::ActiveModel {
+            id: ActiveValue::Unchanged(reply_ent.id),
+            approved: match input.approved {
+                Some(m) => ActiveValue::Set(m),
+                None => ActiveValue::NotSet,
+            },
+            content: match input.content {
+                Some(ref m) => ActiveValue::Set(m.clone()),
+                None => ActiveValue::NotSet,
+            },
+            ..Default::default()
+        }
+        .save(ctx.db())
+        .await?;
 
         Ok(())
     }

@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use fl_www_core::messages::PatchReplyInput;
 use messages::ReplyInput;
 use object_id::ObjectId;
 use warp::filters::BoxedFilter;
@@ -40,10 +41,15 @@ async fn post_reply(ctx: RequestContext, input: ReplyInput) -> HttpResult<impl R
 async fn patch_reply(
     _lang: Language,
     _slug: String,
-    _id: ObjectId,
-    _ctx: RequestContext,
+    id: ObjectId,
+    ctx: RequestContext,
+    input: PatchReplyInput,
 ) -> HttpResult<impl Reply> {
-    Ok(warp::reply::html("not implemented"))
+    messages::Reply::patch(&ctx, id, &input).await?;
+
+    let resp = messages::Response::Success { content: () };
+
+    Ok(ctx.reply(&resp))
 }
 
 async fn delete_reply(
@@ -86,6 +92,7 @@ pub(crate) fn endpoints(ctx: Arc<ServerContext>) -> BoxedFilter<(impl Reply,)> {
         .and(warp::path::end())
         .and(RequestContext::filter(ctx.clone()))
         .and(warp::patch())
+        .and(Encoding::request_body_filter::<PatchReplyInput>())
         .then(patch_reply)
         .terminated();
 
