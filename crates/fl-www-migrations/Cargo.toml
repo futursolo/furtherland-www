@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 publish = false
 
+[[bin]]
+name = "landctl-migrations"
+path = "src/main.rs"
+
 [lib]
 name = "fl_www_migrations"
 path = "src/lib.rs"
