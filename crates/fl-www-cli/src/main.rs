@@ -11,6 +11,9 @@ mod prelude;
 use feed::Feed;
 use metadata::{Metadata, MetadataExt};
 
+#[global_allocator]
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 async fn generate_content(args: cli::GenArgs) -> anyhow::Result<()> {
     let meta = Metadata::from_path(&args.in_dir).await?;
 
