@@ -1,5 +1,5 @@
 ---
-name: Run Tests
+name: Run Tests & Publish
 
 on: [push]
 
@@ -23,7 +23,7 @@ jobs:
           components: rustfmt, clippy
           profile: minimal
 
-      - name: Setup Rust wasm
+      - name: Setup Rust WebAssembly
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable

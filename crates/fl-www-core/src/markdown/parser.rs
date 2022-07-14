@@ -2,6 +2,7 @@
 
 use std::borrow::Cow;
 use std::collections::HashMap;
+use std::fmt::Write;
 // use std::fmt;
 use std::sync::{Arc, Mutex};
 
@@ -546,7 +547,7 @@ where
                 FootnoteReference(name) => {
                     let len = self.numbers.len() + 1;
                     let number = *self.numbers.entry(name.into_string().into()).or_insert(len);
-                    s.push_str(&format!("[{}]", number));
+                    let _ = write!(s, "[{}]", number);
                 }
                 TaskListMarker(true) => s.push_str("[x]"),
                 TaskListMarker(false) => s.push_str("[ ]"),
