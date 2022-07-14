@@ -5,6 +5,9 @@
     <title>Furtherland</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=scrollIntoView"></script>
-    <link data-trunk rel="rust" data-wasm-opt="z" href="packages/fl-www/Cargo.toml" />
+
+    <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml" data-bin="fl-worker-highlight" />
+    <link data-trunk rel="rust" data-type="worker" data-wasm-opt="z" href="crates/fl-www-agents/Cargo.toml" data-bin="fl-worker-markdown" />
+    <link data-trunk rel="rust" data-wasm-opt="z" href="crates/fl-www/Cargo.toml" />
   </head>
 </html>

@@ -1,13 +1,19 @@
 [workspace]
 members = [
-    "packages/fl-www",
-    "packages/fl-www-cli",
-    "packages/fl-www-core",
-    "packages/fl-www-macros",
-    "packages/fl-www-common",
-    "packages/fl-www-agents",
-    "packages/fl-www-backend",
-    "packages/yew-query",
+    # Platform Agnostic Crates / Procedural Macros
+    "crates/fl-www-core",
+    "crates/fl-www-macros",
+
+    # Client-side Crates
+    "crates/fl-www",
+    "crates/fl-www-common",
+    "crates/fl-www-agents",
+    "crates/yew-query",
+
+    # Server-side Crates
+    "crates/fl-www-cli",
+    "crates/fl-www-backend",
+    "crates/fl-www-migrations",
 ]
 resolver = "2"
 
@@ -15,6 +21,7 @@ resolver = "2"
 opt-level = "z"
 lto = true
 codegen-units = 1
+panic = "abort"
 
 [profile.release.package."*"]
 codegen-units = 1

@@ -11,6 +11,8 @@ packages/*/target/
 **/*.rs.bk
 
 dist/
-worker-dist/
 meta-dist/
-wrangler.toml
+
+.env
+
+test.db*
