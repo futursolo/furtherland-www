@@ -6,12 +6,6 @@ mod css_var;
 mod css_variables;
 mod utils;
 
-#[proc_macro_attribute]
-#[proc_macro_error]
-pub fn task(_attrs: TokenStream, _code: TokenStream) -> TokenStream {
-    todo!()
-}
-
 #[proc_macro_derive(CssVariables, attributes(css_vars))]
 #[proc_macro_error]
 pub fn css_variables(input: TokenStream) -> TokenStream {

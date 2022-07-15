@@ -10,7 +10,6 @@ use warp::{Filter, Reply};
 use super::exts::FilterExt;
 use crate::context::{RequestContext, ServerContext};
 use crate::encoding::Encoding;
-// use crate::db::residents as model;
 use crate::error::HttpResult;
 use crate::prelude::*;
 use crate::reply::ReplyExt;
