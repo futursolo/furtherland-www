@@ -518,9 +518,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.2.11"
+version = "3.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d646c7ade5eb07c4aa20e907a922750df0c448892513714fd3e4acbc7130829f"
+checksum = "ab8b79fe3946ceb4a0b1c080b4018992b8d27e9ff363644c1c9b6387c854614d"
 dependencies = [
  "atty",
  "bitflags",
@@ -1019,7 +1019,6 @@ name = "fl-www-common"
 version = "0.1.0"
 dependencies = [
  "fl-www-core",
- "fl-www-macros",
  "futures",
  "gloo 0.8.0",
  "js-sys",
@@ -1050,20 +1049,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "typed-builder",
-]
-
-[[package]]
-name = "fl-www-macros"
-version = "0.1.0"
-dependencies = [
- "convert_case",
- "itertools",
- "once_cell",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "rand",
- "syn",
 ]
 
 [[package]]
@@ -1873,9 +1858,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if",
- "js-sys",
- "wasm-bindgen",
- "web-sys",
 ]
 
 [[package]]
@@ -3429,13 +3411,10 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "stylist"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7687c91ed89b4f6a80e41a354263555980187b6c9ca6c0408089c6781dca4377"
+version = "0.11.0"
+source = "git+https://github.com/futursolo/stylist-rs?branch=css-vars#ff5d40d8778824be8c73d52d4c4ea4de475f8283"
 dependencies = [
- "fastrand",
  "gloo-events",
- "instant",
  "once_cell",
  "stylist-core",
  "stylist-macros",
@@ -3446,9 +3425,8 @@ dependencies = [
 
 [[package]]
 name = "stylist-core"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25355f8d91ef7d250ab53f1f8411b458f54c7dcf76a1cfef47355c0b1d0bfed9"
+version = "0.11.0"
+source = "git+https://github.com/futursolo/stylist-rs?branch=css-vars#ff5d40d8778824be8c73d52d4c4ea4de475f8283"
 dependencies = [
  "nom",
  "once_cell",
@@ -3458,10 +3436,10 @@ dependencies = [
 
 [[package]]
 name = "stylist-macros"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7930b612c9250dac3735aa35fcc1084e51ca84bf7a270f23856df08598821251"
+version = "0.11.0"
+source = "git+https://github.com/futursolo/stylist-rs?branch=css-vars#ff5d40d8778824be8c73d52d4c4ea4de475f8283"
 dependencies = [
+ "convert_case",
  "itertools",
  "litrs",
  "log",
@@ -3469,6 +3447,7 @@ dependencies = [
  "proc-macro-error",
  "proc-macro2",
  "quote",
+ "rand",
  "stylist-core",
  "syn",
 ]

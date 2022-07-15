@@ -28,7 +28,7 @@ yew-feather = { git = "https://github.com/futursolo/yew-feather", branch = "comp
 yew-router = "0.16.0"
 yew = "0.19.3"
 yew-agent = "0.1.0"
-stylist = { version = "0.10.1", features = ["yew_integration"] }
+stylist = { git = "https://github.com/futursolo/stylist-rs", branch = "css-vars", features = ["yew_integration", "macros", "parser"], default-features = false }
 
 i18n-embed = { version = "0.13.4", features = ["fluent-system", "web-sys-requester"] }
 rust-embed = { version = "6.4.0", features = ["debug-embed"] }

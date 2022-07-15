@@ -1,5 +1,5 @@
 use once_cell::sync::Lazy;
-use styling::{Colour, ThemeKind};
+use styling::{Colour, CssVariables, ThemeKind};
 
 use crate::prelude::*;
 

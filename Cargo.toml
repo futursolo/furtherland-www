@@ -1,8 +1,7 @@
 [workspace]
 members = [
-    # Platform Agnostic Crates / Procedural Macros
+    # Platform Agnostic Crates
     "crates/fl-www-core",
-    "crates/fl-www-macros",
 
     # Client-side Crates
     "crates/fl-www",

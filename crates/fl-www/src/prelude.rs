@@ -1,7 +1,7 @@
 // pub use fl_www_agents as agents;
 pub(crate) use fl_www_agents as agents;
 pub(crate) use fl_www_common::prelude::*;
-pub(crate) use fl_www_common::styling::CssVariables;
+pub(crate) use fl_www_common::styling::css_var;
 pub(crate) use fl_www_core::messages;
 pub(crate) use styling::styled_component;
 pub(crate) use wasm_bindgen::UnwrapThrowExt;
