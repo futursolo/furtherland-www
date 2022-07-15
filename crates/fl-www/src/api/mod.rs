@@ -1,6 +1,6 @@
 use messages::ResponseError;
 use once_cell::sync::Lazy;
-use reqwest::Url;
+use reqwest::{Client, Url};
 use thiserror::Error;
 
 use crate::prelude::*;
@@ -15,6 +15,8 @@ static BASE_URL: Lazy<Url> = Lazy::new(|| {
         .unwrap_throw()
 });
 
+static CLIENT: Lazy<Client> = Lazy::new(Client::new);
+
 pub use replies::{RepliesQuery, RepliesQueryInput};
 pub use residents::{CurrentResidentQuery, ExchangeTokenMutation};
 
@@ -25,4 +27,7 @@ pub enum QueryError {
 
     #[error("unknown server error")]
     ServerOther,
+
+    #[error("forbidden")]
+    Forbidden,
 }

@@ -1,12 +1,13 @@
 use std::rc::Rc;
 
 use async_trait::async_trait;
-use bounce::query::{Query, QueryResult};
+use atoms::TokenState;
+use bounce::query::{Mutation, MutationResult, Query, QueryResult};
 use bounce::BounceStates;
 use futures::TryFutureExt;
-use messages::{Replies, Response};
+use messages::{Replies, Reply, ReplyInput, Response};
 
-use super::{QueryError, BASE_URL};
+use super::{QueryError, BASE_URL, CLIENT};
 use crate::prelude::*;
 
 // #[async_trait(?Send)]
@@ -49,6 +50,38 @@ impl Query for RepliesQuery {
 
         match resp {
             Response::Success { content } => Ok(RepliesQuery { content }.into()),
+            Response::Failed { error } => Err(QueryError::Server(error)),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct CreateReplyMutation {
+    pub content: Reply,
+}
+
+#[async_trait(?Send)]
+impl Mutation for CreateReplyMutation {
+    type Error = QueryError;
+    type Input = ReplyInput;
+
+    async fn run(states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self> {
+        let token = match states.get_atom_value::<TokenState>().inner.as_ref() {
+            Some(m) => m.clone(),
+            None => return Err(QueryError::Forbidden),
+        };
+
+        let resp = CLIENT
+            .post(BASE_URL.join("/replies").unwrap_throw())
+            .bearer_auth(token)
+            .json(&input)
+            .send()
+            .and_then(|m| m.json::<Response<messages::Reply>>())
+            .await
+            .map_err(|_e| QueryError::ServerOther)?;
+
+        match resp {
+            Response::Success { content } => Ok(Self { content }.into()),
             Response::Failed { error } => Err(QueryError::Server(error)),
         }
     }

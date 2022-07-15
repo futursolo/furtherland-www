@@ -7,7 +7,7 @@ use bounce::BounceStates;
 use futures::future::TryFutureExt;
 use messages::{Resident, Response};
 
-use super::{QueryError, BASE_URL};
+use super::{QueryError, BASE_URL, CLIENT};
 use crate::prelude::*;
 
 // #[async_trait(?Send)]
@@ -65,9 +65,7 @@ impl Mutation for ExchangeTokenMutation {
     type Input = messages::AccessTokenInput;
 
     async fn run(_states: &BounceStates, input: Rc<Self::Input>) -> MutationResult<Self> {
-        let client = reqwest::Client::new();
-
-        let resp = client
+        let resp = CLIENT
             .post(
                 BASE_URL
                     .join("/residents/_oauth_access_token")
