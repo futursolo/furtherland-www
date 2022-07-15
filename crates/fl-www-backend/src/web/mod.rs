@@ -38,19 +38,20 @@ impl WebServer {
             .or(residents::endpoints(ctx.clone()))
             .or(replies::endpoints(ctx));
 
+        let cors = warp::cors()
+            .allow_any_origin()
+            .allow_methods(["GET", "POST", "OPTIONS", "HEAD", "PATCH", "DELETE"])
+            .allow_header("content-type")
+            .allow_header("authorization")
+            .expose_header("content-type")
+            .build();
+
         let content_limit = warp::filters::method::get()
             .or(warp::filters::method::head())
             .or(warp::filters::method::options())
             .or(warp::body::content_length_limit(10 * 1024 * 1024))
             .map(|_| ())
             .untuple_one();
-
-        let cors = warp::cors()
-            .allow_any_origin()
-            .allow_header("content-type")
-            .allow_header("authorization")
-            .expose_header("content-type")
-            .build();
 
         let routes = // maximum request limit: 10MB
             content_limit.and(routes)
