@@ -2,7 +2,6 @@ use std::convert::TryInto;
 use std::fmt;
 use std::str::FromStr;
 
-use rand::Rng;
 use serde::de::{Deserializer, Visitor};
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
@@ -15,7 +14,21 @@ pub struct ObjectId([u8; 12]);
 
 impl Default for ObjectId {
     fn default() -> ObjectId {
-        Self(rand::thread_rng().gen::<[u8; 12]>())
+        #[cfg(not(target_family = "wasm"))]
+        let this = {
+            use rand::Rng;
+            Self(rand::thread_rng().gen::<[u8; 12]>())
+        };
+
+        #[cfg(target_family = "wasm")]
+        let this = {
+            let mut buf = [0_u8; 12];
+            getrandom::getrandom(&mut buf).expect("failed to fill buffer");
+
+            Self(buf)
+        };
+
+        this
     }
 }
 
