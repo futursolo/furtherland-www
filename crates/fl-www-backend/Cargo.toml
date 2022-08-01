@@ -31,7 +31,7 @@ octocrab = { version = "0.16.0", default-features = false, features = ["rustls"]
 reqwest = { version = "0.11.11", features = ["json", "trust-dns", "rustls-tls", "gzip", "brotli", "deflate"], default-features = false }
 
 # ORM
-sea-orm = { version = "0.9.0", features = ["sqlx-sqlite", "sqlx-postgres", "runtime-tokio-rustls"] }
+sea-orm = { version = "0.9.1", features = ["sqlx-sqlite", "sqlx-postgres", "runtime-tokio-rustls"] }
 
 # Error Handling / Boilerplate
 thiserror = "1.0.31"
