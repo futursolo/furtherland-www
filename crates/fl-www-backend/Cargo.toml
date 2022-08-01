@@ -36,7 +36,7 @@ sea-orm = { version = "0.9.1", features = ["sqlx-sqlite", "sqlx-postgres", "runt
 # Error Handling / Boilerplate
 thiserror = "1.0.31"
 typed-builder = "0.10.0"
-anyhow = "1.0.58"
+anyhow = "1.0.59"
 once_cell = "1.13.0"
 bincode = "1.3.3"
 bytes = "1.1.0"
