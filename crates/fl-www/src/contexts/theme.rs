@@ -77,6 +77,7 @@ impl Deref for ThemeState {
     }
 }
 
+#[hook]
 pub(crate) fn use_theme() -> ThemeState {
     use_context::<ThemeState>().unwrap()
 }

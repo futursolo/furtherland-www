@@ -11,10 +11,12 @@ use crate::handle::UseFetchHandle;
 use crate::provider::ClientState;
 use crate::request::Request;
 
+#[hook]
 pub fn use_client() -> Option<Rc<Client>> {
     use_context::<ClientState>().map(|m| m.inner)
 }
 
+#[hook]
 pub fn use_query<T, F, E>(req_fn: F) -> UseFetchHandle<T, E>
 where
     T: FromStr<Err = E> + Clone + 'static,
@@ -24,6 +26,7 @@ where
     use_pausable_query(move || Some(req_fn()))
 }
 
+#[hook]
 pub fn use_pausable_query<T, F, E>(req_fn: F) -> UseFetchHandle<T, E>
 where
     T: FromStr<Err = E> + Clone + 'static,

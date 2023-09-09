@@ -1,7 +1,7 @@
 use fl_www_core::markdown::{HtmlCreator, Root};
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
-use yew_agent::{Agent, AgentLink, HandlerId, Public};
+use yew_agent::{HandlerId, Public, Worker as Agent, WorkerLink as AgentLink};
 
 use crate::prelude::*;
 use crate::types::Msg;
@@ -65,8 +65,8 @@ impl Agent for Worker {
     }
 
     fn handle_input(&mut self, msg: Self::Input, who: HandlerId) {
-        self.link
-            .send_future(async move { Msg::Respond((markdown(msg).await, who)) })
+        let link = self.link.clone();
+        spawn_local(async move { link.send_message(Msg::Respond((markdown(msg).await, who))) })
     }
 
     fn name_of_resource() -> &'static str {

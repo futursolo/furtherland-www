@@ -23,7 +23,7 @@ pub fn textarea(props: &TextareaProps) -> HtmlResult {
 
     let theme = use_theme();
 
-    return html! {
+    Ok(html! {
         <div
             class={classes!(
                 class,
@@ -65,5 +65,5 @@ pub fn textarea(props: &TextareaProps) -> HtmlResult {
                 )}
             />
         </div>
-    };
+    })
 }

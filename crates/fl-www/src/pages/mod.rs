@@ -46,7 +46,7 @@ pub(crate) enum AppRoute {
 }
 
 impl AppRoute {
-    fn render_route(&self) -> Html {
+    fn render_route(self) -> Html {
         match self {
             Self::Home { .. } => {
                 html! {<Home />}
@@ -113,7 +113,7 @@ pub(crate) fn app_router() -> Html {
                 <link rel="alternate" href={feed_url} type_="application/atom+xml" />
             </Helmet>
             <Switch<AppRoute>
-                 render={Switch::render(AppRoute::render_route)}
+                 render={AppRoute::render_route}
              />
         </>
     }

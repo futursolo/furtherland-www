@@ -10,6 +10,7 @@ pub(crate) struct MetadataState {
     value: Option<Rc<Metadata>>,
 }
 
+#[hook]
 pub(crate) fn use_metadata() -> Option<Rc<Metadata>> {
     let set_error = use_atom_setter::<ErrorState>();
 

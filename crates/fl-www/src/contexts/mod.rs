@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use bounce::helmet::HelmetBridge as BaseHelmetBridge;
 use bounce::BounceRoot;
 use yew_router::prelude::BrowserRouter;
@@ -24,7 +22,7 @@ use worker::WorkerProvider;
 pub(crate) fn helmet_bridge() -> Html {
     use_language();
 
-    let format_fn = Rc::new(|m: &str| fl!("title", title = m)) as Rc<dyn Fn(&str) -> String>;
+    let format_fn = |m: AttrValue| fl!("title", title = m.to_string()).into();
 
     html! {
         <BaseHelmetBridge

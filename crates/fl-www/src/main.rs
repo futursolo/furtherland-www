@@ -32,5 +32,5 @@ pub fn main() {
     #[cfg(not(debug_assertions))]
     console_log::init_with_level(Level::Error).expect("Failed to initialise Log!");
 
-    yew::start_app::<Root>();
+    yew::Renderer::<Root>::new().render();
 }

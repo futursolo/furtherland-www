@@ -56,9 +56,9 @@ pub(crate) fn author(props: &AuthorProps) -> Html {
             html! {
                 <div class={css!(
                     r#"
-                font-size: ${font_size};
-                color: ${colour};
-            "#,
+                        font-size: ${font_size};
+                        color: ${colour};
+                    "#,
                     font_size = &theme.font_size.secondary,
                     colour = css_var!(theme.colour.text.secondary),
                 )}>{m}{time_str}</div>

@@ -1,5 +1,5 @@
 use bounce::prelude::*;
-use yew_feather::alert_circle::AlertCircle;
+use yew_feather::AlertCircle;
 
 use crate::prelude::*;
 
@@ -48,7 +48,7 @@ pub(crate) fn error_popup() -> Html {
                 "#,
                 invalid_bg = css_var!(theme.colour.invalid),
             )}>
-                <AlertCircle size={20} />
+                <AlertCircle size="20" />
                 <div class={css!(r#"width: 7px;"#)} />
                 <div>{error_message}</div>
             </div>

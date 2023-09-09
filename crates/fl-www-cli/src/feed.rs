@@ -52,10 +52,10 @@ impl Feed {
                     .link(
                         LinkBuilder::default()
                             .href(format!("https://www.futures.moe/zh/writings/{}", m.slug))
-                            .hreflang(m.lang.as_str().to_owned())
+                            .hreflang(Some(m.lang.as_str().to_owned()))
                             .mime_type(Some("text/html".to_owned()))
-                            .rel("alternate")
-                            .title(m.title.to_string())
+                            .rel("alternate".to_string())
+                            .title(Some(m.title.to_string()))
                             .build(),
                     )
                     .summary(Text::plain(&m.summary))
@@ -77,10 +77,10 @@ impl Feed {
                     .link(
                         LinkBuilder::default()
                             .href(format!("https://www.futures.moe/zh/writings/{}", m.slug))
-                            .hreflang(m.lang.as_str().to_owned())
+                            .hreflang(Some(m.lang.as_str().to_owned()))
                             .mime_type(Some("text/html".to_owned()))
-                            .rel("alternate")
-                            .title(m.title.to_string())
+                            .rel("alternate".to_string())
+                            .title(Some(m.title.to_string()))
                             .build(),
                     )
                     .summary(Text::plain(&m.summary))
@@ -94,16 +94,16 @@ impl Feed {
             .entries(zh_entries)
             .link(
                 LinkBuilder::default()
-                    .href("https://www.futures.moe/zh/")
-                    .hreflang(Language::Chinese.as_str().to_owned())
+                    .href("https://www.futures.moe/zh/".to_string())
+                    .hreflang(Some(Language::Chinese.as_str().to_owned()))
                     .mime_type(Some("text/html".to_owned()))
-                    .rel("alternate")
+                    .rel("alternate".to_string())
                     .title(Some("星川の秘密部屋".to_string()))
                     .build(),
             )
             .generator(
                 GeneratorBuilder::default()
-                    .value("Furtherland")
+                    .value("Furtherland".to_string())
                     .uri(Some(
                         "https://github.com/futursolo/furtherland-www".to_string(),
                     ))
@@ -118,16 +118,16 @@ impl Feed {
             .entries(en_entries)
             .link(
                 LinkBuilder::default()
-                    .href("https://www.futures.moe/en/")
-                    .hreflang(Language::Chinese.as_str().to_owned())
+                    .href("https://www.futures.moe/en/".to_string())
+                    .hreflang(Some(Language::Chinese.as_str().to_owned()))
                     .mime_type(Some("text/html".to_owned()))
-                    .rel("alternate")
+                    .rel("alternate".to_string())
                     .title(Some("Hoshikawa's Secret Room".to_string()))
                     .build(),
             )
             .generator(
                 GeneratorBuilder::default()
-                    .value("Furtherland")
+                    .value("Furtherland".to_string())
                     .uri(Some(
                         "https://github.com/futursolo/furtherland-www".to_string(),
                     ))

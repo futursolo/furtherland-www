@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::convert::Infallible;
+use std::rc::Rc;
 
 use bounce::helmet::Helmet;
 use bounce::prelude::*;
@@ -34,7 +35,7 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
 
     let summary_clone = summary.clone();
     let worker = use_state(move || {
-        RefCell::new(agents::markdown::Worker::bridge(Callback::from(move |m| {
+        RefCell::new(agents::markdown::Worker::bridge(Rc::new(move |m| {
             if let agents::markdown::Response::Summary(s) = m {
                 summary_clone.set(Some(s));
             }

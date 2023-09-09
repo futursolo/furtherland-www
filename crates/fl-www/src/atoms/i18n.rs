@@ -58,6 +58,7 @@ impl Reducible for LanguageState {
     }
 }
 
+#[hook]
 pub(crate) fn use_language() -> Language {
     use_slice_value::<LanguageState>().lang
 }

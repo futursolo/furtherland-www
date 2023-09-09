@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use styling::{Colour, ThemeKind};
-use yew_agent::{Agent, AgentLink, HandlerId, Public};
+use yew_agent::{HandlerId, Public, Worker as Agent, WorkerLink as AgentLink};
 
 use crate::prelude::*;
 use crate::types::Msg;
@@ -56,8 +56,8 @@ impl Agent for Worker {
     }
 
     fn handle_input(&mut self, msg: Self::Input, who: HandlerId) {
-        self.link
-            .send_future(async move { Msg::Respond((highlight(msg).await, who)) })
+        let link = self.link.clone();
+        spawn_local(async move { link.send_message(Msg::Respond((highlight(msg).await, who))) })
     }
 
     fn name_of_resource() -> &'static str {

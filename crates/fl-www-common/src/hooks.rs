@@ -7,6 +7,7 @@ use yew::prelude::*;
 
 use crate::prelude::*;
 
+#[hook]
 pub fn use_event<E, F>(target: &EventTarget, event_type: E, callback: F)
 where
     E: Into<Cow<'static, str>>,
@@ -54,6 +55,7 @@ where
     );
 }
 
+#[hook]
 pub fn use_render_event<E>(target: &EventTarget, event_type: E)
 where
     E: Into<Cow<'static, str>>,
@@ -65,6 +67,7 @@ where
     });
 }
 
+#[hook]
 pub fn use_viewport_height() -> u64 {
     let vh = use_state_eq(get_viewport_height);
 

@@ -5,16 +5,11 @@ use web_sys::window;
 use crate::client::Client;
 use crate::error::{InternalError, InternalResult};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize, Default)]
 pub enum Method {
+    #[default]
     Get,
     Head,
-}
-
-impl Default for Method {
-    fn default() -> Self {
-        Method::Get
-    }
 }
 
 #[derive(Debug, Clone, TypedBuilder, PartialEq, Eq, Hash, Deserialize, Serialize)]
