@@ -30,8 +30,10 @@ fn get_theme_kind() -> ThemeKind {
     let persisted_state: Option<PersistedThemeState> = LocalStorage::get(STORAGE_KEY).ok();
 
     if let Some(m) = persisted_state {
-        let updated =
-            DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(m.last_updated, 0), Utc);
+        let updated = DateTime::<Utc>::from_naive_utc_and_offset(
+            NaiveDateTime::from_timestamp_opt(m.last_updated, 0).expect("failed to create date"),
+            Utc,
+        );
 
         // theme selection is persisted for 6 hours.
         if Utc::now() - updated <= Duration::hours(6) {

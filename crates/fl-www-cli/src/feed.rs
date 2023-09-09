@@ -21,7 +21,7 @@ impl Feed {
         let mut zh_writings = Vec::new();
         let mut en_writings = Vec::new();
 
-        let mut latest = NaiveDate::from_ymd(1970, 1, 1);
+        let mut latest = NaiveDate::from_ymd_opt(1970, 1, 1).expect("failed to create date");
 
         for writing in metadata.writings() {
             if writing.date > latest {
@@ -34,18 +34,22 @@ impl Feed {
             };
         }
 
-        let time = NaiveTime::from_hms(0, 0, 0);
+        let time = NaiveTime::from_hms_opt(0, 0, 0).expect("failed to create date");
         let latest_datetime = NaiveDateTime::new(latest, time);
-        let latest_datetime: DateTime<FixedOffset> =
-            DateTime::from_utc(latest_datetime, FixedOffset::east(0));
+        let latest_datetime: DateTime<FixedOffset> = DateTime::from_naive_utc_and_offset(
+            latest_datetime,
+            FixedOffset::east_opt(0).expect("failed to create date"),
+        );
 
         let zh_entries = zh_writings
             .iter()
             .map(|m| {
-                let time = NaiveTime::from_hms(0, 0, 0);
+                let time = NaiveTime::from_hms_opt(0, 0, 0).expect("failed to create date");
                 let datetime = NaiveDateTime::new(m.date.to_owned(), time);
-                let datetime: DateTime<FixedOffset> =
-                    DateTime::from_utc(datetime, FixedOffset::east(0));
+                let datetime: DateTime<FixedOffset> = DateTime::from_naive_utc_and_offset(
+                    datetime,
+                    FixedOffset::east_opt(0).expect("failed to create date"),
+                );
 
                 EntryBuilder::default()
                     .title(Text::plain(&m.title))
@@ -67,10 +71,12 @@ impl Feed {
         let en_entries = en_writings
             .iter()
             .map(|m| {
-                let time = NaiveTime::from_hms(0, 0, 0);
+                let time = NaiveTime::from_hms_opt(0, 0, 0).expect("failed to create date");
                 let datetime = NaiveDateTime::new(m.date.to_owned(), time);
-                let datetime: DateTime<FixedOffset> =
-                    DateTime::from_utc(datetime, FixedOffset::east(0));
+                let datetime: DateTime<FixedOffset> = DateTime::from_naive_utc_and_offset(
+                    datetime,
+                    FixedOffset::east_opt(0).expect("failed to create date"),
+                );
 
                 EntryBuilder::default()
                     .title(Text::plain(&m.title))

@@ -1,15 +1,23 @@
 use i18n_embed::fluent::{fluent_language_loader, FluentLanguageLoader};
 use i18n_embed::{LanguageLoader, WebLanguageRequester};
 use once_cell::sync::Lazy;
-use rust_embed::RustEmbed;
 use unic_langid::LanguageIdentifier;
 use yew_router::prelude::Routable;
 
 use crate::prelude::*;
 
-#[derive(Debug, RustEmbed)]
-#[folder = "../../i18n"] // path to the compiled localization resources
-struct Localizations;
+mod l10n_embed {
+    // We only want to suppress this limit for Localization.
+    #![allow(non_upper_case_globals)]
+
+    use rust_embed::RustEmbed;
+
+    #[derive(Debug, RustEmbed)]
+    #[folder = "../../i18n"] // path to the compiled localization resources
+    pub(super) struct Localizations;
+}
+
+use l10n_embed::Localizations;
 
 pub(crate) trait LanguageExt {
     fn detect() -> Self;
