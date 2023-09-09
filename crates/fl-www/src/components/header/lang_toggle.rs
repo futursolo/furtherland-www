@@ -1,6 +1,6 @@
 use components::Link;
 use styling::Colour;
-use yew_feather::globe::Globe;
+use yew_feather::Globe;
 
 use crate::prelude::*;
 
@@ -37,7 +37,7 @@ pub(crate) fn lang_toggle(props: &LangToggleProps) -> Html {
                 "#,
                 colour = props.colour,
             )}>
-                <Globe size={24} />
+                <Globe size="24" />
             </div>
         </Link>
     }

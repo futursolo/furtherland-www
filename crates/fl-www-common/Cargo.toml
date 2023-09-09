@@ -18,8 +18,12 @@ gloo = { version = "0.8.0", features = ["futures"] }
 
 log = "0.4.17"
 
-yew = "0.19.3"
-stylist = { git = "https://github.com/futursolo/stylist-rs", branch = "css-vars", features = ["yew_integration", "macros", "parser"], default-features = false }
+yew = "0.20.0"
+stylist = { git = "https://github.com/futursolo/stylist-rs", branch = "css-vars", features = [
+  "yew_integration",
+  "macros",
+  "parser",
+], default-features = false }
 
 serde = "1.0.139"
 serde_json = "1.0.82"

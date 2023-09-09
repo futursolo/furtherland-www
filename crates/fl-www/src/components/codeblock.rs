@@ -14,6 +14,7 @@ pub(crate) struct CodeBlockProps {
     pub content: String,
 }
 
+#[hook]
 pub(crate) fn use_highlight(
     content: String,
     language: Option<String>,

@@ -100,7 +100,7 @@ impl CacheExchange {
             next_cache.set_id("yew-query-request-cache");
 
             next_cache
-                .set_text(&*serde_json::to_string(&serde_requests).unwrap_throw())
+                .set_text(&serde_json::to_string(&serde_requests).unwrap_throw())
                 .unwrap_throw();
 
             m.append_child(next_cache.as_ref()).unwrap();

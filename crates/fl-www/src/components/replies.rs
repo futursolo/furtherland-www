@@ -4,7 +4,7 @@ use bounce::*;
 use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
 use serde::{Deserialize, Serialize};
 use web_sys::HtmlTextAreaElement;
-use yew_feather::github::Github;
+use yew_feather::Github;
 
 use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
@@ -406,7 +406,7 @@ pub(crate) fn new_reply() -> Html {
                         )}
                         onclick={navigate_to_github}
                     >
-                        <Github size={15} />
+                        <Github size="15" />
                         <div class={css!("width: 5px;")} />
                         {fl!("signin-github")}
                     </div>

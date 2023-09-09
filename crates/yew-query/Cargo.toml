@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 typed-builder = "0.10.0"
-yew = "0.19.3"
+yew = "0.20.0"
 
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"

@@ -49,7 +49,7 @@ impl LanguageExt for Language {
     fn activate(&self) {
         log::debug!("Activating: {:?}", self);
 
-        if (&*LOADER).current_language() != self.to_lang_id() {
+        if LOADER.current_language() != self.to_lang_id() {
             let _result = i18n_embed::select(&*LOADER, &Localizations, &[self.to_lang_id()]);
         }
     }

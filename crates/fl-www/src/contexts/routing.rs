@@ -3,6 +3,7 @@ use bounce::prelude::*;
 use crate::atoms::LanguageState;
 use crate::prelude::*;
 
+#[hook]
 pub(crate) fn use_app_route() -> AppRoute {
     use_route::<AppRoute>().unwrap_or_default()
 }

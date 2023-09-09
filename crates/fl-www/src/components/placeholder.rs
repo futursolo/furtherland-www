@@ -37,7 +37,7 @@ pub(crate) fn placeholder(props: &Props) -> Html {
         ThemeKind::Dark => "rgb(255, 255, 255, 0.05)",
     };
 
-    let data_status = props.set_data_status.then(|| "loading");
+    let data_status = props.set_data_status.then_some("loading");
 
     html! {
         <div data-status={data_status} class={css!(

@@ -1,6 +1,5 @@
 use styling::ThemeKind;
-use yew_feather::moon::Moon;
-use yew_feather::sun::Sun;
+use yew_feather::{Moon, Sun};
 
 use crate::prelude::*;
 
@@ -9,8 +8,8 @@ pub(crate) fn theme_toggle() -> Html {
     let theme = use_theme();
 
     let theme_icon = match &theme.kind() {
-        ThemeKind::Light => html! {<Moon size=24 />},
-        ThemeKind::Dark => html! {<Sun size=24 />},
+        ThemeKind::Light => html! {<Moon size="24" />},
+        ThemeKind::Dark => html! {<Sun size="24" />},
     };
 
     let alt_text = match &theme.kind() {

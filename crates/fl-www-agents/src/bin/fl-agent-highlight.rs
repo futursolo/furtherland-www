@@ -1,4 +1,4 @@
-use yew_agent::Threaded;
+use yew_agent::PublicWorker;
 
 fn main() {
     use log::Level;

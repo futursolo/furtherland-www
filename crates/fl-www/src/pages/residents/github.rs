@@ -1,6 +1,6 @@
 use atoms::{ErrorState, TokenState};
 use bounce::prelude::*;
-use bounce::query::use_mutation_value;
+use bounce::query::use_mutation;
 use components::Main;
 use serde::{Deserialize, Serialize};
 
@@ -15,10 +15,10 @@ struct OauthContinueQuery {
 
 #[styled_component(OauthContinue)]
 pub(crate) fn oauth_continue() -> Html {
-    let exchange_token = use_mutation_value::<ExchangeTokenMutation>();
+    let exchange_token = use_mutation::<ExchangeTokenMutation>();
     let set_error = use_atom_setter::<ErrorState>();
     let set_token = use_atom_setter::<TokenState>();
-    let history = use_history().unwrap_throw();
+    let history = use_navigator().unwrap_throw();
 
     let location = use_location().unwrap_throw();
 
@@ -60,7 +60,7 @@ pub(crate) fn oauth_continue() -> Html {
                                 let route =
                                     AppRoute::recognize(&path).unwrap_or(AppRoute::HomeRedirect);
 
-                                history.push(route);
+                                history.push(&route);
                             }
                             Err(_e) => {
                                 set_error(ErrorKind::Server.into());

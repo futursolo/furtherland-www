@@ -1,6 +1,6 @@
 use styling::use_media_query;
 use web_sys::{ScrollBehavior, ScrollIntoViewOptions};
-use yew_feather::chevron_down::ChevronDown;
+use yew_feather::ChevronDown;
 
 use crate::prelude::*;
 
@@ -66,7 +66,7 @@ pub(crate) fn home_content() -> Html {
                     "#)}
                     onclick={*scroll_to_main}
                 >
-                    <ChevronDown size={down_arrow_size} />
+                    <ChevronDown size={down_arrow_size.to_string()} />
                 </div>
             </div>
         </div>

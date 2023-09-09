@@ -40,10 +40,7 @@ impl Client {
     }
 
     pub(crate) fn default_exchanges() -> Vec<Rc<dyn Exchange>> {
-        vec![
-            Rc::new(CacheExchange::default()),
-            Rc::new(FetchExchange::default()),
-        ]
+        vec![Rc::new(CacheExchange::default()), Rc::new(FetchExchange)]
     }
 
     pub(crate) async fn fetch(self: Rc<Self>, request: Request) -> InternalResult<BaseResponse> {
