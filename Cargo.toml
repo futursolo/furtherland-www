@@ -1,19 +1,5 @@
 [workspace]
-members = [
-    # Platform Agnostic Crates
-    "crates/fl-www-core",
-
-    # Client-side Crates
-    "crates/fl-www",
-    "crates/fl-www-common",
-    "crates/fl-www-agents",
-    "crates/yew-query",
-
-    # Server-side Crates
-    "crates/fl-www-cli",
-    "crates/fl-www-backend",
-    "crates/fl-www-migrations",
-]
+members = ["crates/*"]
 resolver = "2"
 
 [profile.release]
@@ -24,4 +10,4 @@ panic = "abort"
 
 [profile.release.package."*"]
 codegen-units = 1
-opt-level     = "z"
+opt-level = "z"

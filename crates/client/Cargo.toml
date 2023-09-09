@@ -1,0 +1,30 @@
+[package]
+name = "furtherland-www-client"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yew = "0.20.0"
+gloo = "0.8"
+
+
+# Stellation
+stellation-frontend = "0.3.0"
+stellation-stylist = { version = "0.3.0", features = ["frontend"] }
+
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3.16", default-features = false, features = [
+    "time",
+    "std",
+    "fmt",
+    "ansi",
+] }
+
+# Example Workspace
+furtherland-www-view = { path = "../view" }
+furtherland-www-api = { path = "../api" }

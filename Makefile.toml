@@ -1,3 +1,7 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+CARGO_MAKE_CLIPPY_ARGS = "--all-features -- -D warnings"
+
 [tasks.run-local-backend]
 workspace = false
 command = "cargo"
@@ -20,3 +24,19 @@ args = ["build", "--release", "index.html"]
 [tasks.build-local-frontend.env]
 FL_WWW_BACKEND_PREFIX = "http://localhost:9740/"
 FL_WWW_GITHUB_CLIENT_ID = "72f7c210f18ee7928a30"
+
+# stctl
+[tasks.stctl]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "${@}"]
+
+[tasks.start]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "serve"]
+
+[tasks.build]
+workspace = false
+command = "cargo"
+args = ["run", "--bin", "stctl", "--", "build", "--release"]

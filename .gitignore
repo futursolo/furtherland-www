@@ -16,3 +16,8 @@ meta-dist/
 .env
 
 test.db*
+
+
+# Stellation artifacts
+.stellation/
+build/

@@ -1,0 +1,26 @@
+[package]
+name = "furtherland-www-server"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1"
+tokio = { version = "1.23.0", features = ["full"] }
+tracing = { version = "0.1.37" }
+yew = "0.20.0"
+rust-embed = { version = "8.0.0", features = ["interpolate-folder-path"] }
+
+
+# Stellation
+stellation-backend = { version = "0.3.0" }
+stellation-backend-tower = { version = "0.3.0" }
+stellation-backend-cli = { version = "0.3.0" }
+stellation-stylist = { version = "0.3.0", features = ["backend"] }
+
+
+# Example Workspace
+furtherland-www-view = { path = "../view" }
+furtherland-www-api = { path = "../api", features = ["resolvable"] }
