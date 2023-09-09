@@ -52,13 +52,6 @@ pub struct Reply {
     pub created_at: DateTime<Utc>,
 }
 
-impl Reply {
-    /// Returns the key in the storage.
-    pub fn key(&self) -> String {
-        format!("{}:{}:{}", self.lang, self.slug, self.id)
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ReplyInput {
     pub content: String,
