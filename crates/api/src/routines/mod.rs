@@ -6,6 +6,8 @@ use stellation_bridge::Bridge as Bridge_;
 use thiserror::Error;
 
 mod template;
+mod metadata;
+pub use metadata::*;
 pub use template::*;
 
 #[derive(Debug, Error, PartialEq, Eq, Clone, Serialize, Deserialize)]
@@ -18,6 +20,7 @@ pub fn create_routine_registry() -> RoutineRegistry {
     RoutineRegistry::builder()
         .add_query::<ServerTimeQuery>()
         .add_mutation::<GreetingMutation>()
+        .add_query::<MetadataQuery>()
         .build()
 }
 
