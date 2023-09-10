@@ -7,7 +7,7 @@ publish = false
 [dependencies]
 fl-www-core = { path = "../core" }
 fl-www-api = { path = "../api" }
-fl-www-common = { path = "../common" }
+fl-www-frontend = { path = "../frontend" }
 fl-www-agents = { path = "../fl-www-agents" }
 
 bounce = { version = "0.8.0", features = ["query", "helmet"] }

@@ -1311,8 +1311,8 @@ version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
- "fl-www-common",
  "fl-www-core",
+ "fl-www-frontend",
  "futures",
  "gloo 0.8.1",
  "js-sys",
@@ -1408,7 +1408,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "fl-www-common"
+name = "fl-www-core"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "getrandom 0.2.10",
+ "hex",
+ "once_cell",
+ "pulldown-cmark",
+ "rand 0.8.5",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "typed-builder 0.10.0",
+ "yew",
+]
+
+[[package]]
+name = "fl-www-frontend"
 version = "0.1.0"
 dependencies = [
  "fl-www-core",
@@ -1424,24 +1442,6 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "yew",
-]
-
-[[package]]
-name = "fl-www-core"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "getrandom 0.2.10",
- "hex",
- "once_cell",
- "pulldown-cmark",
- "rand 0.8.5",
- "sea-orm",
- "serde",
- "serde_json",
- "thiserror",
- "typed-builder 0.10.0",
  "yew",
 ]
 
@@ -1486,8 +1486,8 @@ dependencies = [
  "fastrand 1.9.0",
  "fl-www-agents",
  "fl-www-api",
- "fl-www-common",
  "fl-www-core",
+ "fl-www-frontend",
  "futures",
  "gloo 0.8.1",
  "i18n-embed",
