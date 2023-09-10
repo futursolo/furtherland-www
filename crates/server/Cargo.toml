@@ -13,6 +13,9 @@ tracing = { version = "0.1.37" }
 yew = "0.20.0"
 rust-embed = { version = "8.0.0", features = ["interpolate-folder-path"] }
 
+# Performance
+jemallocator = "0.5.0"
+
 
 # Stellation
 stellation-backend = { version = "0.3.0" }

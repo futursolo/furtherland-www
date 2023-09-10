@@ -14,6 +14,9 @@ mod bridge;
 use app::ServerApp;
 use bridge::create_backend_bridge;
 
+#[global_allocator]
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 #[cfg(stellation_embedded_frontend)]
 #[derive(rust_embed::RustEmbed)]
 #[folder = "$STELLATION_FRONTEND_BUILD_DIR"]
