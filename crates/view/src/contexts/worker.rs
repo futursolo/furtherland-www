@@ -7,7 +7,6 @@ use crate::prelude::*;
 pub(crate) fn worker_provider(props: &ChildrenProps) -> Html {
     let children = props.children.clone();
 
-    let _ = use_bridge::<agents::highlight::Worker, _>(|_| ());
     let _ = use_bridge::<agents::markdown::Worker, _>(|_| ());
 
     html! {

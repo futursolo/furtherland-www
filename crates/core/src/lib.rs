@@ -8,3 +8,4 @@ pub mod messages;
 pub mod metadata;
 pub mod object_id;
 pub mod prelude;
+pub mod styling;

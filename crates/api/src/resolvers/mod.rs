@@ -10,6 +10,7 @@ pub use crate::routines::*;
 
 mod context;
 mod error;
+mod highlight;
 mod metadata;
 mod page;
 mod replies;

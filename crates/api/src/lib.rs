@@ -5,8 +5,10 @@
 mod resolvers;
 mod routines;
 
-use fl_www_core::messages;
+use fl_www_core as core;
+
+use self::core::messages;
 #[cfg(feature = "resolvable")]
-pub use resolvers::*;
+pub use self::resolvers::*;
 #[cfg(not(feature = "resolvable"))]
-pub use routines::*;
+pub use self::routines::*;

@@ -2,13 +2,24 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Colour {
     pub red: u8,
     pub green: u8,
     pub blue: u8,
     pub alpha: Option<f64>,
 }
+
+impl PartialEq for Colour {
+    fn eq(&self, other: &Self) -> bool {
+        self.red == other.red
+            && self.green == other.green
+            && self.blue == other.blue
+            && self.alpha.as_ref().map(|m| m.to_string())
+                == other.alpha.as_ref().map(|m| m.to_string())
+    }
+}
+impl Eq for Colour {}
 
 impl Colour {
     pub fn from_rgb(red: u8, green: u8, blue: u8) -> Self {

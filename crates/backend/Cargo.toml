@@ -10,14 +10,10 @@ publish = false
 fl-www-core = { path = "../core", features = ["backend"] }
 
 # Data Serialisation / Deserialisation
-serde_json = "1.0.82"
 serde = "1.0.139"
 
 # Date
 chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
-
-# Logging
-log = "0.4.17"
 
 # Async I/O
 async-trait = "0.1.56"
@@ -26,7 +22,6 @@ tokio = { version = "1.20.1", features = ["full"] }
 futures = "0.3.21"
 
 # HTTP
-warp = "0.3.2"
 octocrab = { version = "0.16.0", default-features = false, features = [
     "rustls",
 ] }
@@ -48,8 +43,5 @@ sea-orm = { version = "0.9.1", features = [
 
 # Error Handling / Boilerplate
 thiserror = "1.0.31"
-typed-builder = "0.10.0"
 anyhow = "1.0.59"
-once_cell = "1.13.0"
-bincode = "1.3.3"
 bytes = "1.1.0"

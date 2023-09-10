@@ -5,7 +5,7 @@ use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 use gloo::storage::{LocalStorage, Storage};
 use hooks::use_event;
 use serde::{Deserialize, Serialize};
-use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind};
+use styling::{use_media_query, CssVariables, Global, Theme, ThemeKind, ThemeKindExt};
 
 use crate::prelude::*;
 

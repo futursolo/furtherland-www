@@ -1,9 +1,9 @@
 use std::ops::Deref;
 
-use fl_www_core::prelude::*;
 use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::BridgedQuery;
 
+use crate::core::prelude::*;
 use crate::RoutineError;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]

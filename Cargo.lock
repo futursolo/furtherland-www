@@ -1340,10 +1340,13 @@ dependencies = [
  "fl-www-core",
  "futures",
  "octocrab",
+ "once_cell",
+ "prokio",
  "reqwest",
  "sea-orm",
  "serde",
  "stellation-bridge",
+ "syntect",
  "thiserror",
  "time",
  "typed-builder 0.16.0",
@@ -1355,23 +1358,17 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "bincode",
  "bytes",
  "chrono",
  "fl-www-core",
  "futures",
- "log",
  "octocrab",
- "once_cell",
  "reqwest",
  "sea-orm",
  "serde",
- "serde_json",
  "thiserror",
  "tokio",
  "tokio-stream",
- "typed-builder 0.10.0",
- "warp",
 ]
 
 [[package]]
@@ -1445,6 +1442,7 @@ dependencies = [
  "serde_json",
  "thiserror",
  "typed-builder 0.10.0",
+ "yew",
 ]
 
 [[package]]
@@ -2900,24 +2898,6 @@ dependencies = [
  "log",
  "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "multer"
-version = "2.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01acbdc23469fd8fe07ab135923371d5f5a422fbf9c522158677c8eb15bc51c2"
-dependencies = [
- "bytes",
- "encoding_rs",
- "futures-util",
- "http",
- "httparse",
- "log",
- "memchr",
- "mime",
- "spin 0.9.8",
- "version_check",
 ]
 
 [[package]]
@@ -5637,7 +5617,6 @@ dependencies = [
  "log",
  "mime",
  "mime_guess",
- "multer",
  "percent-encoding",
  "pin-project",
  "rustls-pemfile",

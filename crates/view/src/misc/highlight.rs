@@ -1,7 +1,7 @@
-use agents::highlight::HighlightOutput;
 use components::CodeSpan;
 
 use super::ToHtml;
+use crate::api::HighlightOutput;
 use crate::prelude::*;
 
 impl ToHtml for HighlightOutput {
