@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::BridgedQuery;
 use typed_builder::TypedBuilder;
 
-use crate::Error;
+use crate::RoutineError;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, Hash, TypedBuilder)]
 pub struct PageQueryInput {
@@ -17,10 +17,10 @@ pub struct PageQuery {
 }
 
 impl BridgedQuery for PageQuery {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = PageQueryInput;
 
     fn into_query_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }

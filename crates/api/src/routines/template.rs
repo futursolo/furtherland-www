@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::{BridgedMutation, BridgedQuery};
 use time::OffsetDateTime;
 
-use super::Error;
+use super::RoutineError;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ServerTimeQuery {
@@ -10,11 +10,11 @@ pub struct ServerTimeQuery {
 }
 
 impl BridgedQuery for ServerTimeQuery {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = ();
 
     fn into_query_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }
 
@@ -24,10 +24,10 @@ pub struct GreetingMutation {
 }
 
 impl BridgedMutation for GreetingMutation {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = String;
 
     fn into_mutation_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }

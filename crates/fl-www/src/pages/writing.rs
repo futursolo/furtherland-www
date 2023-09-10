@@ -27,7 +27,7 @@ pub(crate) fn writing(props: &WritingProps) -> HtmlResult {
 
     let writing = match writing_query.as_deref() {
         Err(e) => {
-            if matches!(e, fl_www_api::Error::NotFound) {
+            if matches!(e, fl_www_api::RoutineError::NotFound) {
                 return Ok(html! {<Other />});
             }
             set_error(ErrorKind::Server.into());

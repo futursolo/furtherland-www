@@ -19,9 +19,15 @@ pub use template::*;
 pub use writing::*;
 
 #[derive(Debug, Error, PartialEq, Eq, Clone, Serialize, Deserialize)]
-pub enum Error {
+pub enum RoutineError {
     #[error("content not found")]
     NotFound,
+
+    #[error("unknown server error")]
+    ServerOther,
+
+    #[error("forbidden")]
+    Forbidden,
 
     #[error("failed to communicate with server.")]
     Network,

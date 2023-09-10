@@ -27,7 +27,7 @@ pub(crate) fn page(props: &PageProps) -> HtmlResult {
 
     let full_content = match page_query.as_deref() {
         Err(e) => {
-            if matches!(e, fl_www_api::Error::NotFound) {
+            if matches!(e, fl_www_api::RoutineError::NotFound) {
                 return Ok(html! {<Other />});
             }
 

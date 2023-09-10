@@ -3,7 +3,7 @@ use fl_www_core::prelude::*;
 use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::{BridgedMutation, BridgedQuery};
 
-use crate::Error;
+use crate::RoutineError;
 
 #[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize, Clone)]
 pub struct RepliesQueryInput {
@@ -17,11 +17,11 @@ pub struct RepliesQuery {
 }
 
 impl BridgedQuery for RepliesQuery {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = RepliesQueryInput;
 
     fn into_query_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }
 
@@ -38,10 +38,10 @@ pub struct CreateReplyMutation {
 }
 
 impl BridgedMutation for CreateReplyMutation {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = CreateReplyInput;
 
     fn into_mutation_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }

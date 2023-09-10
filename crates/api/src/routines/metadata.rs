@@ -4,7 +4,7 @@ use fl_www_core::prelude::*;
 use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::BridgedQuery;
 
-use crate::Error;
+use crate::RoutineError;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MetadataQuery {
@@ -12,11 +12,11 @@ pub struct MetadataQuery {
 }
 
 impl BridgedQuery for MetadataQuery {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = ();
 
     fn into_query_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }
 

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::{BridgedMutation, BridgedQuery};
 
-use crate::{messages, Error};
+use crate::{messages, RoutineError};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CurrentResidentQuery {
@@ -9,11 +9,11 @@ pub struct CurrentResidentQuery {
 }
 
 impl BridgedQuery for CurrentResidentQuery {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = ();
 
     fn into_query_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }
 
@@ -23,10 +23,10 @@ pub struct ExchangeTokenMutation {
 }
 
 impl BridgedMutation for ExchangeTokenMutation {
-    type Error = Error;
+    type Error = RoutineError;
     type Input = messages::AccessTokenInput;
 
     fn into_mutation_error(_e: stellation_bridge::BridgeError) -> Self::Error {
-        Error::Network
+        RoutineError::Network
     }
 }
