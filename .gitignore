@@ -21,3 +21,5 @@ test.db*
 # Stellation artifacts
 .stellation/
 build/
+
+.vscode/

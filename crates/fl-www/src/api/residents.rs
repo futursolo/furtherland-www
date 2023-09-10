@@ -10,14 +10,6 @@ use messages::{Resident, Response};
 use super::{QueryError, BASE_URL, CLIENT};
 use crate::prelude::*;
 
-// #[async_trait(?Send)]
-// pub trait Query: PartialEq {
-//     type Input: Hash + Eq + 'static;
-//     type Error: 'static + std::error::Error + PartialEq + Clone;
-
-//     async fn query(states: &BounceStates, input: Rc<Self::Input>) -> QueryResult<Self>;
-// }
-
 #[derive(Debug, PartialEq)]
 pub struct CurrentResidentQuery {
     pub content: Option<Resident>,

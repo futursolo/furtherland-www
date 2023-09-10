@@ -5,6 +5,7 @@
 mod resolvers;
 mod routines;
 
+use fl_www_core::messages;
 #[cfg(feature = "resolvable")]
 pub use resolvers::*;
 #[cfg(not(feature = "resolvable"))]

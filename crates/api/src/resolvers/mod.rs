@@ -6,6 +6,8 @@ pub use crate::routines::*;
 
 mod metadata;
 mod page;
+mod replies;
+mod resident;
 mod template;
 mod writing;
 
@@ -16,6 +18,10 @@ pub fn create_resolver_registry() -> ResolverRegistry<()> {
         .add_query::<MetadataQuery>()
         .add_query::<PageQuery>()
         .add_query::<WritingQuery>()
+        .add_query::<CurrentResidentQuery>()
+        .add_mutation::<ExchangeTokenMutation>()
+        .add_query::<RepliesQuery>()
+        .add_mutation::<CreateReplyMutation>()
         .build()
 }
 

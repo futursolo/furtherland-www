@@ -13,7 +13,7 @@ pub enum ResidencyStatus {
     Master = 100,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Resident {
     pub id: u64,
     pub login: String,
@@ -31,12 +31,12 @@ impl Resident {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Replies {
     pub replies: Vec<Reply>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Reply {
     pub id: ObjectId,
     pub slug: String,
@@ -67,19 +67,19 @@ pub struct PatchReplyInput {
     pub content: Option<String>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AccessTokenInput {
     pub code: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AccessToken {
     pub access_token: String,
     pub token_type: String,
     pub scope: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ResponseError {
     pub code: u64,
 }

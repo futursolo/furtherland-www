@@ -7,10 +7,14 @@ use thiserror::Error;
 
 mod metadata;
 mod page;
+mod replies;
+mod resident;
 mod template;
 mod writing;
 pub use metadata::*;
 pub use page::*;
+pub use replies::*;
+pub use resident::*;
 pub use template::*;
 pub use writing::*;
 
@@ -30,6 +34,10 @@ pub fn create_routine_registry() -> RoutineRegistry {
         .add_query::<MetadataQuery>()
         .add_query::<PageQuery>()
         .add_query::<WritingQuery>()
+        .add_query::<CurrentResidentQuery>()
+        .add_mutation::<ExchangeTokenMutation>()
+        .add_query::<RepliesQuery>()
+        .add_mutation::<CreateReplyMutation>()
         .build()
 }
 
