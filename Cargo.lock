@@ -1332,11 +1332,16 @@ dependencies = [
 name = "fl-www-api"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "async-trait",
  "bounce",
  "chrono",
+ "fl-www-backend",
  "fl-www-core",
  "fl-www-models",
+ "futures",
+ "octocrab",
+ "reqwest",
  "sea-orm",
  "serde",
  "stellation-bridge",
@@ -1485,6 +1490,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "fl-www-api",
+ "fl-www-backend",
  "fl-www-view",
  "rust-embed 8.0.0",
  "stellation-backend",

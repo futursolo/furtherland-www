@@ -24,3 +24,4 @@ stellation-stylist = { version = "0.3.0", features = ["backend"] }
 # Example Workspace
 fl-www-view = { path = "../view" }
 fl-www-api = { path = "../api", features = ["resolvable"] }
+fl-www-backend = { path = "../backend" }
