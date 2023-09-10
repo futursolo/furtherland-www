@@ -1,9 +1,9 @@
 use fl_www_backend as backend;
-use fl_www_models::db;
 use stellation_bridge::links::LocalLink;
 use stellation_bridge::registry::{ResolverRegistry, ResolverRegistryBuilder};
 use stellation_bridge::Bridge as Bridge_;
 
+use self::backend::db;
 pub use self::context::ResolverContext;
 use self::error::ResolverError;
 pub use crate::routines::*;
@@ -14,13 +14,10 @@ mod metadata;
 mod page;
 mod replies;
 mod resident;
-mod template;
 mod writing;
 
 pub fn create_resolver_registry() -> ResolverRegistry<ResolverContext> {
     ResolverRegistryBuilder::new()
-        .add_query::<ServerTimeQuery>()
-        .add_mutation::<GreetingMutation>()
         .add_query::<MetadataQuery>()
         .add_query::<PageQuery>()
         .add_query::<WritingQuery>()

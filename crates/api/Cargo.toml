@@ -7,7 +7,6 @@ publish = false
 [dependencies]
 # Workspace
 fl-www-core = { path = "../core" }
-fl-www-models = { path = "../models" }
 fl-www-backend = { path = "../backend" }
 
 # Stellation

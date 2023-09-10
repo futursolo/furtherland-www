@@ -1,10 +1,10 @@
 use std::ops::Deref;
 use std::sync::Arc;
 
-use fl_www_backend::BackendContext;
 use fl_www_core::messages::Resident;
 use typed_builder::TypedBuilder;
 
+use super::backend::BackendContext;
 use super::error::ResolverResult;
 
 #[derive(Debug, TypedBuilder, Clone)]

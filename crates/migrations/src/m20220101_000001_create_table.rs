@@ -1,4 +1,4 @@
-use fl_www_models::db;
+use fl_www_backend::db;
 use sea_orm::Schema;
 use sea_orm_migration::prelude::*;
 

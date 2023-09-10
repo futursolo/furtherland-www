@@ -8,7 +8,6 @@ publish = false
 
 [dependencies]
 fl-www-core = { path = "../core", features = ["backend"] }
-fl-www-models = { path = "../models" }
 
 # Data Serialisation / Deserialisation
 serde_json = "1.0.82"

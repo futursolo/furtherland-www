@@ -13,7 +13,7 @@ name = "fl_www_migrations"
 path = "src/lib.rs"
 
 [dependencies]
-fl-www-models = { path = "../models" }
+fl-www-backend = { path = "../backend" }
 fl-www-core = { path = "../core" }
 tokio = { version = "1.20.1", features = ["full"] }
 
