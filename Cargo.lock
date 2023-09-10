@@ -1336,6 +1336,8 @@ dependencies = [
  "bounce",
  "chrono",
  "fl-www-core",
+ "fl-www-models",
+ "sea-orm",
  "serde",
  "stellation-bridge",
  "thiserror",

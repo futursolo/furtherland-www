@@ -7,6 +7,13 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Workspace
+fl-www-core = { path = "../core" }
+fl-www-models = { path = "../models" }
+
+# Stellation
+stellation-bridge = "0.3.0"
+
 time = { version = "0.3", features = ["wasm-bindgen", "serde-human-readable"] }
 serde = { version = "1", features = ["derive"] }
 async-trait = "0.1.59"
@@ -15,11 +22,11 @@ thiserror = "1"
 typed-builder = "0.16.0"
 chrono = { version = "0.4.19", features = ["serde", "wasmbind"] }
 
-fl-www-core = { path = "../core" }
-
-# Stellation
-stellation-bridge = "0.3.0"
-
+sea-orm = { version = "0.9.1", features = [
+    "sqlx-sqlite",
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+], optional = true }
 
 [features]
-resolvable = []
+resolvable = ["dep:sea-orm"]

@@ -1,37 +1,22 @@
 use bounce::{Atom, Selector};
-use serde::{Deserialize, Serialize};
 use stellation_bridge::links::FetchLink;
 use stellation_bridge::registry::RoutineRegistry;
 use stellation_bridge::Bridge as Bridge_;
-use thiserror::Error;
 
+mod error;
 mod metadata;
 mod page;
 mod replies;
 mod resident;
 mod template;
 mod writing;
+pub use error::RoutineError;
 pub use metadata::*;
 pub use page::*;
 pub use replies::*;
 pub use resident::*;
 pub use template::*;
 pub use writing::*;
-
-#[derive(Debug, Error, PartialEq, Eq, Clone, Serialize, Deserialize)]
-pub enum RoutineError {
-    #[error("content not found")]
-    NotFound,
-
-    #[error("unknown server error")]
-    ServerOther,
-
-    #[error("forbidden")]
-    Forbidden,
-
-    #[error("failed to communicate with server.")]
-    Network,
-}
 
 pub fn create_routine_registry() -> RoutineRegistry {
     RoutineRegistry::builder()

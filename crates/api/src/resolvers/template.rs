@@ -3,13 +3,14 @@ use stellation_bridge::resolvers::{MutationResolver, QueryResolver};
 use stellation_bridge::routines::{MutationResult, QueryResult};
 use time::OffsetDateTime;
 
+use super::context::ResolverContext;
 pub use crate::routines::*;
 
 #[async_trait(?Send)]
 impl QueryResolver for ServerTimeQuery {
-    type Context = ();
+    type Context = ResolverContext;
 
-    async fn resolve(_ctx: &(), _input: &Self::Input) -> QueryResult<Self> {
+    async fn resolve(_ctx: &ResolverContext, _input: &Self::Input) -> QueryResult<Self> {
         Ok(Self {
             value: OffsetDateTime::now_utc(),
         }
@@ -19,9 +20,9 @@ impl QueryResolver for ServerTimeQuery {
 
 #[async_trait(?Send)]
 impl MutationResolver for GreetingMutation {
-    type Context = ();
+    type Context = ResolverContext;
 
-    async fn resolve(_ctx: &(), name: &Self::Input) -> MutationResult<Self> {
+    async fn resolve(_ctx: &ResolverContext, name: &Self::Input) -> MutationResult<Self> {
         Ok(Self {
             message: format!("Hello, {name}!"),
         }
