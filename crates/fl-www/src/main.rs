@@ -1,6 +1,5 @@
 #![deny(clippy::all)]
 
-mod api;
 mod app;
 mod atoms;
 mod common;
@@ -13,6 +12,7 @@ mod prelude;
 
 use app::App;
 use contexts::Providers;
+pub use fl_www_api as api;
 use prelude::*;
 
 #[function_component(Root)]

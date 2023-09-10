@@ -1,7 +1,7 @@
 use atoms::{ErrorState, TokenState};
 use bounce::prelude::*;
-use bounce::query::use_mutation;
 use components::Main;
+use fl_www_api::Bridge;
 use serde::{Deserialize, Serialize};
 
 use crate::api::ExchangeTokenMutation;
@@ -15,7 +15,7 @@ struct OauthContinueQuery {
 
 #[styled_component(OauthContinue)]
 pub(crate) fn oauth_continue() -> Html {
-    let exchange_token = use_mutation::<ExchangeTokenMutation>();
+    let exchange_token = Bridge::use_mutation::<ExchangeTokenMutation>();
     let set_error = use_atom_setter::<ErrorState>();
     let set_token = use_atom_setter::<TokenState>();
     let history = use_navigator().unwrap_throw();
