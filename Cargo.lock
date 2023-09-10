@@ -1306,45 +1306,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
 
 [[package]]
-name = "fl-www"
-version = "0.1.0"
-dependencies = [
- "ahash 0.7.6",
- "async-trait",
- "bounce",
- "chrono",
- "console_log",
- "fastrand 1.9.0",
- "fl-www-agents",
- "fl-www-api",
- "fl-www-common",
- "fl-www-core",
- "futures",
- "gloo 0.8.1",
- "i18n-embed",
- "i18n-embed-fl",
- "js-sys",
- "log",
- "once_cell",
- "reqwest",
- "rust-embed 6.8.1",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "stellation-bridge",
- "stylist 0.12.1 (git+https://github.com/futursolo/stylist-rs?branch=css-vars)",
- "thiserror",
- "unic-langid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "yew",
- "yew-agent",
- "yew-feather",
- "yew-router",
-]
-
-[[package]]
 name = "fl-www-agents"
 version = "0.1.0"
 dependencies = [
@@ -1537,15 +1498,39 @@ dependencies = [
 name = "fl-www-view"
 version = "0.1.0"
 dependencies = [
+ "ahash 0.7.6",
+ "async-trait",
  "bounce",
+ "chrono",
+ "console_log",
+ "fastrand 1.9.0",
+ "fl-www-agents",
  "fl-www-api",
+ "fl-www-common",
+ "fl-www-core",
+ "futures",
+ "gloo 0.8.1",
+ "i18n-embed",
+ "i18n-embed-fl",
+ "js-sys",
+ "log",
+ "once_cell",
+ "reqwest",
+ "rust-embed 6.8.1",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
  "stellation-bridge",
- "stellation-frontend",
- "stylist 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "time",
- "tracing",
+ "stylist 0.12.1 (git+https://github.com/futursolo/stylist-rs?branch=css-vars)",
+ "thiserror",
+ "unic-langid",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "web-sys",
  "yew",
+ "yew-agent",
+ "yew-feather",
+ "yew-router",
 ]
 
 [[package]]

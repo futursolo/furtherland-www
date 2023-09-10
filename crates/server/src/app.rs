@@ -2,7 +2,7 @@ use stellation_backend::{Request, ServerAppProps};
 use stellation_stylist::BackendManagerProvider;
 use yew::prelude::*;
 
-use crate::view::Main;
+use crate::view::Root;
 
 #[function_component]
 pub fn ServerApp<REQ>(_props: &ServerAppProps<(), REQ>) -> Html
@@ -12,7 +12,7 @@ where
     html! {
         <Suspense fallback={Html::default()}>
             <BackendManagerProvider>
-                <Main />
+                <Root />
             </BackendManagerProvider>
         </Suspense>
     }

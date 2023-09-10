@@ -4,24 +4,72 @@ version = "0.1.0"
 edition = "2021"
 publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-yew = { version = "0.20.0" }
+fl-www-core = { path = "../core" }
 fl-www-api = { path = "../api" }
-time = { version = "0.3", features = [
-    "wasm-bindgen",
-    "serde-human-readable",
-    "macros",
+fl-www-common = { path = "../common" }
+fl-www-agents = { path = "../fl-www-agents" }
+
+bounce = { version = "0.8.0", features = ["query", "helmet"] }
+
+wasm-bindgen = "0.2.81"
+wasm-bindgen-futures = "0.4.31"
+js-sys = "0.3.58"
+futures = "0.3.21"
+gloo = { version = "0.8.0", features = ["futures"] }
+async-trait = "0.1.56"
+# web-sys
+
+console_log = { version = "0.2.0", features = ["color"] }
+log = "0.4.17"
+
+yew-feather = "1.0.0"
+yew-router = "0.17.0"
+yew = { version = "0.20.0", features = ["csr"] }
+yew-agent = "0.2.0"
+stylist = { git = "https://github.com/futursolo/stylist-rs", branch = "css-vars", features = [
+  "yew_integration",
+  "macros",
+  "parser",
+], default-features = false }
+
+i18n-embed = { version = "0.13.4", features = [
+  "fluent-system",
+  "web-sys-requester",
 ] }
-tracing = "0.1.37"
-bounce = { version = "0.8.0", features = ["helmet"] }
-stylist = { version = "0.12.0", features = ["yew_integration"] }
+rust-embed = { version = "6.4.0", features = ["debug-embed"] }
+i18n-embed-fl = "0.6.4"
+unic-langid = "0.9.0"
+
+chrono = { version = "0.4.19", features = ["wasmbind"] }
+
+once_cell = "1.13.0"
+serde = "1.0.139"
+serde_json = "1.0.82"
+thiserror = "1.0.31"
+serde_urlencoded = "0.7.1"
+
+fastrand = "1.8.0"
+ahash = "0.7.6"
+reqwest = { version = "0.11.11", features = ["json"] }
 
 # Stellation
-stellation-frontend = "0.3.0"
 stellation-bridge = "0.3.0"
 
 [dependencies.web-sys]
-version = "0.3"
-features = ["HtmlInputElement"]
+version = "0.3.58"
+features = [
+  "Window",
+  "MediaQueryList",
+  "HtmlMetaElement",
+  "HtmlLinkElement",
+  "HtmlScriptElement",
+  "Storage",
+  "CssStyleDeclaration",
+  "Element",
+  "HtmlElement",
+  "ScrollIntoViewOptions",
+  "ScrollBehavior",
+  "ScrollToOptions",
+  "NodeList",
+]
