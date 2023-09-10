@@ -1,7 +1,9 @@
 use std::rc::Rc;
 
-use bounce::*;
-use yew_query::{use_query, Request};
+use fl_www_api::{Bridge, Link, MetadataQuery};
+use stellation_bridge::hooks::UseBridgedQueryHandle;
+use yew::prelude::*;
+use yew::suspense::SuspensionResult;
 
 use crate::prelude::*;
 
@@ -11,16 +13,6 @@ pub(crate) struct MetadataState {
 }
 
 #[hook]
-pub(crate) fn use_metadata() -> Option<Rc<Metadata>> {
-    let set_error = use_atom_setter::<ErrorState>();
-
-    match use_query(|| Request::builder().url("/metadata.json").build()).result() {
-        Some(Ok(m)) => Some(m.data()),
-        Some(Err(_)) => {
-            set_error(ErrorKind::Server.into());
-
-            None
-        }
-        _ => None,
-    }
+pub(crate) fn use_metadata() -> SuspensionResult<UseBridgedQueryHandle<MetadataQuery, Link>> {
+    Bridge::use_query::<MetadataQuery>(().into())
 }

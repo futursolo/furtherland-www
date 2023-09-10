@@ -9,7 +9,7 @@ use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub(crate) struct MarkdownProps {
-    pub markdown_text: String,
+    pub markdown_text: AttrValue,
 }
 
 #[styled_component(Markdown)]
@@ -17,7 +17,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
     let cache_state = use_slice::<CacheState>();
 
     let md_html = {
-        let input = props.markdown_text.clone();
+        let input = props.markdown_text.to_string();
         let cache_state = cache_state.clone();
         use_state_eq(|| -> Option<Html> {
             cache_state.get::<String, Root>(&input).map(|m| m.to_html())
@@ -28,7 +28,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
 
     let worker = {
         let cache_state = cache_state.clone();
-        let input = props.markdown_text.clone();
+        let input = props.markdown_text.to_string();
         use_bridge::<agents::markdown::Worker, _>(move |m| {
             if let agents::markdown::Response::Html(root) = m {
                 let action =
@@ -42,7 +42,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
         let md_html = md_html.clone();
         use_effect_with_deps(
             move |content| {
-                let content = content.clone();
+                let content = content.to_string();
 
                 if let Some(cached) = cache_state
                     .get::<String, Root>(&content)

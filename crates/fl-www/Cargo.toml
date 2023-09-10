@@ -11,8 +11,6 @@ fl-www-agents = { path = "../fl-www-agents" }
 
 bounce = { version = "0.8.0", features = ["query", "helmet"] }
 
-yew-query = { path = "../yew-query" }
-
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"
 js-sys = "0.3.58"
@@ -53,6 +51,10 @@ serde_urlencoded = "0.7.1"
 fastrand = "1.8.0"
 ahash = "0.7.6"
 reqwest = { version = "0.11.11", features = ["json"] }
+fl-www-api = { path = "../api" }
+
+# Stellation
+stellation-bridge = "0.3.0"
 
 [dependencies.web-sys]
 version = "0.3.58"

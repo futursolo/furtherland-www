@@ -1,24 +1,26 @@
 use bounce::helmet::Helmet;
 use components::{Author, AuthoringResident, Link, Main, SectionTitle};
+use fl_www_api::{Bridge, MetadataQuery};
 
 use super::Loading;
 use crate::prelude::*;
 
 #[function_component(Home)]
-pub(crate) fn home() -> Html {
+pub(crate) fn home() -> HtmlResult {
     let lang = use_language();
 
-    let metadata = match use_metadata() {
-        Some(m) => m,
-        None => {
-            return html! {
+    let metadata_query = Bridge::use_query::<MetadataQuery>(().into())?;
+    let metadata = match metadata_query.as_deref() {
+        Ok(m) => m,
+        Err(_) => {
+            return Ok(html! {
                 <>
                     <Helmet>
                         <title>{fl!("home")}</title>
                     </Helmet>
                     <Loading />
                 </>
-            }
+            })
         }
     };
 
@@ -38,7 +40,7 @@ pub(crate) fn home() -> Html {
         })
         .collect::<Html>();
 
-    html! {
+    Ok(html! {
         <>
             <Helmet>
                 <title>{fl!("home")}</title>
@@ -47,5 +49,5 @@ pub(crate) fn home() -> Html {
                 {writings}
             </Main>
         </>
-    }
+    })
 }

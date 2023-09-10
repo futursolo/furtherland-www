@@ -1,5 +1,5 @@
 [package]
-name = "furtherland-www-view"
+name = "fl-www-view"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 yew = { version = "0.20.0" }
-furtherland-www-api = { path = "../api" }
+fl-www-api = { path = "../api" }
 time = { version = "0.3", features = [
     "wasm-bindgen",
     "serde-human-readable",

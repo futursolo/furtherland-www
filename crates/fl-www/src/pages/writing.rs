@@ -1,12 +1,7 @@
-use std::cell::RefCell;
-use std::convert::Infallible;
-use std::rc::Rc;
-
 use bounce::helmet::Helmet;
 use bounce::prelude::*;
 use components::{Author, AuthoringResident, Main, Markdown, Replies, SectionTitle};
-use yew_agent::Bridged;
-use yew_query::{use_pausable_query, Request, UseFetchHandle};
+use fl_www_api::{Bridge, WritingQuery, WritingQueryInput};
 
 use super::{Loading, Other};
 use crate::prelude::*;
@@ -17,127 +12,37 @@ pub(crate) struct WritingProps {
 }
 
 #[function_component(Writing)]
-pub(crate) fn writing(props: &WritingProps) -> Html {
+pub(crate) fn writing(props: &WritingProps) -> HtmlResult {
     let lang = use_language();
-    let metadata = use_metadata();
+
     let set_error = use_atom_setter::<ErrorState>();
 
-    let writing_metadata = metadata.as_ref().and_then(|m| {
-        m.writings()
-            .iter()
-            .rev()
-            .filter(|m| m.lang == lang)
-            .find(|m| m.slug == props.slug)
-            .cloned()
-    });
+    let writing_query = Bridge::use_query::<WritingQuery>(
+        WritingQueryInput::builder()
+            .lang(lang)
+            .slug(props.slug.clone())
+            .build()
+            .into(),
+    )?;
 
-    let summary = use_state_eq(|| -> Option<String> { None });
-
-    let summary_clone = summary.clone();
-    let worker = use_state(move || {
-        RefCell::new(agents::markdown::Worker::bridge(Rc::new(move |m| {
-            if let agents::markdown::Response::Summary(s) = m {
-                summary_clone.set(Some(s));
+    let writing = match writing_query.as_deref() {
+        Err(e) => {
+            if matches!(e, fl_www_api::Error::NotFound) {
+                return Ok(html! {<Other />});
             }
-        })))
-    });
-
-    // let base_url = use_base_url();
-
-    let writing_metadata_clone = writing_metadata.clone();
-    let req: UseFetchHandle<String, Infallible> = use_pausable_query(move || {
-        let writing_metadata = writing_metadata_clone?;
-
-        Some(
-            Request::builder()
-                .url(format!(
-                    "/writings/{lang}/{date}/{slug}.md",
-                    lang = writing_metadata.lang.as_str(),
-                    date = writing_metadata.date.format("%Y-%m-%d"),
-                    slug = writing_metadata.slug,
-                ))
-                .build(),
-        )
-    });
-
-    let summary_clone = summary.clone();
-    use_effect_with_deps(
-        move |data| {
-            summary_clone.set(None);
-            if let Some(m) = data {
-                worker
-                    .borrow_mut()
-                    .send(agents::markdown::Request::Summary(m.to_string()));
-            }
-            || {}
-        },
-        req.result().and_then(|m| m.ok()).map(|m| m.data()),
-    );
-
-    if metadata.is_none() {
-        return html! {<Loading />};
-    }
-
-    let writing_metadata = match writing_metadata {
-        Some(m) => m,
-        None => return html! {<Other />},
-    };
-
-    let content = match req.result() {
-        None => {
-            return html! {
-                <>
-                    <Helmet>
-                        <title>{&writing_metadata.title}</title>
-                    </Helmet>
-                    <Loading />
-                </>
-            }
-        }
-        Some(Err(e)) => {
-            if let yew_query::Error::Response(ref e) = *e {
-                if e.status() == 404 {
-                    return html! {<Other />};
-                }
-            }
-
             set_error(ErrorKind::Server.into());
 
-            return html! {
-                <>
-                    <Helmet>
-                        <title>{&writing_metadata.title}</title>
-                    </Helmet>
-                    <Loading />
-                </>
-            };
+            return Ok(html! { <Loading /> });
         }
-        Some(Ok(m)) => {
-            if !m
-                .headers()
-                .get("content-type")
-                .ok()
-                .map(|m| m.map(|m| m.contains("markdown")).unwrap_or(false))
-                .unwrap_or(false)
-            {
-                return html! {<Other />};
-            }
-
-            m.data()
-                .split_once('\n')
-                .map(|m| m.1)
-                .unwrap_or("")
-                .trim()
-                .to_string()
-        }
+        Ok(m) => m.clone(),
     };
 
-    html! {
+    Ok(html! {
         <>
             <Helmet>
-                <title>{&writing_metadata.title}</title>
+                <title>{&writing.title}</title>
             </Helmet>
-            {if let Some(m) = (*summary).clone() {
+            {if let Some(m) = writing.summary.clone() {
                 html! {
                     <Helmet>
                         <meta name="description" content={m} />
@@ -147,11 +52,11 @@ pub(crate) fn writing(props: &WritingProps) -> Html {
                 Html::default()
             }}
             <Main>
-                <SectionTitle>{&writing_metadata.title}</SectionTitle>
-                <Author author={AuthoringResident::Default} date={writing_metadata.date} />
-                <Markdown markdown_text={content} />
+                <SectionTitle>{&writing.title}</SectionTitle>
+                <Author author={AuthoringResident::Default} date={writing.date} />
+                <Markdown markdown_text={writing.content.to_owned()} />
                 <Replies slug={props.slug.clone()} />
             </Main>
         </>
-    }
+    })
 }

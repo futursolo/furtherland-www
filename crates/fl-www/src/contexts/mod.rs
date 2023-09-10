@@ -4,14 +4,11 @@ use yew_router::prelude::BrowserRouter;
 
 use crate::prelude::*;
 
-mod client;
 mod metadata;
 mod routing;
 mod theme;
 mod worker;
 
-use client::ClientProvider;
-pub(crate) use metadata::use_metadata;
 pub(crate) use routing::use_app_route;
 use routing::RoutingListener;
 pub(crate) use theme::use_theme;
@@ -43,9 +40,7 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
                 <RoutingListener />
                 <ThemeProvider>
                     <WorkerProvider>
-                        <ClientProvider>
-                            {children}
-                        </ClientProvider>
+                        {children}
                     </WorkerProvider>
                 </ThemeProvider>
             </BrowserRouter>

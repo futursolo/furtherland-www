@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 #![deny(missing_debug_implementations)]
 
-use {furtherland_www_api as api, furtherland_www_view as view};
+use {fl_www_api as api, fl_www_view as view};
 
 mod app;
 use api::FrontendBridge;

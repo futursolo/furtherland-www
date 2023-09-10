@@ -5,13 +5,20 @@ use stellation_bridge::registry::RoutineRegistry;
 use stellation_bridge::Bridge as Bridge_;
 use thiserror::Error;
 
-mod template;
 mod metadata;
+mod page;
+mod template;
+mod writing;
 pub use metadata::*;
+pub use page::*;
 pub use template::*;
+pub use writing::*;
 
 #[derive(Debug, Error, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum Error {
+    #[error("content not found")]
+    NotFound,
+
     #[error("failed to communicate with server.")]
     Network,
 }
@@ -21,6 +28,8 @@ pub fn create_routine_registry() -> RoutineRegistry {
         .add_query::<ServerTimeQuery>()
         .add_mutation::<GreetingMutation>()
         .add_query::<MetadataQuery>()
+        .add_query::<PageQuery>()
+        .add_query::<WritingQuery>()
         .build()
 }
 

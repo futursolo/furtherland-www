@@ -2,7 +2,7 @@
 #![deny(missing_debug_implementations)]
 
 use bounce::helmet::Helmet;
-use furtherland_www_api as api;
+use fl_www_api as api;
 use stylist::yew::{styled_component, Global};
 use yew::prelude::*;
 

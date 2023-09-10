@@ -3,7 +3,7 @@
 
 use stellation_backend_cli::Cli;
 use stellation_backend_tower::TowerEndpoint;
-use {furtherland_www_api as api, furtherland_www_view as view};
+use {fl_www_api as api, fl_www_view as view};
 
 mod app;
 mod bridge;

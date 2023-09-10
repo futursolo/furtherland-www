@@ -1,5 +1,5 @@
 [package]
-name = "furtherland-www-server"
+name = "fl-www-server"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -22,5 +22,5 @@ stellation-stylist = { version = "0.3.0", features = ["backend"] }
 
 
 # Example Workspace
-furtherland-www-view = { path = "../view" }
-furtherland-www-api = { path = "../api", features = ["resolvable"] }
+fl-www-view = { path = "../view" }
+fl-www-api = { path = "../api", features = ["resolvable"] }

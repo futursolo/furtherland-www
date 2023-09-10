@@ -1316,6 +1316,7 @@ dependencies = [
  "console_log",
  "fastrand 1.9.0",
  "fl-www-agents",
+ "fl-www-api",
  "fl-www-common",
  "fl-www-core",
  "futures",
@@ -1330,6 +1331,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
+ "stellation-bridge",
  "stylist 0.12.1 (git+https://github.com/futursolo/stylist-rs?branch=css-vars)",
  "thiserror",
  "unic-langid",
@@ -1339,7 +1341,6 @@ dependencies = [
  "yew",
  "yew-agent",
  "yew-feather",
- "yew-query",
  "yew-router",
 ]
 
@@ -1364,6 +1365,21 @@ dependencies = [
  "wasm-bindgen-futures",
  "yew",
  "yew-agent",
+]
+
+[[package]]
+name = "fl-www-api"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bounce",
+ "chrono",
+ "fl-www-core",
+ "serde",
+ "stellation-bridge",
+ "thiserror",
+ "time",
+ "typed-builder 0.16.0",
 ]
 
 [[package]]
@@ -1415,6 +1431,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "fl-www-client"
+version = "0.1.0"
+dependencies = [
+ "fl-www-api",
+ "fl-www-view",
+ "gloo 0.8.1",
+ "stellation-frontend",
+ "stellation-stylist",
+ "tracing",
+ "tracing-subscriber",
+ "yew",
+]
+
+[[package]]
 name = "fl-www-common"
 version = "0.1.0"
 dependencies = [
@@ -1459,6 +1489,38 @@ dependencies = [
  "fl-www-core",
  "sea-orm-migration",
  "tokio",
+]
+
+[[package]]
+name = "fl-www-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "fl-www-api",
+ "fl-www-view",
+ "rust-embed 8.0.0",
+ "stellation-backend",
+ "stellation-backend-cli",
+ "stellation-backend-tower",
+ "stellation-stylist",
+ "tokio",
+ "tracing",
+ "yew",
+]
+
+[[package]]
+name = "fl-www-view"
+version = "0.1.0"
+dependencies = [
+ "bounce",
+ "fl-www-api",
+ "stellation-bridge",
+ "stellation-frontend",
+ "stylist 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time",
+ "tracing",
+ "web-sys",
+ "yew",
 ]
 
 [[package]]
@@ -1580,70 +1642,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
 
 [[package]]
-name = "furtherland-www-api"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "bounce",
- "serde",
- "stellation-bridge",
- "thiserror",
- "time",
-]
-
-[[package]]
-name = "furtherland-www-client"
-version = "0.1.0"
-dependencies = [
- "furtherland-www-api",
- "furtherland-www-view",
- "gloo 0.8.1",
- "stellation-frontend",
- "stellation-stylist",
- "tracing",
- "tracing-subscriber",
- "yew",
-]
-
-[[package]]
-name = "furtherland-www-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "furtherland-www-api",
- "furtherland-www-view",
- "rust-embed 8.0.0",
- "stellation-backend",
- "stellation-backend-cli",
- "stellation-backend-tower",
- "stellation-stylist",
- "tokio",
- "tracing",
- "yew",
-]
-
-[[package]]
 name = "furtherland-www-stctl"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "stctl",
  "tokio",
-]
-
-[[package]]
-name = "furtherland-www-view"
-version = "0.1.0"
-dependencies = [
- "bounce",
- "furtherland-www-api",
- "stellation-bridge",
- "stellation-frontend",
- "stylist 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "time",
- "tracing",
- "web-sys",
- "yew",
 ]
 
 [[package]]
@@ -6092,26 +6096,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "yew-query"
-version = "0.1.0"
-dependencies = [
- "ahash 0.7.6",
- "async-trait",
- "futures",
- "js-sys",
- "log",
- "once_cell",
- "serde",
- "serde_json",
- "thiserror",
- "typed-builder 0.10.0",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "yew",
 ]
 
 [[package]]

@@ -11,7 +11,7 @@ pub(crate) use yew_router::prelude::*;
 
 pub(crate) use crate::atoms::{use_language, ErrorKind, ErrorState};
 pub(crate) use crate::common::ChildrenProps;
-pub(crate) use crate::contexts::{use_app_route, use_metadata, use_theme};
+pub(crate) use crate::contexts::{use_app_route, use_theme};
 pub(crate) use crate::i18n::LanguageExt;
 pub(crate) use crate::metadata::Metadata;
 pub(crate) use crate::pages::AppRoute;

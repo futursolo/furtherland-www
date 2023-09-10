@@ -1,9 +1,7 @@
-use std::convert::Infallible;
-
 use bounce::helmet::Helmet;
 use bounce::prelude::*;
 use components::{Main, Markdown, SectionTitle};
-use yew_query::{use_query, Request, UseFetchHandle};
+use fl_www_api::{Bridge, PageQuery, PageQueryInput};
 
 use super::{Loading, Other};
 use crate::prelude::*;
@@ -14,47 +12,30 @@ pub(crate) struct PageProps {
 }
 
 #[styled_component(Page)]
-pub(crate) fn page(props: &PageProps) -> Html {
+pub(crate) fn page(props: &PageProps) -> HtmlResult {
     let lang = use_language();
     let set_error = use_atom_setter::<ErrorState>();
 
     let slug = props.slug.clone();
-    let req: UseFetchHandle<String, Infallible> = use_query(move || {
-        Request::builder()
-            .url(format!(
-                "/pages/{lang}/{slug}.md",
-                lang = lang.as_str(),
-                slug = slug,
-            ))
+    let page_query = Bridge::use_query::<PageQuery>(
+        PageQueryInput::builder()
+            .lang(lang)
+            .slug(slug)
             .build()
-    });
+            .into(),
+    )?;
 
-    let full_content = match req.result() {
-        None => return html! {<Loading />},
-        Some(Err(e)) => {
-            if let yew_query::Error::Response(ref e) = *e {
-                if e.status() == 404 {
-                    return html! {<Other />};
-                }
+    let full_content = match page_query.as_deref() {
+        Err(e) => {
+            if matches!(e, fl_www_api::Error::NotFound) {
+                return Ok(html! {<Other />});
             }
 
             set_error(ErrorKind::Server.into());
 
-            return html! {<Loading />};
+            return Ok(html! {<Loading />});
         }
-        Some(Ok(m)) => {
-            if !m
-                .headers()
-                .get("content-type")
-                .ok()
-                .map(|m| m.map(|m| m.contains("markdown")).unwrap_or(false))
-                .unwrap_or(false)
-            {
-                return html! {<Other />};
-            }
-
-            m.data().trim().to_string()
-        }
+        Ok(m) => m.content.to_owned(),
     };
 
     let (title, content) = full_content.split_once('\n').unwrap_or((&full_content, ""));
@@ -66,7 +47,7 @@ pub(crate) fn page(props: &PageProps) -> Html {
     }
     let title = title.trim().to_string();
 
-    html! {
+    Ok(html! {
         <>
             <Helmet>
                 <title>{title.clone()}</title>
@@ -76,5 +57,5 @@ pub(crate) fn page(props: &PageProps) -> Html {
                 <Markdown markdown_text={content} />
             </Main>
         </>
-    }
+    })
 }

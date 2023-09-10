@@ -1,5 +1,5 @@
 [package]
-name = "furtherland-www-client"
+name = "fl-www-client"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -26,5 +26,5 @@ tracing-subscriber = { version = "0.3.16", default-features = false, features = 
 ] }
 
 # Example Workspace
-furtherland-www-view = { path = "../view" }
-furtherland-www-api = { path = "../api" }
+fl-www-view = { path = "../view" }
+fl-www-api = { path = "../api" }
