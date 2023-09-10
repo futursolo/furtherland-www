@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 fl-www-common = { path = "../fl-www-common" }
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../core" }
 
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"

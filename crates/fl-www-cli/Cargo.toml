@@ -11,7 +11,7 @@ name = "landctl"
 path = "src/main.rs"
 
 [dependencies]
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../core" }
 fl-www-backend = { path = "../fl-www-backend" }
 
 # Logging

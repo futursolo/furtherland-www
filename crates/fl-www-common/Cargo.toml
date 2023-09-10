@@ -7,7 +7,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../core" }
 
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"

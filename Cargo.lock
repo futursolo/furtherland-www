@@ -1392,6 +1392,7 @@ dependencies = [
  "bytes",
  "chrono",
  "fl-www-core",
+ "fl-www-models",
  "futures",
  "log",
  "octocrab",
@@ -1485,10 +1486,35 @@ dependencies = [
 name = "fl-www-migrations"
 version = "0.1.0"
 dependencies = [
- "fl-www-backend",
  "fl-www-core",
+ "fl-www-models",
  "sea-orm-migration",
  "tokio",
+]
+
+[[package]]
+name = "fl-www-models"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bincode",
+ "bytes",
+ "chrono",
+ "fl-www-core",
+ "futures",
+ "log",
+ "octocrab",
+ "once_cell",
+ "reqwest",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "typed-builder 0.10.0",
+ "warp",
 ]
 
 [[package]]

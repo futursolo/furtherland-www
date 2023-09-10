@@ -15,7 +15,7 @@ thiserror = "1"
 typed-builder = "0.16.0"
 chrono = { version = "0.4.19", features = ["serde", "wasmbind"] }
 
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../core" }
 
 # Stellation
 stellation-bridge = "0.3.0"

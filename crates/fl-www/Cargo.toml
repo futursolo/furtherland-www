@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-fl-www-core = { path = "../fl-www-core" }
+fl-www-core = { path = "../core" }
 fl-www-common = { path = "../fl-www-common" }
 fl-www-agents = { path = "../fl-www-agents" }
 

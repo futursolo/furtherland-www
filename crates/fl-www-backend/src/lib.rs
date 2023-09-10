@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 
 mod context;
-pub mod db;
+use fl_www_models::db;
 mod encoding;
 mod error;
 mod prelude;
