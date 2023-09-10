@@ -1,10 +1,9 @@
 use atoms::{ErrorState, TokenState};
 use bounce::prelude::*;
 use components::Main;
-use fl_www_api::Bridge;
 use serde::{Deserialize, Serialize};
 
-use crate::api::ExchangeTokenMutation;
+use crate::api::{Bridge, ExchangeTokenInput, ExchangeTokenMutation};
 use crate::prelude::*;
 
 #[derive(Serialize, Deserialize)]
@@ -26,7 +25,7 @@ pub(crate) fn oauth_continue() -> Html {
         move |_| {
             match location.query::<OauthContinueQuery>() {
                 Ok(m) => {
-                    let input = messages::AccessTokenInput { code: m.code };
+                    let input = ExchangeTokenInput { code: m.code };
                     let next = m.next;
 
                     spawn_local(async move {
