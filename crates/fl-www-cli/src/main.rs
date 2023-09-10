@@ -35,18 +35,6 @@ async fn generate_content(args: cli::GenArgs) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn serve_backend(args: cli::ServeArgs) -> anyhow::Result<()> {
-    use fl_www_backend::WebServer;
-
-    WebServer::builder()
-        .address(args.addr)
-        .build()
-        .run()
-        .await?;
-
-    Ok(())
-}
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     logging::init();
@@ -58,7 +46,6 @@ async fn main() -> anyhow::Result<()> {
 
     match args.cmd {
         cli::Commands::Generate(args) => generate_content(args).await?,
-        cli::Commands::Serve(args) => serve_backend(args).await?,
     }
 
     Ok(())

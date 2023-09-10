@@ -12,7 +12,6 @@ path = "src/main.rs"
 
 [dependencies]
 fl-www-core = { path = "../core" }
-fl-www-backend = { path = "../fl-www-backend" }
 
 # Logging
 log = "0.4.17"

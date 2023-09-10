@@ -13,9 +13,6 @@ pub(crate) struct Args {
 pub(crate) enum Commands {
     /// Generates Content
     Generate(GenArgs),
-
-    /// Starts the Backend and serve API endpoint at specified address
-    Serve(ServeArgs),
 }
 
 #[derive(CmdArgs, Clone, Debug)]
@@ -26,11 +23,4 @@ pub(crate) struct GenArgs {
     /// output directory
     #[clap(short, long)]
     pub out_dir: PathBuf,
-}
-
-#[derive(CmdArgs, Clone, Debug)]
-pub(crate) struct ServeArgs {
-    /// the address to listen
-    #[clap(short, long)]
-    pub addr: String,
 }

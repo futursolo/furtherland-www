@@ -1419,7 +1419,6 @@ dependencies = [
  "clap 3.2.25",
  "dotenv",
  "env_logger",
- "fl-www-backend",
  "fl-www-core",
  "futures",
  "jemallocator",
