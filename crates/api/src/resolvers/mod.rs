@@ -11,6 +11,7 @@ pub use crate::routines::*;
 mod context;
 mod error;
 mod highlight;
+mod markdown;
 mod metadata;
 mod page;
 mod replies;

@@ -5,6 +5,7 @@ use stellation_bridge::Bridge as Bridge_;
 
 mod error;
 mod highlight;
+pub mod markdown;
 mod metadata;
 mod page;
 mod replies;
@@ -12,6 +13,7 @@ mod resident;
 mod writing;
 pub use error::RoutineError;
 pub use highlight::*;
+pub use markdown::*;
 pub use metadata::*;
 pub use page::*;
 pub use replies::*;
