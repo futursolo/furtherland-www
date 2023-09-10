@@ -68,18 +68,6 @@ pub struct PatchReplyInput {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AccessTokenInput {
-    pub code: String,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AccessToken {
-    pub access_token: String,
-    pub token_type: String,
-    pub scope: String,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ResponseError {
     pub code: u64,
 }

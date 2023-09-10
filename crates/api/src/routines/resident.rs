@@ -36,14 +36,26 @@ impl BridgedQuery for CurrentResidentQuery {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExchangeTokenInput {
+    pub code: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AccessToken {
+    pub access_token: String,
+    pub token_type: String,
+    pub scope: String,
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ExchangeTokenMutation {
-    pub content: messages::AccessToken,
+    pub content: AccessToken,
 }
 
 impl BridgedMutation for ExchangeTokenMutation {
     type Error = RoutineError;
-    type Input = messages::AccessTokenInput;
+    type Input = ExchangeTokenInput;
 
     fn into_mutation_error(_e: stellation_bridge::BridgeError) -> Self::Error {
         RoutineError::Network

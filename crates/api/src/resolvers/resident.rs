@@ -14,7 +14,7 @@ use super::db::residents as model;
 use super::error::ResolverResult;
 use super::ResolverError;
 use crate::routines::{CurrentResidentQuery, ExchangeTokenMutation};
-use crate::{messages, ResidentQuery, ResidentQueryInput, RoutineError};
+use crate::{messages, AccessToken, ResidentQuery, ResidentQueryInput, RoutineError};
 
 #[async_trait]
 pub(crate) trait ResidentExt {
@@ -200,7 +200,7 @@ impl MutationResolver for ExchangeTokenMutation {
             .header("content-type", "application/json")
             .header("accept", "application/json")
             .send()
-            .and_then(|m| m.json::<messages::AccessToken>())
+            .and_then(|m| m.json::<AccessToken>())
             .await
             .map_err(|_| ResolverError::GitHub)?;
 
