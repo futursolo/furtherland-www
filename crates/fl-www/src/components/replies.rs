@@ -1,12 +1,11 @@
 use atoms::TokenState;
-use bounce::query::use_query_value;
 use bounce::*;
 use components::{Author, AuthoringResident, Placeholder, PlaceholderKind, Textarea};
 use serde::{Deserialize, Serialize};
 use web_sys::HtmlTextAreaElement;
 use yew_feather::Github;
 
-use crate::api::{CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
+use crate::api::{Bridge, CurrentResidentQuery, RepliesQuery, RepliesQueryInput};
 use crate::prelude::*;
 use crate::utils::is_ssr;
 
@@ -137,7 +136,7 @@ fn replies_content(props: &RepliesProps) -> Html {
     let lang = use_language();
     let set_error = use_atom_setter::<ErrorState>();
 
-    let replies = use_query_value::<RepliesQuery>(
+    let replies = Bridge::use_query_value::<RepliesQuery>(
         RepliesQueryInput {
             slug: props.slug.clone(),
             lang,
@@ -342,7 +341,7 @@ fn new_reply_area(props: &NewReplyAreaProps) -> Html {
 
 #[styled_component(NewReply)]
 pub(crate) fn new_reply() -> Html {
-    let current_resident = use_query_value::<CurrentResidentQuery>(().into());
+    let current_resident = Bridge::use_query_value::<CurrentResidentQuery>(().into());
     let set_error = use_atom_setter::<ErrorState>();
 
     let navigate_to_github = Callback::from(|_| {

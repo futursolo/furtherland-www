@@ -5,7 +5,7 @@ use crate::{messages, RoutineError};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CurrentResidentQuery {
-    pub inner: Option<messages::Resident>,
+    pub content: Option<messages::Resident>,
 }
 
 impl BridgedQuery for CurrentResidentQuery {
