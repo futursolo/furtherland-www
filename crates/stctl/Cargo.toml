@@ -1,5 +1,5 @@
 [package]
-name = "furtherland-www-stctl"
+name = "fl-www-stctl"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -9,7 +9,6 @@ publish = false
 [dependencies]
 tokio = "1"
 anyhow = "1"
-
 
 # Stellation
 stctl = "0.3.0"
