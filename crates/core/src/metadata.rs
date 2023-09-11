@@ -6,7 +6,7 @@ use typed_builder::TypedBuilder;
 
 use crate::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Eq)]
 pub struct WritingMetadata {
     pub slug: String,
     pub lang: Language,
@@ -18,7 +18,7 @@ pub struct WritingMetadata {
     pub summary: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TypedBuilder)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TypedBuilder, Eq)]
 pub struct Metadata {
     #[builder(setter(into))]
     writings: Vec<WritingMetadata>,

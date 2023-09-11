@@ -8,7 +8,7 @@ use crate::RoutineError;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MetadataQuery {
-    pub value: (),
+    pub value: Metadata,
 }
 
 impl BridgedQuery for MetadataQuery {
@@ -24,6 +24,6 @@ impl Deref for MetadataQuery {
     type Target = Metadata;
 
     fn deref(&self) -> &Self::Target {
-        todo!()
+        &self.value
     }
 }
