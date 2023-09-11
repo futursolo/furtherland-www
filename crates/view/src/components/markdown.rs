@@ -26,7 +26,7 @@ pub(crate) fn markdown(props: &MarkdownProps) -> HtmlResult {
 
     let children = match markdown_query.as_deref() {
         Ok(m) => m.value.to_html(),
-        Err(e) => {
+        Err(_e) => {
             set_error(ErrorKind::Server.into());
 
             return Ok(html! {

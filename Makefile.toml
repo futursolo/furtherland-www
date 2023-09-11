@@ -3,16 +3,6 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 CARGO_MAKE_CLIPPY_ARGS = "--all-features -- -D warnings"
 FL_WWW_GITHUB_CLIENT_ID = "72f7c210f18ee7928a30"
 
-[tasks.serve-local-frontend]
-workspace = false
-command = "trunk"
-args = ["serve", "--open", "index.html"]
-
-[tasks.build-local-frontend]
-workspace = false
-command = "trunk"
-args = ["build", "--release", "index.html"]
-
 # stctl
 [tasks.stctl]
 workspace = false
