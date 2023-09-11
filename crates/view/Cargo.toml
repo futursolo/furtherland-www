@@ -8,7 +8,6 @@ publish = false
 fl-www-core = { path = "../core" }
 fl-www-api = { path = "../api" }
 fl-www-frontend = { path = "../frontend" }
-fl-www-agents = { path = "../fl-www-agents" }
 
 bounce = { version = "0.8.0", features = ["query", "helmet"] }
 
@@ -26,7 +25,6 @@ log = "0.4.17"
 yew-feather = "1.0.0"
 yew-router = "0.17.0"
 yew = { version = "0.20.0", features = ["csr"] }
-yew-agent = "0.2.0"
 stylist = { git = "https://github.com/futursolo/stylist-rs", branch = "css-vars", features = [
   "yew_integration",
   "macros",

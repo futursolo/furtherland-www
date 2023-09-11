@@ -1493,7 +1493,6 @@ dependencies = [
  "chrono",
  "console_log",
  "fastrand 1.9.0",
- "fl-www-agents",
  "fl-www-api",
  "fl-www-core",
  "fl-www-frontend",
@@ -1517,7 +1516,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew",
- "yew-agent",
  "yew-feather",
  "yew-router",
 ]
