@@ -1306,29 +1306,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fcfdc7a0362c9f4444381a9e697c79d435fe65b52a37466fc2c1184cee9edc6"
 
 [[package]]
-name = "fl-www-agents"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "console_log",
- "fl-www-core",
- "fl-www-frontend",
- "futures",
- "gloo 0.8.1",
- "js-sys",
- "log",
- "once_cell",
- "pulldown-cmark",
- "serde",
- "syntect",
- "unicode-segmentation",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "yew",
- "yew-agent",
-]
-
-[[package]]
 name = "fl-www-api"
 version = "0.1.0"
 dependencies = [
@@ -1384,10 +1361,10 @@ dependencies = [
  "dotenv",
  "env_logger",
  "fl-www-core",
+ "fl-www-markdown",
  "futures",
  "jemallocator",
  "log",
- "pulldown-cmark",
  "serde",
  "serde_json",
  "tokio",
@@ -1416,7 +1393,6 @@ dependencies = [
  "getrandom 0.2.10",
  "hex",
  "once_cell",
- "pulldown-cmark",
  "rand 0.8.5",
  "sea-orm",
  "serde",
@@ -1496,6 +1472,7 @@ dependencies = [
  "fl-www-api",
  "fl-www-core",
  "fl-www-frontend",
+ "fl-www-markdown",
  "futures",
  "gloo 0.8.1",
  "i18n-embed",
@@ -2012,23 +1989,6 @@ dependencies = [
  "js-sys",
  "serde",
  "serde_json",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "gloo-worker"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09110b5555bcafe508cee0fb94308af9aac7a85f980d3c88b270d117c6c6911d"
-dependencies = [
- "anymap2",
- "bincode",
- "gloo-console",
- "gloo-utils 0.1.7",
- "js-sys",
- "serde",
- "slab",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -6037,16 +5997,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew-macro",
-]
-
-[[package]]
-name = "yew-agent"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b06f7c5ed97fff22816bb00d3d82ebc0fc1119d7bbb9e07e62c0d2853f51920a"
-dependencies = [
- "gloo-worker 0.1.2",
- "yew",
 ]
 
 [[package]]

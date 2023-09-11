@@ -12,6 +12,7 @@ path = "src/main.rs"
 
 [dependencies]
 fl-www-core = { path = "../core" }
+fl-www-markdown = { path = "../markdown", features = ["parser"] }
 
 # Logging
 log = "0.4.17"
@@ -35,7 +36,6 @@ serde_json = "1.0.82"
 serde = "1.0.139"
 
 # Content Generation
-pulldown-cmark = { version = "0.9.2", default-features = false }
 unicode-segmentation = "1.9.0"
 atom_syndication = "0.12.2"
 

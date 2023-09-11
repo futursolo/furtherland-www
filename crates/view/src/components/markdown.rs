@@ -1,10 +1,9 @@
-use atoms::CacheState;
 use bounce::prelude::*;
-use fl_www_core::markdown::Root;
+use fl_www_api::{MarkdownQuery, MarkdownQueryInput};
 use misc::ToHtml;
-use yew_agent::use_bridge;
 
 use super::Placeholder;
+use crate::api::Bridge;
 use crate::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -13,56 +12,24 @@ pub(crate) struct MarkdownProps {
 }
 
 #[styled_component(Markdown)]
-pub(crate) fn markdown(props: &MarkdownProps) -> Html {
-    let cache_state = use_slice::<CacheState>();
+pub(crate) fn markdown(props: &MarkdownProps) -> HtmlResult {
+    let set_error = use_atom_setter::<ErrorState>();
 
-    let md_html = {
-        let input = props.markdown_text.to_string();
-        let cache_state = cache_state.clone();
-        use_state_eq(|| -> Option<Html> {
-            cache_state.get::<String, Root>(&input).map(|m| m.to_html())
-        })
-    };
+    let MarkdownProps { markdown_text } = props;
 
-    let md_html_clone = md_html.clone();
+    let markdown_query = Bridge::use_query::<MarkdownQuery>(
+        MarkdownQueryInput {
+            value: markdown_text.to_string(),
+        }
+        .into(),
+    )?;
 
-    let worker = {
-        let cache_state = cache_state.clone();
-        let input = props.markdown_text.to_string();
-        use_bridge::<agents::markdown::Worker, _>(move |m| {
-            if let agents::markdown::Response::Html(root) = m {
-                let action =
-                    CacheState::convert_action::<String, Root>(&input, root.clone()).unwrap_throw();
-                cache_state.dispatch(action);
-                md_html_clone.set(Some(root.to_html()));
-            }
-        })
-    };
-    {
-        let md_html = md_html.clone();
-        use_effect_with_deps(
-            move |content| {
-                let content = content.to_string();
+    let children = match markdown_query.as_deref() {
+        Ok(m) => m.value.to_html(),
+        Err(e) => {
+            set_error(ErrorKind::Server.into());
 
-                if let Some(cached) = cache_state
-                    .get::<String, Root>(&content)
-                    .map(|m| m.to_html())
-                {
-                    md_html.set(Some(cached));
-                } else {
-                    worker.send(agents::markdown::Request::Html(content));
-                }
-
-                || {}
-            },
-            props.markdown_text.clone(),
-        );
-    }
-
-    let children = match (*md_html).clone() {
-        Some(m) => m,
-        None => {
-            return html! {
+            return Ok(html! {
                 <>
                     <div class={css!("
                         margin-bottom: 10px;
@@ -86,11 +53,11 @@ pub(crate) fn markdown(props: &MarkdownProps) -> Html {
                         <Placeholder height="10rem" width="100%" />
                     </div>
                 </>
-            }
+            });
         }
     };
 
-    html! {
+    Ok(html! {
         <div>{children}</div>
-    }
+    })
 }

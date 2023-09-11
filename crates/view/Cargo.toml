@@ -8,6 +8,7 @@ publish = false
 fl-www-core = { path = "../core" }
 fl-www-api = { path = "../api" }
 fl-www-frontend = { path = "../frontend" }
+fl-www-markdown = { path = "../markdown" }
 
 bounce = { version = "0.8.0", features = ["query", "helmet"] }
 

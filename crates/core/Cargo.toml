@@ -17,8 +17,6 @@ serde = { version = "1.0.139", features = ["derive"] }
 chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
 typed-builder = "0.10.0"
 
-pulldown-cmark = { version = "0.9.2", default-features = false }
-
 hex = "0.4.3"
 getrandom = { version = "0.2.7", features = ["js"] }
 yew = "0.20.0"

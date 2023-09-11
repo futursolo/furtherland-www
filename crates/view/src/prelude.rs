@@ -1,5 +1,4 @@
 // pub use fl_www_agents as agents;
-pub(crate) use fl_www_agents as agents;
 pub(crate) use fl_www_core::messages;
 pub(crate) use fl_www_frontend::prelude::*;
 pub(crate) use fl_www_frontend::styling::css_var;

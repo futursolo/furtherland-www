@@ -7,13 +7,11 @@ use crate::prelude::*;
 mod metadata;
 mod routing;
 mod theme;
-mod worker;
 
 pub(crate) use routing::use_app_route;
 use routing::RoutingListener;
 pub(crate) use theme::use_theme;
 use theme::ThemeProvider;
-use worker::WorkerProvider;
 
 #[function_component(HelmetBridge)]
 pub(crate) fn helmet_bridge() -> Html {
@@ -39,9 +37,7 @@ pub(crate) fn providers(props: &ChildrenProps) -> Html {
             <BrowserRouter>
                 <RoutingListener />
                 <ThemeProvider>
-                    <WorkerProvider>
-                        {children}
-                    </WorkerProvider>
+                    {children}
                 </ThemeProvider>
             </BrowserRouter>
         </BounceRoot>

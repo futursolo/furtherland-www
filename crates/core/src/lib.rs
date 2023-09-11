@@ -3,7 +3,7 @@
 mod error;
 mod i18n;
 
-pub mod markdown;
+// pub mod markdown;
 pub mod messages;
 pub mod metadata;
 pub mod object_id;

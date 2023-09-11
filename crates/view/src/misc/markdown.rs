@@ -1,15 +1,15 @@
 // Based on pulldown_cmark's HtmlWriter.
 
 use components::{Code, CodeBlock as CompCodeBlock, Hyperlink, SectionTitle};
-use fl_www_core::markdown::*;
+use fl_www_markdown::types::*;
 use yew::prelude::Html;
 
 use super::ToHtml;
 use crate::prelude::*;
 
-impl ToHtml for Root {
+impl ToHtml for Document {
     fn to_html(&self) -> Html {
-        let children: Vec<Html> = self.nodes.iter().map(|m| m.to_html()).collect();
+        let children: Vec<Html> = self.children.iter().map(|m| m.to_html()).collect();
 
         html! {<>{children}</>}
     }
