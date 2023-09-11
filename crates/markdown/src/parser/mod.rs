@@ -13,6 +13,7 @@ use pulldown_cmark::Event::*;
 use pulldown_cmark::{CodeBlockKind, Event, HeadingLevel, LinkType, Tag};
 
 mod types;
+pub use pulldown_cmark::Parser;
 use types::*;
 
 pub(crate) type CowStr<'a> = Cow<'a, str>;
@@ -119,7 +120,7 @@ where
         }
     }
 
-    pub fn into_root_node(mut self) -> Root {
+    pub fn into_root_node(mut self) -> crate::types::Document {
         while let Some(event) = self.iter.next() {
             match event {
                 Start(tag) => {
@@ -198,7 +199,10 @@ where
             }
         }
 
-        Root { nodes: self.root }
+        Root {
+            children: self.root,
+        }
+        .into()
     }
 
     /// Writes the start of an HTML tag.

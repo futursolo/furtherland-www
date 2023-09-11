@@ -1338,11 +1338,11 @@ dependencies = [
  "chrono",
  "fl-www-backend",
  "fl-www-core",
+ "fl-www-markdown",
  "futures",
  "octocrab",
  "once_cell",
  "prokio",
- "pulldown-cmark",
  "reqwest",
  "sea-orm",
  "serde",
@@ -1444,6 +1444,14 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew",
+]
+
+[[package]]
+name = "fl-www-markdown"
+version = "0.1.0"
+dependencies = [
+ "pulldown-cmark",
+ "serde",
 ]
 
 [[package]]

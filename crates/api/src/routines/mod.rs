@@ -5,7 +5,7 @@ use stellation_bridge::Bridge as Bridge_;
 
 mod error;
 mod highlight;
-pub mod markdown;
+mod markdown;
 mod metadata;
 mod page;
 mod replies;
@@ -29,6 +29,7 @@ pub fn create_routine_registry() -> RoutineRegistry {
         .add_mutation::<ExchangeTokenMutation>()
         .add_query::<RepliesQuery>()
         .add_mutation::<CreateReplyMutation>()
+        .add_query::<MarkdownQuery>()
         .build()
 }
 

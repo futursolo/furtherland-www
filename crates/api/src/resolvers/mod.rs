@@ -27,6 +27,7 @@ pub fn create_resolver_registry() -> ResolverRegistry<ResolverContext> {
         .add_mutation::<ExchangeTokenMutation>()
         .add_query::<RepliesQuery>()
         .add_mutation::<CreateReplyMutation>()
+        .add_query::<MarkdownQuery>()
         .build()
 }
 

@@ -3,8 +3,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Root {
-    pub nodes: Vec<Node>,
+pub struct Document {
+    pub children: Vec<Node>,
 }
 
 // <pre><code>...</code></pre>
@@ -160,9 +160,9 @@ pub enum Node {
     HyperLink(HyperLink),
 }
 
-impl Root {
+impl Document {
     pub fn to_text(&self) -> String {
-        let children: Vec<String> = self.nodes.iter().map(|m| m.to_text()).collect();
+        let children: Vec<String> = self.children.iter().map(|m| m.to_text()).collect();
 
         children.join(" ")
     }

@@ -1,20 +1,17 @@
 use serde::{Deserialize, Serialize};
 use stellation_bridge::routines::BridgedQuery;
 
-// use crate::core::markdown::Root;
+use crate::markdown::types::Document;
 use crate::RoutineError;
-pub mod types;
-
-pub use types::Root;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone)]
 pub struct MarkdownQueryInput {
-    value: String,
+    pub value: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MarkdownQuery {
-    pub value: Root,
+    pub value: Document,
 }
 
 impl BridgedQuery for MarkdownQuery {
