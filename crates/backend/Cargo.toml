@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 fl-www-core = { path = "../core", features = ["backend"] }
+fl-www-markdown = { path = "../markdown", features = ["parser"] }
 
 # Data Serialisation / Deserialisation
 serde = "1.0.139"
@@ -45,3 +46,6 @@ sea-orm = { version = "0.9.1", features = [
 thiserror = "1.0.31"
 anyhow = "1.0.59"
 bytes = "1.1.0"
+
+# Content Generation
+unicode-segmentation = "1.9.0"

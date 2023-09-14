@@ -15,6 +15,7 @@ pub(crate) enum ResolverError {
 
     #[error("database error")]
     Database(#[from] sea_orm::DbErr),
+
     // #[error("request too large")]
     // RequestTooLarge,
 

@@ -37,27 +37,14 @@ pub(crate) fn oauth_continue() -> Html {
                                     inner: Some(m.content.access_token.clone()),
                                 });
 
-                                let path = next
-                                    .parse::<reqwest::Url>()
-                                    .ok()
-                                    .and_then(|url| {
-                                        if let Some(m) = url.host() {
-                                            if Some(m.to_string())
-                                                != window().location().host().ok()
-                                            {
-                                                None
-                                            } else {
-                                                Some(url)
-                                            }
-                                        } else {
-                                            Some(url)
-                                        }
-                                    })
-                                    .map(|m| m.path().to_string())
-                                    .unwrap_or_else(|| "/".to_string());
+                                let path = if next.starts_with('/') {
+                                    next.as_str()
+                                } else {
+                                    "/"
+                                };
 
                                 let route =
-                                    AppRoute::recognize(&path).unwrap_or(AppRoute::HomeRedirect);
+                                    AppRoute::recognize(path).unwrap_or(AppRoute::HomeRedirect);
 
                                 history.push(&route);
                             }

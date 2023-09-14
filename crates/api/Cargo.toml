@@ -46,6 +46,7 @@ syntect = { version = "5.0.0", default-features = false, features = [
     "default-themes",
     "regex-fancy",
 ], optional = true }
+tracing = "0.1"
 
 [features]
 resolvable = [

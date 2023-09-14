@@ -1,4 +1,5 @@
 use std::env;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use anyhow::Context;
@@ -15,20 +16,24 @@ pub struct BackendContext {
 
     http: Client,
     github: Octocrab,
+
+    content_dir: PathBuf,
 }
 
 impl BackendContext {
     pub async fn from_env() -> anyhow::Result<Self> {
-        let github_token = env::var("GITHUB_TOKEN").context("no github token set")?;
+        let github_token = env::var("FL_WWW_GITHUB_TOKEN").context("no github token set")?;
 
         Ok(Self {
-            github_client_id: env::var("GITHUB_CLIENT_ID").context("no github token set")?,
-            github_client_secret: env::var("GITHUB_CLIENT_SECRET")
+            github_client_id: env::var("FL_WWW_GITHUB_CLIENT_ID").context("no github token set")?,
+            github_client_secret: env::var("FL_WWW_GITHUB_CLIENT_SECRET")
                 .context("no github token set")?,
 
-            db: Database::connect(env::var("DATABASE_URL").context("no database url provided")?)
-                .await
-                .context("failed to connect to database")?,
+            db: Database::connect(
+                env::var("FL_WWW_DATABASE_URL").context("no database url provided")?,
+            )
+            .await
+            .context("failed to connect to database")?,
 
             http: Client::builder()
                 .user_agent(format!("fl-www-server/{}", env!("CARGO_PKG_VERSION")))
@@ -39,6 +44,9 @@ impl BackendContext {
                 .personal_token(github_token)
                 .build()
                 .context("failed to create github client")?,
+            content_dir: PathBuf::from(
+                env::var("FL_WWW_BACKEND_CONTENT_DIR").context("no content dir")?,
+            ),
         })
     }
 
@@ -56,5 +64,9 @@ impl BackendContext {
 
     pub fn github(&self) -> &Octocrab {
         self.server_github()
+    }
+
+    pub fn content_dir(&self) -> &Path {
+        self.content_dir.as_path()
     }
 }
