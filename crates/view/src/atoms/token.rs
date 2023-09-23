@@ -21,6 +21,6 @@ impl Default for TokenState {
 
 impl Observed for TokenState {
     fn changed(self: Rc<Self>) {
-        LocalStorage::set(STORAGE_KEY, self).expect_throw("failed to set theme.");
+        LocalStorage::set(STORAGE_KEY, self.as_ref()).expect_throw("failed to set theme.");
     }
 }
