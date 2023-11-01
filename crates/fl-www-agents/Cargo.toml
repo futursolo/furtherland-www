@@ -13,7 +13,7 @@ fl-www-core = { path = "../fl-www-core" }
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"
 js-sys = "0.3.58"
-futures = "0.3.21"
+futures = "0.3.29"
 gloo = { version = "0.8.0", features = ["futures"] }
 # web-sys
 
