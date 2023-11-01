@@ -12,7 +12,7 @@ yew = "0.20.0"
 
 wasm-bindgen = "0.2.81"
 wasm-bindgen-futures = "0.4.31"
-js-sys = "0.3.58"
+js-sys = "0.3.65"
 futures = "0.3.21"
 async-trait = "0.1.56"
 
