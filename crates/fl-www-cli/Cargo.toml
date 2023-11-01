@@ -33,7 +33,7 @@ chrono = { version = "0.4.19", features = ["wasmbind", "serde"] }
 
 # Data Serialisation / Deserialisation
 serde_json = "1.0.82"
-serde = "1.0.139"
+serde = "1.0.190"
 
 # Content Generation
 pulldown-cmark = { version = "0.9.2", default-features = false }
